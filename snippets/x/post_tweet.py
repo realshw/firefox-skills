@@ -1,0 +1,84 @@
+# Two composers share the testids: scope everything to [role="dialog"] or an unscoped querySelector types
+# into the inline box while you watch the modal's button. Post state lives in aria-disabled (never the
+# `disabled` property) and X counts CJK as 2 chars. The composer emptying is the signal, not the click.
+from selenium.webdriver.common.keys import Keys
+from snippets.common.wait_js import wait_js
+
+BOX = '[role="dialog"] [data-testid="tweetTextarea_0"]'
+POST = '[role="dialog"] [data-testid="tweetButton"]'
+CLOSE = '[role="dialog"] [data-testid="app-bar-close"]'
+NEW = '[data-testid="SideNav_NewTweet_Button"]'
+
+
+def _enabled(driver, sel):
+    return wait_js(
+        driver,
+        "!!document.querySelector('%s') && document.querySelector('%s')"
+        ".getAttribute('aria-disabled') !== 'true'" % (sel, sel),
+        timeout=15)
+
+
+def _clear_box(driver):
+    """Empty the DraftJS contenteditable (no .clear() on a div): select-all then DELETE. Re-clicking
+    the box can hit ElementClickInterceptedException — X floats hints/tooltips over the composer the
+    moment there is text in it — so keep the existing focus instead of insisting on a click."""
+    box = driver.find_element("css selector", BOX)
+    try:
+        box.click()
+    except Exception:
+        box = driver.switch_to.active_element
+    box.send_keys(Keys.CONTROL, "a")
+    box.send_keys(Keys.DELETE)
+    return wait_js(driver,
+                   "!document.querySelector('%s').innerText.trim()" % BOX,
+                   timeout=5)
+
+
+def _close_composer(driver):
+    if not driver.find_elements("css selector", BOX):
+        return True
+    driver.find_element("css selector", CLOSE).click()
+    if wait_js(driver, "!document.querySelector('%s')" % BOX, timeout=4):
+        return True
+    if driver.find_elements("css selector",
+                            '[data-testid="confirmationSheetCancel"]'):
+        driver.find_element("css selector",
+                            '[data-testid="confirmationSheetCancel"]').click()
+    return wait_js(driver, "!document.querySelector('%s')" % BOX, timeout=6)
+
+
+def post_tweet(driver, text, dry_run=False):
+    """Compose `text` and post it. dry_run=True types, checks the button, then discards — nothing sent."""
+    if not driver.find_elements("css selector", BOX):
+        driver.find_element("css selector", NEW).click()
+    if not wait_js(driver, "!!document.querySelector('%s')" % BOX):
+        print(
+            "POST_FAILED: modal composer never mounted (logged in? overlay stuck?)"
+        )
+        return False
+    box = driver.find_element("css selector", BOX)
+    box.click()
+    box.send_keys(text)
+    ready = _enabled(driver, POST)
+    print("TYPED: %d chars | READY: %s" % (len(box.text), ready))
+    if dry_run or not ready:
+        cleared = _clear_box(driver)
+        closed = _close_composer(driver)
+        print(
+            "DRY_RUN: cleared=%s closed=%s - nothing was sent" %
+            (cleared, closed) if dry_run else
+            "NOT_SENT: Post button never enabled (too long? CJK counts double)"
+        )
+        return False
+    driver.find_element("css selector", POST).click()
+    closed = wait_js(driver, "!document.querySelector('%s')" % BOX, timeout=30)
+    toast = ""
+    try:
+        toast = " ".join(
+            driver.find_element("css selector",
+                                '[data-testid="toast"]').text.split())
+    except Exception:
+        pass
+    print("POSTED:" if closed else "POST_UNCONFIRMED:", closed, "| toast:",
+          toast or "(none)")
+    return closed
