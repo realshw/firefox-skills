@@ -6,9 +6,9 @@ compatibility: Firefox with Marionette, geckodriver, selenium, tmux window cowor
 
 ## Running a snippet
 
-Snippets are reusable Selenium blocks that take `driver` first. `scripts/exec_repl.py` takes one Python block on stdin and runs it in the long-lived REPL in the tmux window `cowork:browser`, so `driver` and earlier names survive. Snippets print a short labelled summary; read that instead of re-reading the page.
+Snippets are reusable Selenium blocks that take `driver` first. `scripts/exec.py` feeds one Python block on stdin to the long-lived REPL in the tmux window `cowork:browser`, where `driver` keeps its browser state from block to block. Snippets print a short labelled summary; read that instead of re-reading the page.
 
-When no snippet fits the task, send your own Selenium block to the same REPL. Wait on a condition, never a duration: predicates through `snippets/common/wait_js.py`, values that must stop changing through `snippets/common/wait_stable.py`.
+When no snippet fits the task, feed your own Selenium block to the same REPL. Wait on a condition, never a duration: predicates through `snippets/common/wait_js.py`, values that must stop changing through `snippets/common/wait_stable.py`.
 
 ## Saving a snippet
 

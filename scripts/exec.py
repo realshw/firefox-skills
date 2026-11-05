@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
-"""exec_repl.py — run a block in the tmux REPL and print what the block printed.
+"""exec.py — pipe one Python block into the live REPL and echo what it printed.
 
-    scripts/exec_repl.py <<'PY'
-    print(driver.title)
+    scripts/exec.py <<'PY'
+    print(driver.current_url)
     PY
 
 The block runs in the REPL's globals, so the browser session survives between runs, and travels through
 send-keys as one base64 line (send-keys mangles literal newlines). Raised exceptions exit 1 here.
-Blocks run in the REPL's cwd, the skill root, which is also on sys.path, so snippets are imported as
-modules: from snippets.common import read_text.
+Blocks run in the REPL's cwd, the skill root, so snippets import as modules.
 """
 
 import base64
@@ -62,7 +61,7 @@ def read_block():
 
 def main():
     if len(sys.argv) > 1:
-        return fail(f"takes no arguments - pipe the block instead: echo 'print(driver.title)' | {PROG}")
+        return fail(f"takes no arguments - pipe the block instead: echo 'print(driver.current_url)' | {PROG}")
     block = read_block()
     if block is None:
         return 2
