@@ -18,7 +18,9 @@ Edits to an existing snippet need `importlib.reload` on the module before the RE
 
 ## Handling the driver
 
-`snippets/common/connect.py` and `snippets/common/reattach.py` hold the two callables that hand back a `driver` instead of taking one. `connect()` attaches to the running Firefox; `reattach()` clears stray geckodrivers first and is the way back when a session dies or loses its window. Both leave the session on a blank tab.
+`snippets/common/connect.py` and `snippets/common/reattach.py` hold the two callables that hand back a `driver` instead of taking one. `connect()` attaches to the running Firefox; `reattach()` is the way back when a session dies or loses its window. Both leave the session on a blank tab.
+
+Reuse the `driver` the session already holds, rather than attaching again at the start of each block.
 
 ## Respecting the tabs
 
