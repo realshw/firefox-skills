@@ -21,12 +21,11 @@ def reattach():
             strays.append(int(pid))
 
     if strays:
-        print("REATTACH: killing stray geckodriver", " ".join(map(str,
-                                                                  strays)))
+        print("REATTACH: killing %d stray geckodriver(s)" % len(strays))
         for pid in strays:
             try:
                 os.kill(pid, 9)
             except OSError:
                 pass  # already gone between scan and kill
         time.sleep(1)
-    return connect()
+    return connect(reuse=False)
