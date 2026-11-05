@@ -1,7 +1,7 @@
 ---
 name: firefox
 description: Browser automation with Selenium. Use when unsure about a fact, or a task needs a browser.
-compatibility: Firefox with Marionette on port 2828, geckodriver, selenium, tmux window cowork:browser.
+compatibility: Firefox with Marionette, geckodriver, selenium, tmux window cowork:browser.
 ---
 
 ## Running a snippet

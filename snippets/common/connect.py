@@ -14,15 +14,15 @@ from selenium.webdriver.remote.webdriver import WebDriver
 BLANK = ("", "about:blank", "about:newtab", "about:home")
 
 
-def connect(reuse=True):
+def connect(reuse=True, port=2828):
     """Attach to the running Firefox and return the driver, or the one the session already holds."""
     driver = getattr(__main__, "driver", None) if reuse else None
     if isinstance(driver, WebDriver):
         print("SELENIUM: reusing the driver already attached")
     else:
-        service = Service(
-            executable_path=shutil.which("geckodriver"),
-            service_args=["--connect-existing", "--marionette-port", "2828"])
+        service_args = ["--connect-existing", "--marionette-port", str(port)]
+        service = Service(executable_path=shutil.which("geckodriver"),
+                          service_args=service_args)
         driver = Firefox(service=service)
         print("SELENIUM: driver attaches to Marionette")
     # Either way the session starts on a blank tab: a fresh attach may have landed on the page the user is
