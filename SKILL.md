@@ -6,13 +6,13 @@ compatibility: Firefox with Marionette, geckodriver, selenium, tmux window cowor
 
 ## Running a snippet
 
-Snippets are reusable Selenium blocks that take `driver` first. `scripts/exec.py` feeds one Python block on stdin to the long-lived REPL in the tmux window `cowork:browser`, where `driver` keeps its browser state from block to block. Snippets print a short labelled summary; read that instead of re-reading the page.
+Snippets are reusable Selenium blocks that take `driver` first. `scripts/exec.py` feeds one Python block on stdin to the live REPL in the tmux window `cowork:browser`, where `driver` keeps its browser state from block to block. Snippets print a short labelled summary; read that instead of re-reading the page.
 
 When no snippet fits the task, feed your own Selenium block to the same REPL. Wait on a condition, never a duration: predicates through `snippets/common/wait_js.py`, values that must stop changing through `snippets/common/wait_stable.py`.
 
 ## Saving a snippet
 
-Proactively save reusable ones, but run them first; anything hard to undo takes `dry_run=True`. Shared code goes in a file under `snippets/common/`; site code and its DOM quirks go in a file under `snippets/<site>/`. Format with `yapf -i`, and commit as `<domain>: <verb phrase>`.
+Save reusable ones without being asked, but run them first; anything hard to undo takes `dry_run=True`. Shared code goes in a file under `snippets/common/`; site code and its DOM quirks go in a file under `snippets/<site>/`. Format with `yapf -i`, and commit as `<domain>: <verb phrase>`.
 
 Edits to an existing snippet need `importlib.reload` on the module before the REPL sees the change.
 
@@ -28,4 +28,4 @@ Open a new tab before going to a different site; the current tab keeps the page 
 
 ## Sourcing the answer
 
-Unsure about any fact? Proactively search before guessing and read the results instead of composing an answer from recall. Cite the page each fact came from in your reply.
+Unsure about any fact? Search before guessing and read the results instead of composing an answer from recall. Cite the page each fact came from in your reply.
