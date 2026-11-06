@@ -2,8 +2,32 @@
 # needs ?q=is%3Aissue+is%3Aclosed (?state=closed just reloads the open list). thread(driver) reads both the React
 # comment viewer and the classic timeline — a page picks either one. JS strings double their escapes.
 import re
+import time
 
+from snippets.common.type_verified import type_verified
 from snippets.common.wait_js import wait_js
+
+# Editing the issue body: the body's first icon button is the kebab holding "Edit", the editor is the same
+# textarea the new-issue form uses, and "Save" carries no testid (the comment box's own buttons sit too).
+_BODY_SEL = 'textarea[placeholder^="Type your description"]'
+_JS_SAVE_BODY = """
+const b = [...document.querySelectorAll('button')]
+  .filter(x => (x.innerText || '').trim() === 'Save' && (x.offsetParent || x.getClientRects().length));
+if (b.length) b[b.length - 1].click();
+return b.length;
+"""
+
+
+def _wait_editor(driver, sel, timeout=60):
+    """Wait for the body editor to mount and return the text it was opened with."""
+    end = time.time() + timeout
+    while time.time() < end:
+        for el in driver.find_elements("css selector", sel):
+            if el.is_displayed():
+                return el.get_attribute('value') or ''
+        time.sleep(0.2)
+    raise RuntimeError("body editor never opened")
+
 
 _NUM = re.compile(r"/issues/(\d+)")
 
@@ -108,3 +132,48 @@ def read_issue(driver,
     print("COMMENTS", len(d['comments']), "|", url)
     d['url'] = url
     return d
+
+
+def append_body(driver, url_or_num, text, slug=None, timeout=60):
+    """Append text to an issue body (kebab -> Edit), verify the saved tail, return the new body.
+
+    Only the tail is typed: type_verified reads the editor, sees the old body as a prefix of the wanted
+    text and sends the remainder after moving the caret to the end. Safe to re-run - appending twice is a
+    visible duplicate, not a silent one."""
+    url = url_or_num
+    if not str(url_or_num).startswith('http'):
+        m = _NUM.search(str(url_or_num))
+        num = m.group(1) if m else str(url_or_num)
+        if not slug:
+            raise ValueError(
+                "append_body(driver, num) needs slug='owner/repo'")
+        url = "https://github.com/" + slug.strip("/") + "/issues/" + num
+    if "github.com" not in (driver.current_url or ""):
+        driver.switch_to.new_window("tab")
+    driver.get(url)
+    thread(driver, timeout)
+
+    driver.find_elements("css selector",
+                         '[data-testid="issue-body"] button')[0].click()
+    for item in driver.find_elements("css selector", '[role="menuitem"]'):
+        if (item.text or '').strip() == 'Edit':
+            item.click()
+            break
+    else:
+        raise RuntimeError(
+            "no Edit menu item - the issue body is not editable")
+
+    old = _wait_editor(driver, _BODY_SEL, timeout)
+    want = old.rstrip() + "\n\n" + text.strip()
+    if not type_verified(driver, want, selector=_BODY_SEL, paste_over=10**9):
+        raise RuntimeError("appended body did not type back exactly")
+    print("SAVE_BUTTONS:", driver.execute_script(_JS_SAVE_BODY))
+    wait_js(driver, "!document.querySelector('%s')" % _BODY_SEL, timeout)
+
+    d = thread(driver, timeout)
+    saved = d['body'].rstrip().endswith(text.strip())
+    print("BODY_APPENDED:", saved, "| chars:", len(d['body']))
+    if not saved:
+        raise RuntimeError(
+            "the saved body does not end with the appended text")
+    return d['body']
