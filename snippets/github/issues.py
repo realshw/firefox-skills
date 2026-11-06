@@ -9,24 +9,45 @@ from snippets.common.wait_js import wait_js
 
 # Editing the issue body: the body's first icon button is the kebab holding "Edit", the editor is the same
 # textarea the new-issue form uses, and "Save" carries no testid (the comment box's own buttons sit too).
+# Commenting: the page's Markdown textarea is the comment box, and its submit is the last enabled "Comment"
+# button — "Close with comment" keeps its own pair just above.
 _BODY_SEL = 'textarea[placeholder^="Type your description"]'
+_COMMENT_SEL = 'textarea[placeholder*="Markdown"]'
 _JS_SAVE_BODY = """
 const b = [...document.querySelectorAll('button')]
   .filter(x => (x.innerText || '').trim() === 'Save' && (x.offsetParent || x.getClientRects().length));
 if (b.length) b[b.length - 1].click();
 return b.length;
 """
+_JS_SUBMIT_COMMENT = """
+const b = [...document.querySelectorAll('button')]
+  .filter(x => (x.innerText || '').trim() === 'Comment' && !x.disabled
+               && (x.offsetParent || x.getClientRects().length));
+if (b.length) b[b.length - 1].click();
+return b.length;
+"""
 
 
 def _wait_editor(driver, sel, timeout=60):
-    """Wait for the body editor to mount and return the text it was opened with."""
+    """Wait for a body editor or comment box to mount and return the text it holds now."""
     end = time.time() + timeout
     while time.time() < end:
         for el in driver.find_elements("css selector", sel):
             if el.is_displayed():
                 return el.get_attribute('value') or ''
         time.sleep(0.2)
-    raise RuntimeError("body editor never opened")
+    raise RuntimeError("editor never opened: %s" % sel)
+
+
+def _issue_url(url_or_num, slug=None):
+    """A full issue URL from one, or from a number when slug='owner/repo' is given."""
+    if str(url_or_num).startswith('http'):
+        return url_or_num
+    m = _NUM.search(str(url_or_num))
+    num = m.group(1) if m else str(url_or_num)
+    if not slug:
+        raise ValueError("an issue number needs slug='owner/repo'")
+    return "https://github.com/" + slug.strip("/") + "/issues/" + num
 
 
 _NUM = re.compile(r"/issues/(\d+)")
@@ -140,14 +161,7 @@ def append_body(driver, url_or_num, text, slug=None, timeout=60):
     Only the tail is typed: type_verified reads the editor, sees the old body as a prefix of the wanted
     text and sends the remainder after moving the caret to the end. Safe to re-run - appending twice is a
     visible duplicate, not a silent one."""
-    url = url_or_num
-    if not str(url_or_num).startswith('http'):
-        m = _NUM.search(str(url_or_num))
-        num = m.group(1) if m else str(url_or_num)
-        if not slug:
-            raise ValueError(
-                "append_body(driver, num) needs slug='owner/repo'")
-        url = "https://github.com/" + slug.strip("/") + "/issues/" + num
+    url = _issue_url(url_or_num, slug)
     if "github.com" not in (driver.current_url or ""):
         driver.switch_to.new_window("tab")
     driver.get(url)
@@ -177,3 +191,38 @@ def append_body(driver, url_or_num, text, slug=None, timeout=60):
         raise RuntimeError(
             "the saved body does not end with the appended text")
     return d['body']
+
+
+def comment(driver, url_or_num, text, slug=None, timeout=60, dry_run=False):
+    """Post text as a new comment on an issue, then reload and prove it is in the thread.
+
+    dry_run=True only checks the box is there - nothing is typed and nothing is sent, so it is safe on
+    an issue the caller is not ready to post to. Returns the comment dict when it lands."""
+    url = _issue_url(url_or_num, slug)
+    if "github.com" not in (driver.current_url or ""):
+        driver.switch_to.new_window("tab")
+    driver.get(url)
+    thread(driver, timeout)
+
+    if _wait_editor(driver, _COMMENT_SEL, timeout) is None:
+        raise RuntimeError("no comment box: locked or read-only issue?")
+    if dry_run:
+        print("DRY_RUN: comment box found, nothing typed |", url)
+        return {"url": url, "dry_run": True}
+
+    if not type_verified(driver, text, selector=_COMMENT_SEL):
+        raise RuntimeError("comment did not type back exactly")
+    print("SUBMIT_BUTTONS:", driver.execute_script(_JS_SUBMIT_COMMENT))
+    wait_js(
+        driver,
+        "!document.querySelector('%s') || !document.querySelector('%s').value"
+        % (_COMMENT_SEL, _COMMENT_SEL), timeout)
+
+    driver.get(url)
+    d = thread(driver, timeout)
+    head = text.strip().splitlines()[0][:40]
+    hit = [c for c in d['comments'] if head in (c['text'] or '')]
+    print("COMMENT_POSTED:", bool(hit), "| comments:", len(d['comments']))
+    if not hit:
+        raise RuntimeError("the comment is not in the thread after submitting")
+    return hit[-1]
