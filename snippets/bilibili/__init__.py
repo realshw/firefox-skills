@@ -15,3 +15,4 @@ from snippets.bilibili.restart_video import restart_video
 from snippets.bilibili.resume_playback import resume_playback
 from snippets.bilibili.search_links import search_links
 from snippets.bilibili.user_info import user_info
+from snippets.bilibili.verify_reorg import verify_reorg
