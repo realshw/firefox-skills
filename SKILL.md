@@ -24,7 +24,7 @@ Reuse the `driver` the session already holds, rather than attaching again at the
 
 ## Respecting the tabs
 
-Open a new tab before going to a different site; the current tab keeps the page it was on. Staying within the same site reuses that tab. Tab handling is plain Selenium WebDriver: `driver.window_handles`, `driver.switch_to.window`, `driver.switch_to.new_window`.
+Open a new tab before going to a different site; the current tab keeps the page it was on. Staying within the same site reuses that tab. Tab handling is plain Selenium window handling: WebDriver draws no distinction between tabs and windows.
 
 ## Sourcing the answer
 
