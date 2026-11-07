@@ -2,7 +2,7 @@
 # dump_all dict or its JSON path. Re-dumps the account and compares by folder id — ids survive renames, so a
 # renamed folder is not reported as one folder emptied and another filled. lost = an avid that is now in no
 # folder at all (the only real failure); new = favourited since the baseline, not a failure; dup = the same
-# avid twice in one folder. final_verify speaks for a plan's folders, this speaks for the whole account.
+# avid twice in one folder. It speaks for the whole account, so a plan's targets need no separate check.
 import json
 import os
 import tempfile

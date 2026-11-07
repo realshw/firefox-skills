@@ -1,7 +1,10 @@
-# dump_all(driver, out_path=None) -> {folder: {id, count, medias:[{id,type,bvid,title,upper}]}} written to
-# <tempdir>/bili_all_media.json — the whole account in one call, which is what every reshuffle starts from.
+# dump_all(driver, out_path=None) -> {folder: {id, count, medias:[{id,type,bvid,title,upper,intro,
+# duration,fav_time,ctime}]}} written to <tempdir>/bili_all_media.json — the whole account in one call,
+# which is what every reshuffle starts from. The extra fields are what deciding "what is this video" needs;
+# for tags as well, hand a slice of this to fetch_video_meta.
 # type 2 = video, 24 = PGC 番剧/film (move/delete need it); a type-2 entry with an empty upper.name is
-# dead, and type 24 never reports an upper.
+# dead (it stays behind under the exact title 已失效视频, and remove_from_folder takes it out),
+# and type 24 never reports an upper.
 import json
 import os
 import tempfile
@@ -25,7 +28,11 @@ def dump_all(driver, out_path=None):
                 'type': m.get('type'),
                 'bvid': m.get('bvid'),
                 'title': m['title'],
-                'upper': upper
+                'upper': upper,
+                'intro': (m.get('intro') or '')[:200],
+                'duration': m.get('duration'),
+                'fav_time': m.get('fav_time'),
+                'ctime': m.get('ctime'),
             })
             seen[m['id']].append(f['title'])
             if m.get('type') == 2 and not upper:
