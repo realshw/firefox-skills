@@ -1,34 +1,24 @@
-# API: GET /x/v3/fav/folder/created/list-all?up_mid=<uid> — 默认收藏夹 has attr=1, the rest 3/22/23.
-# Always fetch(..., {credentials:'include'}) from a bilibili.com page (cookie auth); POST bodies are
-# URLSearchParams-encoded with csrf from bili_jct.
+# list_folders(driver) -> the summary written to <tempdir>/bili_folders.json, one printed line each.
+# API: GET /x/v3/fav/folder/created/list-all?up_mid=<uid> — 默认收藏夹 has attr=1, the rest 3/22/23,
+# and attr bit 0 is the only reliable privacy flag.
 import json
 import os
 import tempfile
+
+from snippets.bilibili.api import fav_folders, uid
 
 OUT_PATH = os.path.join(tempfile.gettempdir(), 'bili_folders.json')
 
 
 def list_folders(driver):
-    uid = driver.get_cookie('DedeUserID')['value']
-    res = driver.execute_async_script(
-        """
-    var uid = arguments[0];
-    var cb = arguments[arguments.length - 1];
-    fetch('https://api.bilibili.com/x/v3/fav/folder/created/list-all?up_mid=' + uid, {credentials: 'include'})
-      .then(r => r.json()).then(j => cb(JSON.stringify(j))).catch(e => cb('ERR:' + e));
-    """, uid)
-    if not res or (isinstance(res, str) and res.startswith('ERR')):
-        raise RuntimeError(res)
-    data = json.loads(res).get('data') or {}
-    folders = data.get('list') or []
     summary = [{
         'id': f['id'],
         'title': f['title'],
         'count': f['media_count'],
         'attr': f['attr']
-    } for f in folders]
+    } for f in fav_folders(driver)]
     json.dump({
-        'uid': uid,
+        'uid': uid(driver),
         'folders': summary
     },
               open(OUT_PATH, 'w'),
@@ -37,3 +27,4 @@ def list_folders(driver):
     print('SAVED', len(summary), 'folders ->', OUT_PATH)
     for f in summary:
         print(f['id'], f['title'], f['count'], 'attr=%d' % f['attr'])
+    return summary

@@ -3,45 +3,14 @@
 # Traps: attr bit 0 is the only reliable privacy flag (never compare the whole number — add returns an
 # unsettled 6/7); edit overwrites every field it is given, cover='' wipes it, so unset args come from
 # folder_info(driver) (list-all lacks intro). 默认收藏夹 (attr=1) can be neither renamed nor deleted.
-import json
 import time
 
-
-def _fav_post(driver, path, params):
-    csrf = driver.get_cookie('bili_jct')['value']
-    res = driver.execute_async_script(
-        """
-    var path = arguments[0], params = arguments[1], csrf = arguments[2];
-    var cb = arguments[arguments.length - 1];
-    var fd = new URLSearchParams(params);
-    fd.append('csrf', csrf);
-    fetch('https://api.bilibili.com' + path, {method: 'POST', credentials: 'include',
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: fd.toString()})
-      .then(r => r.json()).then(j => cb(JSON.stringify(j))).catch(e => cb('ERR:' + e));
-    """, path, params, csrf)
-    try:
-        return json.loads(res) if isinstance(
-            res, str) and res.startswith('{') else {
-                'raw': res
-            }
-    except Exception:
-        return {'raw': res}
+from snippets.bilibili.api import fav_folders, fav_get, fav_post
 
 
 def folder_list(driver):
     """The account's own folders as list-all reports them — the settled attr, not the add response."""
-    uid = driver.get_cookie('DedeUserID')['value']
-    res = driver.execute_async_script(
-        """
-    var uid = arguments[0], cb = arguments[arguments.length - 1];
-    fetch('https://api.bilibili.com/x/v3/fav/folder/created/list-all?up_mid=' + uid,
-          {credentials: 'include'})
-      .then(r => r.json()).then(j => cb(JSON.stringify(j))).catch(e => cb('ERR:' + e));
-    """, uid)
-    try:
-        return (json.loads(res).get('data') or {}).get('list') or []
-    except Exception:
-        return []
+    return fav_folders(driver)
 
 
 def delete_folders(driver, media_ids):
@@ -50,11 +19,11 @@ def delete_folders(driver, media_ids):
         media_ids = str(media_ids)
     elif not isinstance(media_ids, str):
         media_ids = ','.join(str(m) for m in media_ids)
-    return _fav_post(driver, '/x/v3/fav/folder/del', {'media_ids': media_ids})
+    return fav_post(driver, '/x/v3/fav/folder/del', {'media_ids': media_ids})
 
 
 def create_folder(driver, title, intro='', privacy=1):
-    j = _fav_post(driver, '/x/v3/fav/folder/add', {
+    j = fav_post(driver, '/x/v3/fav/folder/add', {
         'title': title,
         'intro': intro,
         'privacy': str(privacy),
@@ -74,33 +43,26 @@ def create_folder(driver, title, intro='', privacy=1):
 
 def folder_info(driver, media_id):
     """data.info for one folder."""
-    res = driver.execute_async_script(
-        """
-    var mid = arguments[0], cb = arguments[arguments.length - 1];
-    fetch('https://api.bilibili.com/x/v3/fav/resource/list?media_id=' + mid +
-          '&pn=1&ps=1&platform=web', {credentials: 'include'})
-      .then(r => r.json()).then(j => cb(JSON.stringify(j))).catch(e => cb('ERR:' + e));
-    """, media_id)
-    try:
-        return (json.loads(res).get('data') or {}).get('info') or {}
-    except Exception:
-        return {}
+    return (fav_get(driver,
+                    '/x/v3/fav/resource/list',
+                    media_id=media_id,
+                    pn=1,
+                    ps=1,
+                    platform='web').get('data') or {}).get('info') or {}
 
 
 def first_cover(driver, media_id):
     """Cover URL of the folder's first video — the obvious thing to put on the folder itself."""
-    res = driver.execute_async_script(
-        """
-    var mid = arguments[0], cb = arguments[arguments.length - 1];
-    fetch('https://api.bilibili.com/x/v3/fav/resource/list?media_id=' + mid +
-          '&pn=1&ps=1&platform=web&order=mtime&type=0&tid=0', {credentials: 'include'})
-      .then(r => r.json()).then(j => cb(JSON.stringify(j))).catch(e => cb('ERR:' + e));
-    """, media_id)
-    try:
-        medias = (json.loads(res).get('data') or {}).get('medias') or []
-        return (medias[0].get('cover') or '') if medias else ''
-    except Exception:
-        return ''
+    medias = (fav_get(driver,
+                      '/x/v3/fav/resource/list',
+                      media_id=media_id,
+                      pn=1,
+                      ps=1,
+                      platform='web',
+                      order='mtime',
+                      type=0,
+                      tid=0).get('data') or {}).get('medias') or []
+    return (medias[0].get('cover') or '') if medias else ''
 
 
 def rename_folder(driver,
@@ -122,7 +84,7 @@ def rename_folder(driver,
         privacy = 1 if int(info.get('attr') or 0) & 1 else 0
     if cover is None:
         cover = info.get('cover') or ''
-    j = _fav_post(
+    j = fav_post(
         driver, '/x/v3/fav/folder/edit', {
             'media_id': str(media_id),
             'title': title,
