@@ -12,7 +12,9 @@ When no snippet fits the task, feed your own Selenium block to the same REPL. Wa
 
 ## Saving a snippet
 
-Save reusable ones without being asked, but run them first; anything hard to undo takes `dry_run=True`. Shared code goes in a file under `snippets/common/`; site code and its DOM quirks go in a file under `snippets/<site>/`. Format with `yapf -i`, and commit as `<domain>: <verb phrase>`.
+Read https://www.selenium.dev/llms.txt before you write a snippet, and https://agentskills.io/llms.txt before you change this file. They index the Selenium docs and the skill format, the two things this skill goes stale against.
+
+Save reusable snippets without being asked, but run them first; anything hard to undo takes `dry_run=True`. Shared code goes in a file under `snippets/common/`; site code and its DOM quirks go in a file under `snippets/<site>/`. Format with `yapf -i`, and commit as `<domain>: <verb phrase>`.
 
 Edits to an existing snippet need `importlib.reload` on the module before the REPL sees the change.
 
