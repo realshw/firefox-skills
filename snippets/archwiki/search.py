@@ -2,13 +2,13 @@
 # .mw-search-result-heading with the .searchresult div by index. The top hit is often a #REDIRECT stub and
 # matching is loose — don't dedupe, the redirect is frequently the canonical name.
 from urllib.parse import quote
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 
 def search(driver, query, limit=10, timeout=30):
     """Print and return [{title, url, snippet}] for an ArchWiki full-text search."""
-    if "//wiki.archlinux.org/" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "//wiki.archlinux.org/")
     driver.get("https://wiki.archlinux.org/index.php?search=" + quote(query) +
                "&fulltext=1")
     wait_js(driver, "!!document.querySelector('.mw-search-result-heading')",

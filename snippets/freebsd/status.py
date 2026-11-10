@@ -4,6 +4,7 @@ import os
 import re
 import tempfile
 from snippets.common.page_sections import page_text
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 BASE = "https://www.freebsd.org/status/"
@@ -16,8 +17,7 @@ def quarters(driver, force=False):
     global _QUARTERS
     if _QUARTERS is not None and not force:
         return _QUARTERS
-    if "freebsd.org" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "freebsd.org")
     driver.get(BASE)
     wait_js(driver, "document.body.innerText.length > 1500", 30)
     hrefs = driver.execute_script(
@@ -41,8 +41,7 @@ def open_status(driver, report=None, timeout=30, cache=True):
     if not slug:
         print("NO_REPORTS")
         return ''
-    if "freebsd.org" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "freebsd.org")
     driver.get(BASE + slug + "/")
     wait_js(driver, "document.querySelectorAll('h2').length > 3", timeout)
     print("STATUS:", slug, "|", driver.title.replace("\n", " ")[:70])

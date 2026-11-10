@@ -3,13 +3,13 @@
 # What the wiki adds: <pre> blocks with real commands (code_blocks(driver)) and warning/note templates (notes(driver)).
 from urllib.parse import quote
 from snippets.common.page_sections import page_text
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 
 def open_page(driver, title, timeout=30):
     """Load an article by title (spaces or underscores); returns the page text."""
-    if "//wiki.archlinux.org/" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "//wiki.archlinux.org/")
     driver.get("https://wiki.archlinux.org/title/" +
                quote(title.strip().replace(" ", "_"), safe="_()/:.-"))
     wait_js(driver, "!!document.querySelector('.mw-parser-output')", timeout)

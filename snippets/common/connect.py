@@ -5,13 +5,9 @@
 import __main__
 import shutil
 
-from selenium.common.exceptions import NoSuchWindowException
 from selenium.webdriver import Firefox
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.remote.webdriver import WebDriver
-
-# The tab nobody is reading: what a fresh attach lands on when the previous session ended on its own.
-BLANK = ("", "about:blank", "about:newtab", "about:home")
 
 
 def connect(reuse=True, port=2828):
@@ -25,19 +21,9 @@ def connect(reuse=True, port=2828):
                           service_args=service_args)
         driver = Firefox(service=service)
         print("SELENIUM: driver attaches to Marionette")
-    # Either way the session starts on a blank tab: a fresh attach may have landed on the page the user is
-    # reading, and a reused driver may have been left mid-page. Whatever it was on stays open for them.
-    try:
-        landed_blank = (driver.current_url or "") in BLANK
-    except Exception:
-        landed_blank = False  # privileged pages reject the query, and are not ours to navigate
-    if not landed_blank:
-        try:
-            driver.switch_to.new_window("tab")
-        except NoSuchWindowException:
-            print("TAB: the session lost its window - ask the user to open a "
-                  "Firefox window, then driver = reattach()")
-            raise
+    # The session keeps whichever tab it landed on - a fresh attach may be on the page the user is reading,
+    # and a reused driver was left wherever the last block put it. Neither opens a blank tab for nobody: a
+    # snippet that loads a page asks common/site_tab.py for a tab of its own. The line below names the tab.
     # No page-load ceiling: if a single resource never loads, driver.get() and every command after it
     # get stuck. Reused drivers may carry a timeout a snippet raised, so both are set either way.
     driver.set_page_load_timeout(30)

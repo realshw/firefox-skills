@@ -4,13 +4,13 @@
 import re
 
 from snippets.common.page_sections import section
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 
 def search(driver, query, limit=10, timeout=30):
     """Print and return [{repo, arch, name, version, desc, updated, url}]."""
-    if "//archlinux.org/" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "//archlinux.org/")
     driver.get("https://archlinux.org/packages/?q=" + query.replace(" ", "+"))
     wait_js(
         driver,
@@ -40,8 +40,7 @@ def info(driver,
     """Open a package page (full url, or name + repo/arch) and return its fields as a dict."""
     url = url_or_name if url_or_name.startswith("http") else \
         "https://archlinux.org/packages/%s/%s/%s/" % (repo, arch, url_or_name)
-    if "//archlinux.org/" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "//archlinux.org/")
     driver.get(url)
     wait_js(driver, "document.body.innerText.indexOf('Architecture:') > 0",
             timeout)

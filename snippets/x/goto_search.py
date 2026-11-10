@@ -4,13 +4,13 @@
 # that as "no hits".
 from urllib.parse import quote
 
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 
 def goto_search(driver, query, latest=True, timeout=25):
     """Navigate the x.com tab to the search results; return the number of tweets mounted."""
-    if "//x.com/" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "//x.com/")
     driver.get("https://x.com/search?q=" + quote(query) +
                ("&f=live" if latest else ""))
     wait_js(driver,

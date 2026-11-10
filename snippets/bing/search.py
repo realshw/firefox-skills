@@ -11,6 +11,7 @@
 import time
 from urllib.parse import quote_plus
 
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_stable import wait_js_stable
 
 BASE = "https://cn.bing.com/search?q="
@@ -76,8 +77,7 @@ def goto_search(driver, query, edition="cn", page=1, timeout=20):
     """Load one results page in the requested edition, and say which edition and page Bing actually served."""
     if edition not in EDITIONS:
         raise ValueError("edition is 'cn' or 'int', not %r" % (edition, ))
-    if "bing.com" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "bing.com")
     driver.get(_url(query, edition, page))
     # Cards mount in batches and page 2 holds fewer of them, so trust the count only once it stops moving.
     wait_js_stable(driver, _COUNT_JS, timeout, tick=0.5, stable_ticks=2)

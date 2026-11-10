@@ -4,6 +4,8 @@
 # pipelines that toggle_play cannot reach, so an existing one is adopted, not opened next to.
 from selenium.webdriver.support.ui import WebDriverWait
 
+from snippets.common.site_tab import site_tab
+
 PLAYER = "https://music.163.com/st/webplayer"
 
 
@@ -30,8 +32,7 @@ def _existing_player(driver):
 def goto_player(driver):
     if not driver.current_url.startswith(PLAYER):
         if not _existing_player(driver):
-            if "music.163.com" not in driver.current_url:
-                driver.switch_to.new_window("tab")
+            site_tab(driver, "music.163.com")
             driver.get(PLAYER)
     WebDriverWait(driver, 25).until(
         lambda d: d.execute_script("return document.readyState") == "complete")

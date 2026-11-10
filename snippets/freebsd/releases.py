@@ -3,6 +3,7 @@
 # /releases/15.1.0/relnotes/ is a 404.
 import re
 
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 PAGE = "https://www.freebsd.org/releases/"
@@ -12,8 +13,7 @@ _DATED = re.compile(r"Release (\d+\.\d+) \(([^)]+)\)")
 
 def open_releases(driver, timeout=30):
     """Load the releases page and wait for the tier summary to render."""
-    if "freebsd.org" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "freebsd.org")
     driver.get(PAGE)
     wait_js(
         driver,

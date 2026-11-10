@@ -2,6 +2,7 @@
 # mounts a moment after navigation. Same aria-disabled rule as post_tweet; clear with select-all+DELETE,
 # never a click on the box (a floating hint intercepts it).
 from selenium.webdriver.common.keys import Keys
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 BOX = '[data-testid="tweetTextarea_0"]'
@@ -19,8 +20,7 @@ def reply_tweet(driver, url, text, dry_run=False):
     """Open `url` (a /status/ link or handle/status/id) and reply with the inline composer."""
     if not url.startswith("http"):
         url = "https://x.com/" + url.lstrip("/")
-    if "//x.com/" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "//x.com/")
     driver.get(url)
     if not wait_js(
             driver, "!!(function(){return [...document.querySelectorAll('" +

@@ -4,6 +4,7 @@
 import os
 import tempfile
 from snippets.common.page_sections import page_text
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 
@@ -11,8 +12,7 @@ def open_relnotes(driver, version='15.1', timeout=30, cache=True):
     """Load one release's notes; returns the page text (cached to <tempdir>/relnotes_<v>.txt)."""
     v = version.strip().rstrip("Rr")
     url = "https://www.freebsd.org/releases/" + v + "R/relnotes/"
-    if "freebsd.org" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "freebsd.org")
     driver.get(url)
     wait_js(driver, "document.querySelectorAll('h2').length > 3", timeout)
     if driver.execute_script("return document.title").startswith("404"):

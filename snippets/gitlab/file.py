@@ -5,6 +5,7 @@
 import os
 
 from selenium.common.exceptions import TimeoutException
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 BOT = "not a bot"
@@ -35,8 +36,7 @@ def read_file(driver,
               preview=0):
     """Load one repo file in a tab; return its text, optionally writing it to out_path."""
     url = raw_url(project, path, ref, host)
-    if host not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, host)
     try:
         driver.get(url)
     except TimeoutException:

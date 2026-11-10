@@ -3,13 +3,13 @@
 # PGC entries — with a title as keyword those are the official, playable ones.
 import urllib.parse
 
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import as_expr
 from snippets.common.wait_stable import wait_js_stable
 
 
 def search_links(driver, keyword, limit=40, timeout=30):
-    if "bilibili.com" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "bilibili.com")
     driver.get('https://search.bilibili.com/all?keyword=' +
                urllib.parse.quote(keyword))
     js = r"""

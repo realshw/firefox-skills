@@ -5,6 +5,7 @@
 import json
 import re
 
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 _ID = re.compile(
@@ -20,8 +21,7 @@ def video_id(url_or_id):
 def open_video(driver, url_or_id, timeout=30):
     """Load a watch page and return its metadata as a dict (see video_info)."""
     vid = video_id(url_or_id)
-    if "youtube.com" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "youtube.com")
     driver.get("https://www.youtube.com/watch?v=" + vid)
     wait_js(
         driver,

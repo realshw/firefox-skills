@@ -6,6 +6,7 @@
 import time
 from urllib.parse import quote_plus
 
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 from snippets.common.wait_stable import wait_js_stable
 
@@ -39,8 +40,7 @@ return out;
 
 def goto_search(driver, query):
     """Navigate the DDG tab to the results page (opening it when the current tab is elsewhere)."""
-    if "duckduckgo.com" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "duckduckgo.com")
     driver.get(BASE + quote_plus(query) + "&ia=web")
     # Cards mount in batches: trust the count only once it has stopped growing. Bot-check pages never have
     # one, so they settle nowhere and the caller's retry is what handles it.

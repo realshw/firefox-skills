@@ -3,6 +3,7 @@
 import os
 import re
 import tempfile
+from snippets.common.site_tab import site_tab
 from snippets.github.file import _read_in_tab
 from snippets.github.issues import thread
 
@@ -26,8 +27,7 @@ def read_pull(driver,
               comment_limit=1200):
     """Print and return {title, state, body, comments, url} for a PR."""
     url = _pr_url(url_or_num, slug)
-    if "github.com" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "github.com")
     driver.get(url)
     d = thread(driver)
     print("PR:", d['title'][:90], "|", d['state'] or '-')

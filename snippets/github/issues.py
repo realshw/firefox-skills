@@ -4,6 +4,7 @@
 import re
 import time
 
+from snippets.common.site_tab import site_tab
 from snippets.common.type_verified import type_verified
 from snippets.common.wait_js import wait_js
 
@@ -98,8 +99,7 @@ def thread(driver, timeout=30):
 
 def list_issues(driver, slug, state='open', limit=25, timeout=30):
     """Print and return [{num, title, url, time}] for one state of a repo's issues."""
-    if "github.com" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "github.com")
     driver.get("https://github.com/" + slug.strip("/") +
                "/issues?q=is%3Aissue+is%3A" + state)
     wait_js(
@@ -141,8 +141,7 @@ def read_issue(driver,
         if not slug:
             raise ValueError("read_issue(driver, num) needs slug='owner/repo'")
         url = "https://github.com/" + slug.strip("/") + "/issues/" + num
-    if "github.com" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "github.com")
     driver.get(url)
     d = thread(driver)
     print("ISSUE:", d['title'][:90], "|", d['state'] or '-')
@@ -162,8 +161,7 @@ def append_body(driver, url_or_num, text, slug=None, timeout=60):
     text and sends the remainder after moving the caret to the end. Safe to re-run - appending twice is a
     visible duplicate, not a silent one."""
     url = _issue_url(url_or_num, slug)
-    if "github.com" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "github.com")
     driver.get(url)
     thread(driver, timeout)
 
@@ -199,8 +197,7 @@ def comment(driver, url_or_num, text, slug=None, timeout=60, dry_run=False):
     dry_run=True only checks the box is there - nothing is typed and nothing is sent, so it is safe on
     an issue the caller is not ready to post to. Returns the comment dict when it lands."""
     url = _issue_url(url_or_num, slug)
-    if "github.com" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "github.com")
     driver.get(url)
     thread(driver, timeout)
 

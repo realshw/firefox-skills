@@ -3,13 +3,13 @@
 import os
 import tempfile
 
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 
 def open_repo(driver, slug, timeout=45):
     """Load a repo home page; return {name, desc, stars, forks, branch}."""
-    if "github.com" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "github.com")
     driver.get("https://github.com/" + slug.strip("/"))
     wait_js(driver,
             "!!document.querySelector('[data-testid=\"repo-name-link\"]')",

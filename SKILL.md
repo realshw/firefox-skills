@@ -20,13 +20,13 @@ Edits to an existing snippet need `importlib.reload` on the module before the RE
 
 ## Handling the driver
 
-`snippets/common/connect.py` and `snippets/common/reattach.py` hold the two callables that hand back a `driver` instead of taking one. `connect()` attaches to the running Firefox; `reattach()` is the way back when a session dies or loses its window. Both leave the session on a blank tab.
+`snippets/common/connect.py` and `snippets/common/reattach.py` hold the two callables that hand back a `driver` instead of taking one. `connect()` attaches to the running Firefox; `reattach()` is the way back when a session dies or loses its window.
 
 Reuse the `driver` the session already holds, rather than attaching again at the start of each block.
 
 ## Respecting the tabs
 
-Open a new tab before going to a different site; the current tab keeps the page it was on. Staying within the same site reuses that tab. Tab handling is plain Selenium window handling: WebDriver draws no distinction between tabs and windows.
+Open a new tab before going to a different site, through `snippets/common/site_tab.py`; the current tab keeps the page it was on. Staying within the same site reuses that tab. Tab handling is plain Selenium window handling: WebDriver draws no distinction between tabs and windows.
 
 ## Sourcing the answer
 

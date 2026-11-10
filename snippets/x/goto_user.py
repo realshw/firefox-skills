@@ -1,6 +1,7 @@
 # Tab urls are plain (/handle, /handle/replies, /handle/media): don't click the role="tab" buttons. Wait
 # for the tweets, not [data-testid="UserName"] — a count taken when the header mounts is still 0. The
 # empty-profile wording differs by tab and owner, so match the fragments.
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 TABS = {
@@ -17,8 +18,7 @@ def goto_user(driver, handle, tab="posts", timeout=25):
     if tab not in TABS:
         print("BAD_TAB:", tab, "expected one of", list(TABS))
         return -1
-    if "//x.com/" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "//x.com/")
     driver.get("https://x.com/" + h + TABS[tab])
     wait_js(driver,
             'document.querySelectorAll(\'article[data-testid="tweet"]\')'

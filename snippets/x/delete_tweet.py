@@ -1,6 +1,7 @@
 # The caret opens a [role="menu"] whose "Delete" item carries no testid — match the label exactly; the
 # confirm sheet has no [role="dialog"] wrapper. The caret is one click from a real deletion, so every call
 # takes `expect` and refuses unless the focal post's text contains it. /status/ pages only.
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 CARET = 'article[data-testid="tweet"] [data-testid="caret"]'
@@ -10,8 +11,7 @@ def delete_tweet(driver, url, expect=None, dry_run=False):
     """Delete the post at `url` (must be yours). `expect` guards the target; dry_run stops at the sheet."""
     if not url.startswith("http"):
         url = "https://x.com/" + url.lstrip("/")
-    if "//x.com/" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "//x.com/")
     driver.get(url)
     if not wait_js(driver, "!!document.querySelector('%s')" % CARET):
         print(

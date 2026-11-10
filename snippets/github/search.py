@@ -5,6 +5,7 @@
 import re
 from urllib.parse import quote
 
+from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 _KINDS = ('repositories', 'code', 'issues', 'pullrequests', 'users',
@@ -29,8 +30,7 @@ def goto_search(driver, query, kind='repositories', timeout=45):
     if kind not in _KINDS:
         raise ValueError("kind must be one of " + ", ".join(_KINDS))
     url = "https://github.com/search?q=" + quote(query) + "&type=" + kind
-    if "github.com" not in (driver.current_url or ""):
-        driver.switch_to.new_window("tab")
+    site_tab(driver, "github.com")
     driver.get(url)
     wait_js(driver,
             "!!document.querySelector('[data-testid=\"results-list\"]')",
