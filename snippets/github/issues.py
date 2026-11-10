@@ -41,7 +41,7 @@ def _wait_editor(driver, sel, timeout=60):
 
 
 def _issue_url(url_or_num, slug=None):
-    """A full issue URL from one, or from a number when slug='owner/repo' is given."""
+    """Full issue URL: a URL passes through as given, a bare number needs slug='owner/repo'."""
     if str(url_or_num).startswith('http'):
         return url_or_num
     m = _NUM.search(str(url_or_num))
