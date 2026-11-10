@@ -73,8 +73,8 @@ def main():
         encoded = base64.b64encode(wrapper.encode()).decode()
         command = f"exec(__import__('base64').b64decode({encoded!r}).decode(), globals(), {{}})"
 
-        sent = subprocess.run(["tmux", "send-keys", "-t", TARGET, command, "Enter"],
-                              capture_output=True, text=True)
+        argv = ["tmux", "send-keys", "-t", TARGET, command, "Enter"]
+        sent = subprocess.run(argv, capture_output=True, text=True)
         if sent.returncode:
             reason = (sent.stderr or sent.stdout).strip() or f"tmux exited {sent.returncode}"
 
@@ -83,8 +83,8 @@ def main():
 
             # tmux 3.8 refuses a command string over ~16 KiB and types nothing at all: say so, and how
             # big the block was, instead of blaming a dead pane. base64 inflates a block by 4/3 first.
-            return fail(f"tmux refused the block ({reason}); its command was {len(command)} chars - over "
-                        f"the ~16 KiB ceiling, so split the block into two runs")
+            return fail(f"tmux refused the block ({reason}); its command was {len(command)} chars - "
+                        f"over the ~16 KiB ceiling, so split the block into two runs")
 
         try:
             conn, _ = server.accept()
