@@ -55,12 +55,14 @@ def read_block():
     if sys.stdin.isatty():
         print(f"usage: {PROG} <<'PY' ... PY   (the block comes from stdin)", file=sys.stderr)
         return None
+
     return sys.stdin.buffer.read()
 
 
 def main():
     if len(sys.argv) > 1:
         return fail("takes no arguments - the block comes from stdin")
+
     block = read_block()
     if block is None:
         return 2
@@ -75,8 +77,10 @@ def main():
                               capture_output=True, text=True)
         if sent.returncode:
             reason = (sent.stderr or sent.stdout).strip() or f"tmux exited {sent.returncode}"
+
             if "can't find" in reason or "no server" in reason:
                 return fail(f"{TARGET} is gone - ask the user to start it again, then retry.")
+
             # tmux 3.8 refuses a command string over ~16 KiB and types nothing at all: say so, and how
             # big the block was, instead of blaming a dead pane. base64 inflates a block by 4/3 first.
             return fail(f"tmux refused the block ({reason}); its command was {len(command)} chars - over "
