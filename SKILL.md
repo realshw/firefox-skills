@@ -1,12 +1,12 @@
 ---
 name: firefox
 description: Browser automation with Selenium. Use when unsure about a fact, or a task needs a browser.
-compatibility: Firefox with Marionette, geckodriver, selenium, tmux window cowork:browser.
+compatibility: Firefox with Marionette, geckodriver, selenium, tmux window cowork:firefox.
 ---
 
 ## Running a snippet
 
-Snippets are reusable Selenium blocks that take `driver` first. `scripts/exec.py` feeds one Python block on stdin to the live REPL in the tmux window `cowork:browser`, where `driver` keeps its browser state from block to block. Snippets print a short labelled summary; read that instead of re-reading the page.
+Snippets are reusable Selenium blocks that take `driver` first. `scripts/exec.py` feeds one Python block on stdin to the live REPL in the tmux window `cowork:firefox`, where `driver` keeps its browser state from block to block. Snippets print a short labelled summary; read that instead of re-reading the page.
 
 When no snippet fits the task, feed your own Selenium block to the same REPL. Wait on a condition, never a duration: predicates through `snippets/common/wait_js.py`, values that must stop changing through `snippets/common/wait_stable.py`.
 

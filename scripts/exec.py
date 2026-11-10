@@ -19,7 +19,7 @@ import subprocess
 import sys
 
 PROG = pathlib.Path(__file__).name
-TARGET = os.environ.get("COWORK_TARGET", "cowork:browser")
+TARGET = os.environ.get("COWORK_TARGET", "cowork:firefox")
 TIMEOUT = float(os.environ.get("COWORK_TIMEOUT", "120"))
 
 # Runs in a throwaway locals dict, so it leaves no names in the shared globals. The socket file object is
