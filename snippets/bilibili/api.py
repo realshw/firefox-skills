@@ -1,5 +1,8 @@
 # The favourite-API plumbing every bilibili snippet shares, so the traps live in one place.
 # Auth: fetch(..., {credentials: 'include'}) from a bilibili.com tab; a write also needs csrf = bili_jct.
+# That tab has to be a loaded bilibili page: a fresh about:blank one carries neither the cookies nor the
+# origin, so uid() answers None ("'NoneType' object is not subscriptable") and the fetch reports
+# NetworkError. site_tab only picks the tab, it does not navigate — load the page first.
 # Reads: GET /x/v3/fav/folder/created/list-all?up_mid=<uid> — 默认收藏夹 has attr=1, the rest 3/22/23 —
 # and GET /x/v3/fav/resource/list?media_id=&pn=&ps=20, where ps is capped at 20: page until has_more,
 # never until a short page. Media type 2 = video, 24 = PGC 番剧/film; a move or delete needs the real type.
@@ -51,15 +54,12 @@ def fav_post(driver, path, params):
     """POST a form body to api.bilibili.com, with csrf filled in from the cookie."""
     params = dict(params)
     params['csrf'] = csrf(driver)
-    return _reply(driver.execute_async_script(POST_JS, BASE + path, params),
-                  path)
+    return _reply(driver.execute_async_script(POST_JS, BASE + path, params), path)
 
 
 def fav_folders(driver):
     """The account's own folders, in list-all's shape (id, title, media_count, attr)."""
-    data = fav_get(driver,
-                   '/x/v3/fav/folder/created/list-all',
-                   up_mid=uid(driver)).get('data') or {}
+    data = fav_get(driver, '/x/v3/fav/folder/created/list-all', up_mid=uid(driver)).get('data') or {}
     return data.get('list') or []
 
 
