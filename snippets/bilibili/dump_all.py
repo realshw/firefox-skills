@@ -2,9 +2,10 @@
 # duration,fav_time,ctime}]}} written to <tempdir>/bili_all_media.json — the whole account in one call,
 # which is what every reshuffle starts from. The extra fields are what deciding "what is this video" needs;
 # for tags as well, hand a slice of this to fetch_video_meta.
-# type 2 = video, 24 = PGC 番剧/film (move/delete need it); a type-2 entry with an empty upper.name is
-# dead (it stays behind under the exact title 已失效视频, and remove_from_folder takes it out),
-# and type 24 never reports an upper.
+# type 2 = video, 24 = PGC 番剧/film (move/delete need it); a dead entry stays behind under the exact
+# title 已失效视频 and remove_from_folder takes it out. It usually has an empty upper.name, but not always
+# (时政·社会 kept its uploader while the video was gone), so the title is the check that always fires.
+# type 24 never reports an upper.
 import json
 import os
 import tempfile
@@ -35,20 +36,15 @@ def dump_all(driver, out_path=None):
                 'ctime': m.get('ctime'),
             })
             seen[m['id']].append(f['title'])
-            if m.get('type') == 2 and not upper:
+            if m.get('type') == 2 and (not upper or m['title'].strip() == '已失效视频'):
                 dead.append((f['title'], m['id'], m.get('type'), m['title']))
-        out[f['title']] = {
-            'id': f['id'],
-            'count': f['media_count'],
-            'medias': medias
-        }
+        out[f['title']] = {'id': f['id'], 'count': f['media_count'], 'medias': medias}
         print(pad(f['title'], 14), '%3d' % len(medias))
     json.dump(out, open(out_path, 'w'), ensure_ascii=False, indent=1)
     total = sum(len(v['medias']) for v in out.values())
     dups = {a: ns for a, ns in seen.items() if len(ns) > 1}
     print('---')
-    print('TOTAL', total, '| unique', len(seen), '| dup', len(dups), '->',
-          out_path)
+    print('TOTAL', total, '| unique', len(seen), '| dup', len(dups), '->', out_path)
     for a, ns in dups.items():
         print('DUP', a, '|', ' + '.join(ns))
     for row in dead:
