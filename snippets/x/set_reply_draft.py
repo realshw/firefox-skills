@@ -4,12 +4,7 @@
 from selenium.webdriver.common.keys import Keys
 
 exec(open("snippets/common/wait_js.py").read())
-
-X_BOX = '[data-testid="tweetTextarea_0"]'
-X_SEND = '[data-testid="tweetButtonInline"]'
-
-_X_INLINE = ("[...document.querySelectorAll('" + X_BOX + "')]"
-             ".find(e => !e.closest('[role=\"dialog\"]')) || null")
+exec(open("snippets/x/reply_tweet.py").read())
 
 
 def x_set_reply_draft(driver, text, timeout=25):

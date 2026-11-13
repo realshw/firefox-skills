@@ -7,6 +7,9 @@ exec(open("snippets/common/wait_js.py").read())
 
 X_BOX = '[data-testid="tweetTextarea_0"]'
 X_SEND = '[data-testid="tweetButtonInline"]'
+# The two draft files exec this file for the same composer, so these three live here once.
+_X_INLINE = ("[...document.querySelectorAll('" + X_BOX + "')]"
+             ".find(e => !e.closest('[role=\"dialog\"]')) || null")
 
 
 def _x_find_inline_box(driver):
