@@ -1,4 +1,4 @@
-# move_videos(driver, plan, out_path=None) -> [{'target','mid','count','ok','code','missing','resp'}]
+# bilibili_move_videos(driver, plan, out_path=None) -> [{'target','mid','count','ok','code','missing','resp'}]
 # plan: {"src_media_id": 0, "targets": [{"mid": 0, "name": "folder", "avids": [123, "456:24", (789, 24)]}]}
 # API: POST /x/v3/fav/resource/move (src_media_id, tar_media_id, mid, resources="<avid>:<type>,...", csrf).
 # Trap: the type must be the list entry's own `type` — PGC film / 番剧 are 24 — and a wrong one is accepted
@@ -13,7 +13,7 @@ import time
 exec(open("snippets/bilibili/api.py").read())
 
 
-def _entry(item):
+def _bilibili_read_entry(item):
     """One resources entry: an int means type 2, a "id:type" string or an (id, type) pair says its own."""
     if isinstance(item, (tuple, list)):
         return '%d:%d' % (int(item[0]), int(item[1]))
@@ -22,17 +22,17 @@ def _entry(item):
     return '%d:2' % int(item)
 
 
-def _avid(item):
+def _bilibili_read_avid(item):
     if isinstance(item, (tuple, list)):
         return int(item[0])
     return int(str(item).split(':')[0])
 
 
-def _await_in_folder(driver, media_id, avids, tries=6, sleep=1.5):
+def _bilibili_wait_in_folder(driver, media_id, avids, tries=6, sleep=1.5):
     """Poll the folder until every avid is listed; ([missing ids], tries used) once it gives up."""
-    want = [_avid(a) for a in avids]
+    want = [_bilibili_read_avid(a) for a in avids]
     for attempt in range(1, tries + 1):
-        present = {m['id'] for m in folder_medias(driver, media_id)}
+        present = {m['id'] for m in bilibili_read_folder_medias(driver, media_id)}
         missing = [a for a in want if a not in present]
         if not missing:
             return [], attempt
@@ -41,14 +41,14 @@ def _await_in_folder(driver, media_id, avids, tries=6, sleep=1.5):
     return missing, tries
 
 
-def move_videos(driver, plan, out_path=None, verify=True):
+def bilibili_move_videos(driver, plan, out_path=None, verify=True):
     if isinstance(plan, str):
         plan = json.load(open(plan))
-    account, src = uid(driver), plan['src_media_id']
+    account, src = bilibili_get_uid(driver), plan['src_media_id']
     results = []
     for t in plan['targets']:
-        resources = ','.join(_entry(a) for a in t['avids'])
-        j = fav_post(
+        resources = ','.join(_bilibili_read_entry(a) for a in t['avids'])
+        j = bilibili_post_api(
             driver, '/x/v3/fav/resource/move', {
                 'src_media_id': src,
                 'tar_media_id': t['mid'],
@@ -59,7 +59,7 @@ def move_videos(driver, plan, out_path=None, verify=True):
         code_ok = j.get('code') == 0
         missing, tries = [], 0
         if code_ok and verify:
-            missing, tries = _await_in_folder(driver, t['mid'], t['avids'])
+            missing, tries = _bilibili_wait_in_folder(driver, t['mid'], t['avids'])
         ok = code_ok and not missing
         results.append({
             'target': t['name'],

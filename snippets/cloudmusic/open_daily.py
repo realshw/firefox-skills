@@ -4,13 +4,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 exec(open("snippets/cloudmusic/open_rec.py").read())
 
-_DAILY_JS = ('const t = document.querySelector("h1.recommend-title .recommend");'
+_CLOUDMUSIC_DAILY_JS = ('const t = document.querySelector("h1.recommend-title .recommend");'
        'return !!t && t.innerText.includes("每日推荐");')
 
 
-def open_daily(driver):
-    if not driver.execute_script(_DAILY_JS):
-        open_rec(driver)
+def cloudmusic_open_daily(driver):
+    if not driver.execute_script(_CLOUDMUSIC_DAILY_JS):
+        cloudmusic_open_rec(driver)
         spans = [
             e for e in driver.find_elements(
                 "xpath",
@@ -23,5 +23,5 @@ def open_daily(driver):
         driver.execute_script(
             "arguments[0].click()", card
         )  # JS click: the cover <img> sits over the span and intercepts a real click
-        WebDriverWait(driver, 15).until(lambda d: d.execute_script(_DAILY_JS))
+        WebDriverWait(driver, 15).until(lambda d: d.execute_script(_CLOUDMUSIC_DAILY_JS))
     print("OPENED_DAILY")

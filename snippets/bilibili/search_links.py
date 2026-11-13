@@ -8,7 +8,7 @@ exec(open("snippets/common/wait_js.py").read())
 exec(open("snippets/common/wait_stable.py").read())
 
 
-def search_links(driver, keyword, limit=40, timeout=30):
+def bilibili_search_links(driver, keyword, limit=40, timeout=30):
     site_tab(driver, "bilibili.com")
     driver.get('https://search.bilibili.com/all?keyword=' +
                urllib.parse.quote(keyword))

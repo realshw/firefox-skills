@@ -10,7 +10,7 @@ _X_INLINE = ("[...document.querySelectorAll('" + X_BOX + "')]"
              ".find(e => !e.closest('[role=\"dialog\"]')) || null")
 
 
-def send_reply_draft(driver, timeout=30):
+def x_send_reply_draft(driver, timeout=30):
     """Click Reply on the current inline draft; True once the composer is empty again."""
     box = driver.execute_script("return (" + _X_INLINE + ")")
     if not box:

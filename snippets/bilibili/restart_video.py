@@ -4,11 +4,11 @@ import json
 
 exec(open("snippets/common/wait_js.py").read())
 
-PLAYING = "!document.querySelector('video').paused"
-MOVING = "!document.querySelector('video').paused && document.querySelector('video').currentTime > 1.0"
+BILIBILI_PLAYING_JS = "!document.querySelector('video').paused"
+BILIBILI_MOVING_JS = "!document.querySelector('video').paused && document.querySelector('video').currentTime > 1.0"
 
 
-def restart_video(driver):
+def bilibili_restart_video(driver):
     js = """const v = document.querySelector('video');
     if (!v) return null;
     return {paused: v.paused, t: v.currentTime, d: v.duration};"""
@@ -16,10 +16,10 @@ def restart_video(driver):
     if not driver.execute_script(js):
         raise RuntimeError('no <video> on this tab')
     driver.execute_script("document.querySelector('video').currentTime = 0;")
-    if not wait_js(driver, PLAYING, 5, tick=0.3):
+    if not wait_js(driver, BILIBILI_PLAYING_JS, 5, tick=0.3):
         # a real WebDriver click doubles as the user gesture (a JS click may not count)
         driver.find_element('css selector', '.bpx-player-ctrl-play').click()
 
-    ok = wait_js(driver, MOVING, 30, tick=2.0)
+    ok = wait_js(driver, BILIBILI_MOVING_JS, 30, tick=2.0)
     print('RESTARTED' if ok else 'FAILED',
           json.dumps(driver.execute_script(js)))

@@ -7,20 +7,20 @@ exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 
 
-def open_repo(driver, slug, timeout=45):
+def github_open_repo(driver, slug, timeout=45):
     """Load a repo home page; return {name, desc, stars, forks, branch}."""
     site_tab(driver, "github.com")
     driver.get("https://github.com/" + slug.strip("/"))
     wait_js(driver,
             "!!document.querySelector('[data-testid=\"repo-name-link\"]')",
             timeout)
-    info = repo_info(driver)
+    info = github_read_repo_info(driver)
     print("REPO:", info["name"], "|", info["stars"], "stars |", info["forks"],
           "forks |", info["desc"][:80])
     return info
 
 
-def repo_info(driver):
+def github_read_repo_info(driver):
     """Current repo page as a dict."""
     js = """
     const t = s => { const e = document.querySelector(s); return e ? e.innerText.trim() : ''; };
@@ -35,7 +35,7 @@ def repo_info(driver):
     return driver.execute_script(js)
 
 
-def readme(driver, out_path=None, limit=6000):
+def github_read_readme(driver, out_path=None, limit=6000):
     """Save the rendered README (article.markdown-body) to out_path (default: the system temp dir)
     and print its head."""
     if not driver.execute_script(
@@ -53,7 +53,7 @@ def readme(driver, out_path=None, limit=6000):
     return text
 
 
-def tree(driver, limit=80):
+def github_list_tree(driver, limit=80):
     """Print the entry names in the root listing (dirs and files, deduped, order kept)."""
     seen = driver.execute_script("""
     const out = [], seen = new Set();

@@ -2,7 +2,7 @@
 # count; the badge on the playlist cover is the play count.
 
 
-def player_state(driver):
+def cloudmusic_read_player_state(driver):
     js = r"""
     const footer = document.querySelector('footer');
     const icon = footer ? footer.querySelector('span[aria-label=pause], span[aria-label=play]') : null;

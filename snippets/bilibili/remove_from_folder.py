@@ -1,4 +1,5 @@
-# remove_from_folder(driver, avids, media_id, sleep_s=1.5) -> [{'avid','ok','resp'}]; avids are ints (type 2) or
+# bilibili_remove_from_folder(driver, avids, media_id, sleep_s=1.5) -> [{'avid','ok','resp'}];
+# avids are ints (type 2) or
 # "<id>:<type>" strings — PGC entries are 24 and a type-2 delete reports code 0 with success_num 0.
 # API: POST /x/v3/fav/resource/deal (rid, type, del_media_ids, csrf). success_num counts additions only —
 # a delete that worked answers data {"success_num": 0}, so ok comes from code alone and the real proof is a
@@ -8,7 +9,7 @@ import time
 exec(open("snippets/bilibili/api.py").read())
 
 
-def remove_from_folder(driver, avids, media_id, sleep_s=1.5):
+def bilibili_remove_from_folder(driver, avids, media_id, sleep_s=1.5):
     out = []
     for item in avids:
         if isinstance(item, (tuple, list)):
@@ -18,7 +19,7 @@ def remove_from_folder(driver, avids, media_id, sleep_s=1.5):
             avid = int(avid)
         else:
             avid, rtype = int(item), '2'
-        j = fav_post(driver, '/x/v3/fav/resource/deal', {
+        j = bilibili_post_api(driver, '/x/v3/fav/resource/deal', {
             'rid': avid,
             'type': rtype,
             'add_media_ids': '',

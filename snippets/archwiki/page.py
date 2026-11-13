@@ -1,13 +1,14 @@
 # Titles are /title/With_Underscores (spaces normalize). Read .mw-parser-output through
 # common/page_sections.py; MediaWiki wraps headings in div.mw-heading so [edit] never leaks into the h2.
-# What the wiki adds: <pre> blocks with real commands (code_blocks(driver)) and warning/note templates (notes(driver)).
+# What the wiki adds: <pre> blocks with real commands (archwiki_read_code_blocks(driver))
+# and warning/note templates (archwiki_read_notes(driver)).
 from urllib.parse import quote
 exec(open("snippets/common/page_sections.py").read())
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 
 
-def open_page(driver, title, timeout=30):
+def archwiki_open_page(driver, title, timeout=30):
     """Load an article by title (spaces or underscores); returns the page text."""
     site_tab(driver, "//wiki.archlinux.org/")
     driver.get("https://wiki.archlinux.org/title/" +
@@ -17,7 +18,7 @@ def open_page(driver, title, timeout=30):
     return page_text(driver)
 
 
-def code_blocks(driver, limit=30, pattern=None, show=True):
+def archwiki_read_code_blocks(driver, limit=30, pattern=None, show=True):
     """Commands from the article's <pre> blocks; pattern filters with a JS regex string."""
     blocks = driver.execute_script(
         "return [...document.querySelectorAll('.mw-parser-output pre')].map(e => e.innerText.trim())"
@@ -37,7 +38,7 @@ def code_blocks(driver, limit=30, pattern=None, show=True):
     return blocks
 
 
-def notes(driver, kind=None, show=True):
+def archwiki_read_notes(driver, kind=None, show=True):
     """Warning / note / tip boxes (kind filters on the template class, e.g. 'warning')."""
     sel = '[class*="archwiki-template-box"]'
     boxes = driver.execute_script("""

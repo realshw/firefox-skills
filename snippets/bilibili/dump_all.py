@@ -1,12 +1,12 @@
-# dump_all(driver, out_path=None) -> {folder: {id, count, medias:[{id,type,bvid,title,upper,intro,
+# bilibili_dump_all(driver, out_path=None) -> {folder: {id, count, medias:[{id,type,bvid,title,upper,intro,
 # duration,fav_time,ctime}]}} written to <tempdir>/bili_all_media.json — the whole account in one call,
 # which is what every reshuffle starts from. The extra fields are what deciding "what is this video" needs;
-# for tags as well, hand a slice of this to fetch_video_meta.
+# for tags as well, hand a slice of this to bilibili_fetch_video_meta.
 # type 2 = video, 24 = PGC 番剧/film (move/delete need it); a dead entry stays behind under the exact
-# title 已失效视频 and remove_from_folder takes it out. It usually has an empty upper.name, but not always
+# title 已失效视频 and bilibili_remove_from_folder takes it out. It usually has an empty upper.name, but not always
 # (时政·社会 kept its uploader while the video was gone), so the title is the check that always fires.
 # type 24 never reports an upper, and an entry whose video is gone stays out of every page while
-# media_count still counts it — folder_ids is the view that shows that one.
+# media_count still counts it — bilibili_read_folder_ids is the view that shows that one.
 import json
 import os
 import tempfile
@@ -15,15 +15,15 @@ from collections import defaultdict
 exec(open("snippets/bilibili/api.py").read())
 exec(open("snippets/common/pad.py").read())
 
-DEFAULT_OUT = os.path.join(tempfile.gettempdir(), 'bili_all_media.json')
+BILIBILI_DEFAULT_OUT = os.path.join(tempfile.gettempdir(), 'bili_all_media.json')
 
 
-def dump_all(driver, out_path=None):
-    out_path = out_path or DEFAULT_OUT
+def bilibili_dump_all(driver, out_path=None):
+    out_path = out_path or BILIBILI_DEFAULT_OUT
     out, dead, seen = {}, [], defaultdict(list)
-    for f in fav_folders(driver):
+    for f in bilibili_read_fav_folders(driver):
         medias = []
-        for m in folder_medias(driver, f['id']):
+        for m in bilibili_read_folder_medias(driver, f['id']):
             upper = (m.get('upper') or {}).get('name') or ''
             medias.append({
                 'id': m['id'],

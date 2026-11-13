@@ -6,7 +6,7 @@ import time
 exec(open("snippets/common/wait_js.py").read())
 
 
-def _TOGGLE_ICON(driver):
+def _cloudmusic_find_toggle_icon(driver):
     els = [
         e for e in driver.find_elements(
             "css selector",
@@ -16,8 +16,8 @@ def _TOGGLE_ICON(driver):
     return els[0] if els else None
 
 
-def toggle_play(driver):
-    before = _TOGGLE_ICON(driver)
+def cloudmusic_toggle_play(driver):
+    before = _cloudmusic_find_toggle_icon(driver)
     if before is None:
         raise RuntimeError("play/pause control not found in mini bar")
     before_label = before.get_attribute("aria-label")
@@ -31,6 +31,6 @@ def toggle_play(driver):
         want,
         5,
         tick=0.3)
-    after = _TOGGLE_ICON(driver)
+    after = _cloudmusic_find_toggle_icon(driver)
     print("TOGGLED:", before_label, "->",
           after.get_attribute("aria-label") if after else "MISSING")

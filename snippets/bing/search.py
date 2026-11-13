@@ -15,18 +15,18 @@ exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_stable.py").read())
 
 BING_BASE = "https://cn.bing.com/search?q="
-EDITIONS = {"cn": 0, "int": 1}
+BING_EDITIONS = {"cn": 0, "int": 1}
 
 _BING_COUNT_JS = "document.querySelectorAll('#b_results > li.b_algo').length"
 
 # est_cn/est_en carry est_selected on the edition that is live; empty when the SERP has no switch (bot page).
-_EDITION_JS = (
+_BING_EDITION_JS = (
     "(function(){const c=document.querySelector('#est_cn'),e=document.querySelector('#est_en');"
     "if(!c||!e||!document.querySelector('#b_results'))return '';"
     "return /est_selected/.test(e.className)?'int':"
     "/est_selected/.test(c.className)?'cn':'';})()")
 
-_PAGE_JS = "(document.querySelector('.sb_pagS')||{}).textContent || ''"
+_BING_PAGE_JS = "(document.querySelector('.sb_pagS')||{}).textContent || ''"
 
 BING_EXTRACT_JS = r"""
 const clean = s => (s || '').replace(/\s+/g, ' ').trim();
@@ -54,20 +54,20 @@ return out;
 """
 
 
-def _url(query, edition, page):
+def _bing_build_url(query, edition, page):
     # The param on every request, not only for 国际版: a bare url leaves whatever the cookie already says,
     # so asking for 国内版 after a 国际版 call would come back 国际版 again.
-    url = BING_BASE + quote_plus(query) + "&ensearch=%d" % EDITIONS[edition]
+    url = BING_BASE + quote_plus(query) + "&ensearch=%d" % BING_EDITIONS[edition]
     if page > 1:
         url += "&first=%d" % ((page - 1) * 10 + 1)
     return url
 
 
-def _set_edition(driver, edition):
+def _bing_set_edition(driver, edition):
     """Pin the edition with the cookie the toggle itself writes; the page must already be on bing.com."""
     driver.add_cookie({
         "name": "ENSEARCH",
-        "value": "BENVER=%d" % EDITIONS[edition],
+        "value": "BENVER=%d" % BING_EDITIONS[edition],
         "domain": ".bing.com",
         "path": "/"
     })
@@ -75,28 +75,28 @@ def _set_edition(driver, edition):
 
 def bing_goto_search(driver, query, edition="cn", page=1, timeout=20):
     """Load one results page in the requested edition, and say which edition and page Bing actually served."""
-    if edition not in EDITIONS:
+    if edition not in BING_EDITIONS:
         raise ValueError("edition is 'cn' or 'int', not %r" % (edition, ))
     site_tab(driver, "bing.com")
-    driver.get(_url(query, edition, page))
+    driver.get(_bing_build_url(query, edition, page))
     # Cards mount in batches and page 2 holds fewer of them, so trust the count only once it stops moving.
     wait_js_stable(driver, _BING_COUNT_JS, timeout, tick=0.5, stable_ticks=2)
-    served = driver.execute_script("return %s;" % _EDITION_JS)
+    served = driver.execute_script("return %s;" % _BING_EDITION_JS)
     if served and served != edition:
         print("EDITION: asked for %s, page says %s - re-pinning the cookie" %
               (edition, served))
-        _set_edition(driver, edition)
-        driver.get(_url(query, edition, page))
+        _bing_set_edition(driver, edition)
+        driver.get(_bing_build_url(query, edition, page))
         wait_js_stable(driver, _BING_COUNT_JS, timeout, tick=0.5, stable_ticks=2)
-        served = driver.execute_script("return %s;" % _EDITION_JS) or served
-    mark = driver.execute_script("return %s;" % _PAGE_JS) or "?"
+        served = driver.execute_script("return %s;" % _BING_EDITION_JS) or served
+    mark = driver.execute_script("return %s;" % _BING_PAGE_JS) or "?"
     print("SEARCH: %s | edition=%s | page=%s of %d results" %
           (driver.title, served
            or "?", mark, driver.execute_script("return %s;" % _BING_COUNT_JS)))
     return mark
 
 
-def read_results(driver):
+def bing_read_results(driver):
     """The organic cards on the current SERP as [{title, snippet, date, site, cite, url}]."""
     rows = driver.execute_script(BING_EXTRACT_JS) or []
     return [
@@ -109,7 +109,7 @@ def bing_search(driver, query, edition="cn", pages=1, tries=3):
     rows = []
     for attempt in range(tries):
         mark = bing_goto_search(driver, query, edition)
-        rows = read_results(driver)
+        rows = bing_read_results(driver)
         if not rows:
             print("NO RESULTS attempt %d (url=%s)" %
                   (attempt + 1, driver.current_url))
@@ -129,7 +129,7 @@ def bing_search(driver, query, edition="cn", pages=1, tries=3):
                     "PAGE: asked for page %d, bing served page %s - stopping" %
                     (page, served))
                 break
-            more = read_results(driver)
+            more = bing_read_results(driver)
             if not more:
                 print("PAGE: page %d came back empty" % page)
                 break

@@ -31,7 +31,7 @@ def archlinux_search(driver, query, limit=10, timeout=30):
     return rows
 
 
-def info(driver,
+def archlinux_read_info(driver,
          url_or_name,
          repo='extra',
          arch='x86_64',
@@ -69,9 +69,9 @@ def info(driver,
     return d
 
 
-def depends(driver, url_or_name, repo='extra', arch='x86_64', limit=60):
+def archlinux_read_depends(driver, url_or_name, repo='extra', arch='x86_64', limit=60):
     """Print the package's dependencies."""
-    d = info(driver, url_or_name, repo, arch, quiet=True)
+    d = archlinux_read_info(driver, url_or_name, repo, arch, quiet=True)
     print("DEPS for", d.get('name', url_or_name), d.get('version', ''))
     body = section(driver, 'Dependencies', limit=6000, show=False)
     deps = [

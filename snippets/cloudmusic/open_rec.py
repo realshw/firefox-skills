@@ -4,7 +4,7 @@
 import time
 from selenium.webdriver.support.ui import WebDriverWait
 
-_FIND_SIDEBAR = r"""
+_CLOUDMUSIC_SIDEBAR_JS = r"""
 const t = arguments[0];
 return [...document.querySelectorAll('body *')].find(e => {
   const r = e.getBoundingClientRect();
@@ -13,18 +13,18 @@ return [...document.querySelectorAll('body *')].find(e => {
 """
 
 
-def _click_sidebar(driver, label):
-    el = driver.execute_script(_FIND_SIDEBAR, label)
+def _cloudmusic_click_sidebar(driver, label):
+    el = driver.execute_script(_CLOUDMUSIC_SIDEBAR_JS, label)
     if el is None:
         return False
     driver.execute_script("arguments[0].click()", el)
     return True
 
 
-def open_rec(driver):
+def cloudmusic_open_rec(driver):
     if "推荐歌单" not in driver.find_element("tag name", "body").text:
         deadline = time.time() + 30
-        while not _click_sidebar(driver, "推荐"):
+        while not _cloudmusic_click_sidebar(driver, "推荐"):
             if time.time() > deadline:
                 raise RuntimeError("sidebar item 推荐 not found")
             time.sleep(0.5)

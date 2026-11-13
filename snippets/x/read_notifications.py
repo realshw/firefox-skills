@@ -2,7 +2,7 @@
 # [data-testid="notification"], not articles. links[0] is the actor; the second link may be a quoted excerpt.
 
 
-def read_notifications(driver):
+def x_read_notifications(driver):
     cells = driver.find_elements("css selector",
                                  '[data-testid="notification"]')
     print("NOTIFICATIONS:", len(cells), "|", driver.title)

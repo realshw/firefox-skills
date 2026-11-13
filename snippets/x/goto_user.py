@@ -4,7 +4,7 @@
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 
-TABS = {
+X_USER_TABS = {
     "posts": "",
     "replies": "/with_replies",
     "media": "/media",
@@ -12,14 +12,14 @@ TABS = {
 }
 
 
-def goto_user(driver, handle, tab="posts", timeout=25):
+def x_goto_user(driver, handle, tab="posts", timeout=25):
     """Navigate the x.com tab to a profile page (handle with or without @); returns tweets mounted."""
     h = handle.strip().lstrip("@").split("/")[0]
-    if tab not in TABS:
-        print("BAD_TAB:", tab, "expected one of", list(TABS))
+    if tab not in X_USER_TABS:
+        print("BAD_TAB:", tab, "expected one of", list(X_USER_TABS))
         return -1
     site_tab(driver, "//x.com/")
-    driver.get("https://x.com/" + h + TABS[tab])
+    driver.get("https://x.com/" + h + X_USER_TABS[tab])
     wait_js(driver,
             'document.querySelectorAll(\'article[data-testid="tweet"]\')'
             '.length || (document.body.innerText.includes("post")'

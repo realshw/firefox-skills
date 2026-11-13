@@ -5,7 +5,7 @@ exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 
 
-def news(driver, limit=8, timeout=30):
+def archlinux_read_news(driver, limit=8, timeout=30):
     """Print and return [{date, title, author, url}] for the newest news entries."""
     site_tab(driver, "//archlinux.org/")
     driver.get("https://archlinux.org/news/")
@@ -26,7 +26,7 @@ def news(driver, limit=8, timeout=30):
     return rows
 
 
-def read_item(driver, url_or_slug, limit=5000):
+def archlinux_read_news_item(driver, url_or_slug, limit=5000):
     """Open one news item (full url or bare slug) and print its article text."""
     url = url_or_slug if url_or_slug.startswith("http") else \
         "https://archlinux.org/news/" + url_or_slug.strip("/") + "/"

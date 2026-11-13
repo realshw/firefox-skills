@@ -4,13 +4,13 @@ import time
 from selenium.common.exceptions import StaleElementReferenceException
 
 
-def _toolbar_up(driver):
+def _cloudmusic_check_toolbar(driver):
     return bool(
         driver.execute_script(
             "return document.body.innerText.includes('播放全部')"))
 
 
-def _on_liked(driver):
+def _cloudmusic_check_on_liked(driver):
     # the playlist page's header h2 — other pages have their own h2 (visible = non-zero rect)
     return bool(
         driver.execute_script(
@@ -20,12 +20,12 @@ def _on_liked(driver):
         ))
 
 
-def open_liked(driver):
+def cloudmusic_open_liked(driver):
     deadline = time.time() + 30
-    while not _toolbar_up(driver):
+    while not _cloudmusic_check_toolbar(driver):
         if time.time() > deadline:
             raise RuntimeError("liked playlist toolbar did not appear")
-        if not _on_liked(driver):
+        if not _cloudmusic_check_on_liked(driver):
             try:
                 els = [
                     e for e in driver.find_elements(

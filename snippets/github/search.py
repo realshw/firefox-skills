@@ -8,10 +8,10 @@ from urllib.parse import quote
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 
-_KINDS = ('repositories', 'code', 'issues', 'pullrequests', 'users',
+_GITHUB_KINDS = ('repositories', 'code', 'issues', 'pullrequests', 'users',
           'discussions')
 
-_ROWS_JS = """
+_GITHUB_ROWS_JS = """
 const list = document.querySelector('[data-testid="results-list"]');
 if (!list) return [];
 const rows = [...list.children].filter(el => !/InfoBar/i.test(typeof el.className === 'string' ? el.className : ''));
@@ -27,8 +27,8 @@ return rows.map(r => {
 
 def github_goto_search(driver, query, kind='repositories', timeout=45):
     """Load a search results page and wait for the result list to mount. Returns the url."""
-    if kind not in _KINDS:
-        raise ValueError("kind must be one of " + ", ".join(_KINDS))
+    if kind not in _GITHUB_KINDS:
+        raise ValueError("kind must be one of " + ", ".join(_GITHUB_KINDS))
     url = "https://github.com/search?q=" + quote(query) + "&type=" + kind
     site_tab(driver, "github.com")
     driver.get(url)
@@ -39,7 +39,7 @@ def github_goto_search(driver, query, kind='repositories', timeout=45):
     return url
 
 
-def _abs(href):
+def _github_abs_url(href):
     if not href:
         return ''
     return href if href.startswith('http') else "https://github.com" + href
@@ -48,7 +48,7 @@ def _abs(href):
 def github_search(driver, query, kind='repositories', limit=10, timeout=45):
     """Print and return [{title, url, extra}] for a GitHub search; kind see _KINDS."""
     github_goto_search(driver, query, kind, timeout=timeout)
-    rows = driver.execute_script(_ROWS_JS)
+    rows = driver.execute_script(_GITHUB_ROWS_JS)
     out, seen = [], set()
     for r in rows or []:
         text, href = r['text'], r['href']
@@ -58,13 +58,13 @@ def github_search(driver, query, kind='repositories', limit=10, timeout=45):
         if kind == 'code':
             m = re.match(r"([\w.-]+/[\w.-]+)\s*·\s*(.+)$", lines[0])
             repo, path = (m.group(1), m.group(2)) if m else ('', lines[0])
-            url = _abs(href)
+            url = _github_abs_url(href)
             title, extra = repo + "/" + path, " ".join(lines[1:])[:300]
         elif kind in ('issues', 'pullrequests'):
             hit = next((a for a in r['anchors']
                         if re.search(r"/(issues|pull)/\d+", a['href'] or '')),
                        None)
-            url = _abs(hit['href']) if hit else ''
+            url = _github_abs_url(hit['href']) if hit else ''
             # an issue row's first line is the repo name; the title is the anchor's own text
             title = (hit['text'] if hit and hit['text'] else
                      (lines[1] if len(lines) > 1 else lines[0]))
@@ -78,7 +78,7 @@ def github_search(driver, query, kind='repositories', limit=10, timeout=45):
                 name = next((h.strip('/') for h in r['hrefs']
                              if re.match(r"^/[\w.-]+/[\w.-]+$", h or '')),
                             lines[0])
-            url = _abs("/" + name.strip('/'))
+            url = _github_abs_url("/" + name.strip('/'))
             title, extra = name, " ".join(lines[1:])[:200]
         if not url or url in seen:
             continue

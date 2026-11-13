@@ -8,7 +8,7 @@ from selenium.common.exceptions import TimeoutException
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 
-BOT = "not a bot"
+GITLAB_BOT_TEXT = "not a bot"
 
 
 def gitlab_raw_url(project, path, ref="main", host="gitlab.archlinux.org"):
@@ -17,12 +17,12 @@ def gitlab_raw_url(project, path, ref="main", host="gitlab.archlinux.org"):
                                           path.lstrip("/"))
 
 
-def _GITLAB_SETTLE(driver, timeout=90):
+def _gitlab_settle(driver, timeout=90):
     """True once the Anubis interstitial is gone and the document has finished loading."""
     return wait_js(
         driver,
         "document.title.indexOf(%r) === -1 && document.readyState === "
-        "'complete'" % BOT,
+        "'complete'" % GITLAB_BOT_TEXT,
         timeout,
         tick=1)
 
@@ -41,7 +41,7 @@ def gitlab_read_file(driver,
         driver.get(url)
     except TimeoutException:
         pass  # the challenge keeps the load open; _settle is what decides
-    if not _GITLAB_SETTLE(driver):
+    if not _gitlab_settle(driver):
         print("NO_FILE:", url, "-> still on the challenge page")
         return ""
     body = driver.find_element("tag name", "body")

@@ -1,4 +1,4 @@
-# ytInitialPlayerResponse is the *initial load* snapshot, so an SPA hop leaves a stale one — open_video(driver)
+# ytInitialPlayerResponse is the *initial load* snapshot, so an SPA hop leaves a stale one — youtube_open_video(driver)
 # always does a full driver.get() then waits until videoDetails.videoId matches (ytcfg is on the home page
 # too, never use it as the check). The DOM lands later, so every read waits first; one regex covers all
 # id forms. publishDate is absent on some uploads — .get() it and fall back to the DOM.
@@ -8,19 +8,19 @@ import re
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 
-_ID = re.compile(
+_YOUTUBE_ID = re.compile(
     r"(?:v=|/shorts/|/live/|youtu\.be/|/embed/)([A-Za-z0-9_-]{11})")
 
 
-def video_id(url_or_id):
+def youtube_get_video_id(url_or_id):
     """11-char id from any YouTube url shape, or the bare id passed through."""
-    m = _ID.search(url_or_id)
+    m = _YOUTUBE_ID.search(url_or_id)
     return m.group(1) if m else url_or_id.strip()
 
 
-def open_video(driver, url_or_id, timeout=30):
+def youtube_open_video(driver, url_or_id, timeout=30):
     """Load a watch page and return its metadata as a dict (see video_info)."""
-    vid = video_id(url_or_id)
+    vid = youtube_get_video_id(url_or_id)
     site_tab(driver, "youtube.com")
     driver.get("https://www.youtube.com/watch?v=" + vid)
     wait_js(
@@ -53,7 +53,7 @@ def youtube_video_info(driver):
     return d
 
 
-def description(driver, limit=4000, timeout=15):
+def youtube_read_description(driver, limit=4000, timeout=15):
     """Print the description (the page's collapsed text, not the truncated meta one)."""
     wait_js(
         driver,

@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 exec(open("snippets/common/wait_js.py").read())
 
-_CLOCK_JS = (
+_CLOUDMUSIC_CLOCK_JS = (
     "(function(){const f = document.querySelector('footer');"
     " if (!f) return null;"
     " const t = [...f.querySelectorAll('[class*=miniBarTimeTextStyle]')]"
@@ -13,7 +13,7 @@ _CLOCK_JS = (
     " return t.length ? t[0] : null;})()")
 
 
-def _PLAY_ICON(driver):
+def _cloudmusic_find_play_icon(driver):
     els = [
         e for e in driver.find_elements(
             "css selector",
@@ -23,15 +23,15 @@ def _PLAY_ICON(driver):
     return els[0] if els else None
 
 
-def _clock(driver):
-    return driver.execute_script("return (%s);" % _CLOCK_JS)
+def _cloudmusic_read_clock(driver):
+    return driver.execute_script("return (%s);" % _CLOUDMUSIC_CLOCK_JS)
 
 
-def _clock_moves(driver, first):
-    return wait_js(driver, "(%s) !== %s" % (_CLOCK_JS, json.dumps(first)), 8)
+def _cloudmusic_check_clock_moves(driver, first):
+    return wait_js(driver, "(%s) !== %s" % (_CLOUDMUSIC_CLOCK_JS, json.dumps(first)), 8)
 
 
-def play_all(driver):
+def cloudmusic_play_all(driver):
     els = [
         e
         for e in driver.find_elements("xpath", '//*[contains(text(), "播放全部")]')
@@ -42,13 +42,13 @@ def play_all(driver):
     els[0].click()
     WebDriverWait(driver, 15).until(lambda d: d.find_elements(
         "css selector", "footer span[aria-label=pause]"))
-    first = _clock(driver)
-    if not _clock_moves(driver, first):
-        icon = _PLAY_ICON(driver)
+    first = _cloudmusic_read_clock(driver)
+    if not _cloudmusic_check_clock_moves(driver, first):
+        icon = _cloudmusic_find_play_icon(driver)
         if icon is not None and icon.get_attribute("aria-label") == "play":
             icon.click()
-            _clock_moves(driver, first)
+            _cloudmusic_check_clock_moves(driver, first)
     print(
         "PLAY_ALL_CLICKED", "clock=" + str(first),
-        "icon=" + (_PLAY_ICON(driver).get_attribute("aria-label")
-                   if _PLAY_ICON(driver) else "MISSING"))
+        "icon=" + (_cloudmusic_find_play_icon(driver).get_attribute("aria-label")
+                   if _cloudmusic_find_play_icon(driver) else "MISSING"))

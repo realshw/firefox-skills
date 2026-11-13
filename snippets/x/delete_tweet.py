@@ -4,16 +4,16 @@
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 
-CARET = 'article[data-testid="tweet"] [data-testid="caret"]'
+X_CARET = 'article[data-testid="tweet"] [data-testid="caret"]'
 
 
-def delete_tweet(driver, url, expect=None, dry_run=False):
+def x_delete_tweet(driver, url, expect=None, dry_run=False):
     """Delete the post at `url` (must be yours). `expect` guards the target; dry_run stops at the sheet."""
     if not url.startswith("http"):
         url = "https://x.com/" + url.lstrip("/")
     site_tab(driver, "//x.com/")
     driver.get(url)
-    if not wait_js(driver, "!!document.querySelector('%s')" % CARET):
+    if not wait_js(driver, "!!document.querySelector('%s')" % X_CARET):
         print(
             "DELETE_FAILED: no caret on the page (not on a /status/ page, or not your post)"
         )
@@ -27,7 +27,7 @@ def delete_tweet(driver, url, expect=None, dry_run=False):
               (expect, text[:80].replace("\n", " ")))
         return False
     print("TARGET:", text[:80].replace("\n", " "))
-    driver.find_element("css selector", CARET).click()
+    driver.find_element("css selector", X_CARET).click()
     if not wait_js(driver, '!!document.querySelector(\'[role="menu"]\')'):
         print("DELETE_FAILED: caret menu never opened")
         return False

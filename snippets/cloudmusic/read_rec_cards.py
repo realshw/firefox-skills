@@ -6,26 +6,26 @@ import json
 
 exec(open("snippets/common/wait_js.py").read())
 
-_FIRST_CARD_JS = (
+_CLOUDMUSIC_FIRST_CARD_JS = (
     "(function(){const e = document.querySelector('[class*=CardWrapper], [class*=cmd-card]');"
     "return e ? (e.innerText || '').replace(/\\s+/g, ' ').trim().slice(0, 80) : '';})()"
 )
 
 
-def _first_card(driver):
+def _cloudmusic_find_first_card(driver):
     """The topmost mounted card's text — the handle on how far the grid has slid."""
-    return driver.execute_script("return %s;" % _FIRST_CARD_JS)
+    return driver.execute_script("return %s;" % _CLOUDMUSIC_FIRST_CARD_JS)
 
 
-def _grid_slides(driver, before, timeout=2.5):
+def _cloudmusic_count_grid_slides(driver, before, timeout=2.5):
     """True once a different card has mounted on top; False when the grid did not move at all."""
     return wait_js(driver,
-                   "%s !== %s" % (_FIRST_CARD_JS, json.dumps(before)),
+                   "%s !== %s" % (_CLOUDMUSIC_FIRST_CARD_JS, json.dumps(before)),
                    timeout,
                    tick=0.2)
 
 
-_JS_CARDS = r"""
+_CLOUDMUSIC_CARDS_JS = r"""
 const out = [];
 for (const e of document.querySelectorAll('[class*=CardWrapper], [class*=cmd-card]')) {
   const r = e.getBoundingClientRect();
@@ -38,17 +38,17 @@ return out;
 """
 
 
-def read_rec_cards(driver):
+def cloudmusic_read_rec_cards(driver):
     orig = driver.execute_script(
         "const c = document.querySelector('[class*=AppScrollContainer]'); return c ? c.scrollTop : 0;"
     )
     seen = []
     top = None
     for _ in range(15):
-        for line in driver.execute_script(_JS_CARDS):
+        for line in driver.execute_script(_CLOUDMUSIC_CARDS_JS):
             if line not in seen:
                 seen.append(line)
-        before = _first_card(driver)
+        before = _cloudmusic_find_first_card(driver)
         s = driver.execute_script(
             "const c = document.querySelector('[class*=AppScrollContainer]'); if (!c) return null;"
             "c.scrollTop += c.clientHeight * 0.8;"
@@ -58,7 +58,7 @@ def read_rec_cards(driver):
         if s[0] == top:
             break  # scrollTop did not move: shorter than the viewport
         top = s[0]
-        _grid_slides(driver, before)
+        _cloudmusic_count_grid_slides(driver, before)
         if s[0] + s[2] >= s[1] - 2:
             break
     driver.execute_script(

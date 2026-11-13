@@ -7,10 +7,10 @@ from selenium.webdriver.common.by import By
 
 exec(open("snippets/common/wait_js.py").read())
 
-_BACKDROP = "[class*=Dialog-Backdrop]"
-_DESC = 'input[placeholder="Short description of this repository"], input[maxlength="350"]'
+_GITHUB_BACKDROP = "[class*=Dialog-Backdrop]"
+_GITHUB_DESC = 'input[placeholder="Short description of this repository"], input[maxlength="350"]'
 
-_STATE_JS = """
+_GITHUB_STATE_JS = """
 const out = {desc: null, sections: {}};
 const d = document.querySelector('p[class*=SidebarAbout-module]');
 out.desc = d ? d.innerText.trim() : null;
@@ -23,9 +23,9 @@ return out;
 """
 
 
-def _open_dialog(driver, timeout=15):
+def _github_open_dialog(driver, timeout=15):
     if driver.execute_script("return !!document.querySelector(%r)" %
-                             _BACKDROP):
+                             _GITHUB_BACKDROP):
         return
     gear = [
         b for b in driver.find_elements(By.CSS_SELECTOR, "button")
@@ -38,12 +38,12 @@ def _open_dialog(driver, timeout=15):
                           gear[0])
     time.sleep(0.5)
     gear[0].click()
-    if not wait_js(driver, "!!document.querySelector(%r)" % _BACKDROP,
+    if not wait_js(driver, "!!document.querySelector(%r)" % _GITHUB_BACKDROP,
                    timeout):
         raise RuntimeError("about dialog did not open")
 
 
-def _set_desc(driver, text):
+def _github_set_desc(driver, text):
     got = driver.execute_script(
         """
     const box = document.querySelector(arguments[1]);
@@ -53,13 +53,13 @@ def _set_desc(driver, text):
     set.call(box, arguments[0]);
     for (const t of ["input", "change"]) box.dispatchEvent(new Event(t, {bubbles: true}));
     return box.value;
-    """, text, _DESC)
+    """, text, _GITHUB_DESC)
     if got != text:
         raise RuntimeError("description field did not take the text: %r" %
                            (got))
 
 
-def _set_sections(driver, wanted):
+def _github_set_sections(driver, wanted):
     """wanted: {'Releases': False, ...} — click only the labels whose state differs."""
     for name, want in wanted.items():
         state = driver.execute_script(
@@ -79,14 +79,14 @@ def _set_sections(driver, wanted):
                                (name, state))
 
 
-def edit_about(driver, new_desc=None, sections=None, timeout=20):
+def github_edit_about(driver, new_desc=None, sections=None, timeout=20):
     """Rewrite the About description and/or home-page sections; return (before, after)."""
-    _open_dialog(driver)
-    before = driver.execute_script(_STATE_JS)
+    _github_open_dialog(driver)
+    before = driver.execute_script(_GITHUB_STATE_JS)
     if new_desc is not None:
-        _set_desc(driver, new_desc)
+        _github_set_desc(driver, new_desc)
     if sections:
-        _set_sections(driver, sections)
+        _github_set_sections(driver, sections)
     time.sleep(0.5)
     save = [
         b for b in driver.find_elements(By.CSS_SELECTOR, "button")
@@ -95,11 +95,11 @@ def edit_about(driver, new_desc=None, sections=None, timeout=20):
     if not save:
         raise RuntimeError("Save changes button not found")
     save[-1].click()
-    if not wait_js(driver, "!document.querySelector(%r)" % _BACKDROP, timeout):
+    if not wait_js(driver, "!document.querySelector(%r)" % _GITHUB_BACKDROP, timeout):
         raise RuntimeError(
             "dialog stayed open after Save — check the console for a failed request"
         )
     time.sleep(1)
-    after = driver.execute_script(_STATE_JS)
+    after = driver.execute_script(_GITHUB_STATE_JS)
     print("ABOUT:", repr(before), "->", repr(after))
     return before, after

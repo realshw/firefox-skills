@@ -4,7 +4,7 @@ import json
 exec(open("snippets/common/wait_js.py").read())
 
 
-def pause_video(driver):
+def bilibili_pause_video(driver):
     state_js = r"""
     const v = document.querySelector('video');
     if (!v) return null;

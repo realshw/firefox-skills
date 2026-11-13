@@ -1,4 +1,4 @@
-# fetch_video_meta(driver, vids, out_path=None) -> the same list with tname/desc/tags filled in; each entry
+# bilibili_fetch_video_meta(driver, vids, out_path=None) -> the same list with tname/desc/tags filled in; each entry
 # needs 'avid' and gets its 'bvid' resolved when it is missing or empty. Tags are the deciding signal when
 # reshuffling — tname is empty these days, and a title alone routinely points at the wrong folder.
 # API: GET /x/web-interface/view?aid=, GET /x/tag/archive/tags?bvid=
@@ -8,19 +8,19 @@ import time
 exec(open("snippets/bilibili/api.py").read())
 
 
-def fetch_video_meta(driver, vids, out_path=None):
+def bilibili_fetch_video_meta(driver, vids, out_path=None):
     for i, m in enumerate(vids):
         aid = m['avid']
         if not m.get('bvid'):
-            m['bvid'] = (fav_get(driver, '/x/web-interface/view',
+            m['bvid'] = (bilibili_get_api(driver, '/x/web-interface/view',
                                  aid=aid).get('data') or {}).get('bvid') or ''
             time.sleep(0.4)
-        d = fav_get(driver, '/x/web-interface/view', aid=aid).get('data') or {}
+        d = bilibili_get_api(driver, '/x/web-interface/view', aid=aid).get('data') or {}
         m['tname'] = d.get('tname')
         m['desc'] = (d.get('desc') or '')[:150]
         tags = []
         if m['bvid']:
-            tags = (fav_get(driver, '/x/tag/archive/tags',
+            tags = (bilibili_get_api(driver, '/x/tag/archive/tags',
                             bvid=m['bvid']).get('data') or [])
         m['tags'] = [t['tag_name'] for t in tags][:8]
         print('meta %d/%d' % (i + 1, len(vids)), m['bvid'], '|',

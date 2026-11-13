@@ -2,7 +2,7 @@
 # so take the last path segment. .text may include the avatar's alt text — squash newlines.
 
 
-def whoami(driver):
+def x_read_me(driver):
     try:
         handle = (driver.find_element(
             "css selector",

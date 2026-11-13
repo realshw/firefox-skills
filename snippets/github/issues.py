@@ -1,5 +1,6 @@
 # Rows are React children (data-testid issue-listitem-title-link / issue-activity-timestamp); filtering
-# needs ?q=is%3Aissue+is%3Aclosed (?state=closed just reloads the open list). thread(driver) reads both the React
+# needs ?q=is%3Aissue+is%3Aclosed (?state=closed just reloads the open list).
+# github_read_thread(driver) reads both the React
 # comment viewer and the classic timeline — a page picks either one. JS strings double their escapes.
 import re
 import time
@@ -12,15 +13,15 @@ exec(open("snippets/common/wait_js.py").read())
 # textarea the new-issue form uses, and "Save" carries no testid (the comment box's own buttons sit too).
 # Commenting: the page's Markdown textarea is the comment box, and its submit is the last enabled "Comment"
 # button — "Close with comment" keeps its own pair just above.
-_BODY_SEL = 'textarea[placeholder^="Type your description"]'
-_COMMENT_SEL = 'textarea[placeholder*="Markdown"]'
-_JS_SAVE_BODY = """
+_GITHUB_BODY_SEL = 'textarea[placeholder^="Type your description"]'
+_GITHUB_COMMENT_SEL = 'textarea[placeholder*="Markdown"]'
+_GITHUB_SAVE_BODY_JS = """
 const b = [...document.querySelectorAll('button')]
   .filter(x => (x.innerText || '').trim() === 'Save' && (x.offsetParent || x.getClientRects().length));
 if (b.length) b[b.length - 1].click();
 return b.length;
 """
-_JS_SUBMIT_COMMENT = """
+_GITHUB_SUBMIT_COMMENT_JS = """
 const b = [...document.querySelectorAll('button')]
   .filter(x => (x.innerText || '').trim() === 'Comment' && !x.disabled
                && (x.offsetParent || x.getClientRects().length));
@@ -29,7 +30,7 @@ return b.length;
 """
 
 
-def _wait_editor(driver, sel, timeout=60):
+def _github_wait_editor(driver, sel, timeout=60):
     """Wait for a body editor or comment box to mount and return the text it holds now."""
     end = time.time() + timeout
     while time.time() < end:
@@ -40,20 +41,20 @@ def _wait_editor(driver, sel, timeout=60):
     raise RuntimeError("editor never opened: %s" % sel)
 
 
-def _issue_url(url_or_num, slug=None):
+def _github_build_issue_url(url_or_num, slug=None):
     """Full issue URL: a URL passes through as given, a bare number needs slug='owner/repo'."""
     if str(url_or_num).startswith('http'):
         return url_or_num
-    m = _ISSUES_NUM.search(str(url_or_num))
+    m = _GITHUB_ISSUE_NUM.search(str(url_or_num))
     num = m.group(1) if m else str(url_or_num)
     if not slug:
         raise ValueError("an issue number needs slug='owner/repo'")
     return "https://github.com/" + slug.strip("/") + "/issues/" + num
 
 
-_ISSUES_NUM = re.compile(r"/issues/(\d+)")
+_GITHUB_ISSUE_NUM = re.compile(r"/issues/(\d+)")
 
-_THREAD_JS = """
+_GITHUB_THREAD_JS = """
 const txt = s => { const e = document.querySelector(s); return e ? e.innerText.trim() : ''; };
 const items = [];
 document.querySelectorAll('[data-testid^="comment-viewer-outer-box"]').forEach(c => {
@@ -82,14 +83,14 @@ return {title: rawTitle.split('\\n')[0].trim(),
 """
 
 
-def thread(driver, timeout=30):
+def github_read_thread(driver, timeout=30):
     """Wait for the open issue/PR page, return {title, state, body, items} (body may be '')."""
     wait_js(
         driver, "!!(document.querySelector('[data-testid=\"issue-body\"]')"
         " || document.querySelector('div.timeline-comment-group')"
         " || document.querySelector('[data-testid=\"issue-title\"]'))",
         timeout)
-    d = driver.execute_script(_THREAD_JS)
+    d = driver.execute_script(_GITHUB_THREAD_JS)
     if not d['body'] and d['items']:
         d['body'], d['comments'] = d['items'][0]['text'], d['items'][1:]
     else:
@@ -97,7 +98,7 @@ def thread(driver, timeout=30):
     return d
 
 
-def list_issues(driver, slug, state='open', limit=25, timeout=30):
+def github_list_issues(driver, slug, state='open', limit=25, timeout=30):
     """Print and return [{num, title, url, time}] for one state of a repo's issues."""
     site_tab(driver, "github.com")
     driver.get("https://github.com/" + slug.strip("/") +
@@ -128,7 +129,7 @@ def list_issues(driver, slug, state='open', limit=25, timeout=30):
     return rows
 
 
-def read_issue(driver,
+def github_read_issue(driver,
                url_or_num,
                slug=None,
                body_limit=6000,
@@ -136,14 +137,14 @@ def read_issue(driver,
     """Load an issue (full url, or a number when slug is given); print and return it as a dict."""
     url = url_or_num
     if not str(url_or_num).startswith('http'):
-        m = _ISSUES_NUM.search(str(url_or_num))
+        m = _GITHUB_ISSUE_NUM.search(str(url_or_num))
         num = m.group(1) if m else str(url_or_num)
         if not slug:
             raise ValueError("read_issue(driver, num) needs slug='owner/repo'")
         url = "https://github.com/" + slug.strip("/") + "/issues/" + num
     site_tab(driver, "github.com")
     driver.get(url)
-    d = thread(driver)
+    d = github_read_thread(driver)
     print("ISSUE:", d['title'][:90], "|", d['state'] or '-')
     print("BODY:", d['body'][:body_limit] or "(empty)")
     for c in d['comments']:
@@ -154,16 +155,16 @@ def read_issue(driver,
     return d
 
 
-def append_body(driver, url_or_num, text, slug=None, timeout=60):
+def github_append_body(driver, url_or_num, text, slug=None, timeout=60):
     """Append text to an issue body (kebab -> Edit), verify the saved tail, return the new body.
 
     Only the tail is typed: type_verified reads the editor, sees the old body as a prefix of the wanted
     text and sends the remainder after moving the caret to the end. Safe to re-run - appending twice is a
     visible duplicate, not a silent one."""
-    url = _issue_url(url_or_num, slug)
+    url = _github_build_issue_url(url_or_num, slug)
     site_tab(driver, "github.com")
     driver.get(url)
-    thread(driver, timeout)
+    github_read_thread(driver, timeout)
 
     driver.find_elements("css selector",
                          '[data-testid="issue-body"] button')[0].click()
@@ -175,14 +176,14 @@ def append_body(driver, url_or_num, text, slug=None, timeout=60):
         raise RuntimeError(
             "no Edit menu item - the issue body is not editable")
 
-    old = _wait_editor(driver, _BODY_SEL, timeout)
+    old = _github_wait_editor(driver, _GITHUB_BODY_SEL, timeout)
     want = old.rstrip() + "\n\n" + text.strip()
-    if not type_verified(driver, want, selector=_BODY_SEL, paste_over=10**9):
+    if not type_verified(driver, want, selector=_GITHUB_BODY_SEL, paste_over=10**9):
         raise RuntimeError("appended body did not type back exactly")
-    print("SAVE_BUTTONS:", driver.execute_script(_JS_SAVE_BODY))
-    wait_js(driver, "!document.querySelector('%s')" % _BODY_SEL, timeout)
+    print("SAVE_BUTTONS:", driver.execute_script(_GITHUB_SAVE_BODY_JS))
+    wait_js(driver, "!document.querySelector('%s')" % _GITHUB_BODY_SEL, timeout)
 
-    d = thread(driver, timeout)
+    d = github_read_thread(driver, timeout)
     saved = d['body'].rstrip().endswith(text.strip())
     print("BODY_APPENDED:", saved, "| chars:", len(d['body']))
     if not saved:
@@ -191,32 +192,32 @@ def append_body(driver, url_or_num, text, slug=None, timeout=60):
     return d['body']
 
 
-def comment(driver, url_or_num, text, slug=None, timeout=60, dry_run=False):
+def github_post_comment(driver, url_or_num, text, slug=None, timeout=60, dry_run=False):
     """Post text as a new comment on an issue, then reload and prove it is in the thread.
 
     dry_run=True only checks the box is there - nothing is typed and nothing is sent, so it is safe on
     an issue the caller is not ready to post to. Returns the comment dict when it lands."""
-    url = _issue_url(url_or_num, slug)
+    url = _github_build_issue_url(url_or_num, slug)
     site_tab(driver, "github.com")
     driver.get(url)
-    thread(driver, timeout)
+    github_read_thread(driver, timeout)
 
-    if _wait_editor(driver, _COMMENT_SEL, timeout) is None:
+    if _github_wait_editor(driver, _GITHUB_COMMENT_SEL, timeout) is None:
         raise RuntimeError("no comment box: locked or read-only issue?")
     if dry_run:
         print("DRY_RUN: comment box found, nothing typed |", url)
         return {"url": url, "dry_run": True}
 
-    if not type_verified(driver, text, selector=_COMMENT_SEL):
+    if not type_verified(driver, text, selector=_GITHUB_COMMENT_SEL):
         raise RuntimeError("comment did not type back exactly")
-    print("SUBMIT_BUTTONS:", driver.execute_script(_JS_SUBMIT_COMMENT))
+    print("SUBMIT_BUTTONS:", driver.execute_script(_GITHUB_SUBMIT_COMMENT_JS))
     wait_js(
         driver,
         "!document.querySelector('%s') || !document.querySelector('%s').value"
-        % (_COMMENT_SEL, _COMMENT_SEL), timeout)
+        % (_GITHUB_COMMENT_SEL, _GITHUB_COMMENT_SEL), timeout)
 
     driver.get(url)
-    d = thread(driver, timeout)
+    d = github_read_thread(driver, timeout)
     head = text.strip().splitlines()[0][:40]
     hit = [c for c in d['comments'] if head in (c['text'] or '')]
     print("COMMENT_POSTED:", bool(hit), "| comments:", len(d['comments']))

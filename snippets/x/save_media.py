@@ -7,7 +7,7 @@ import os
 import re
 import tempfile
 
-FETCH_JS = r"""
+X_FETCH_JS = r"""
 const url = arguments[0], done = arguments[arguments.length - 1];
 let finished = false;
 const fin = o => { if (!finished) { finished = true; done(o); } };
@@ -20,7 +20,7 @@ fetch(url).then(r => r.blob().then(b => {
 })).catch(e => fin({ok: false, status: 0, err: String(e)}));
 """
 
-MEDIA_JS = r"""
+X_MEDIA_JS = r"""
 const i = arguments[0];
 const arts = [...document.querySelectorAll('article[data-testid="tweet"]')];
 const a = arts[i];
@@ -32,7 +32,7 @@ return imgs.map(img => ({url: img.src, alt: img.getAttribute('alt') || ''}));
 """
 
 
-def _tweet_id(driver, index):
+def _x_read_tweet_id(driver, index):
     try:
         return driver.execute_script(
             "const a = document.querySelectorAll('article[data-testid=\"tweet\"]')[arguments[0]];"
@@ -44,13 +44,13 @@ def _tweet_id(driver, index):
         return None
 
 
-def media_list(driver, index=0):
+def x_list_media(driver, index=0):
     """[{url, alt}] — the tweet's own photos / video posters (quoted media excluded)."""
-    return driver.execute_script(MEDIA_JS, index) or []
+    return driver.execute_script(X_MEDIA_JS, index) or []
 
 
-def _fetch(driver, url):
-    info = driver.execute_async_script(FETCH_JS, url) or {}
+def _x_fetch_data(driver, url):
+    info = driver.execute_async_script(X_FETCH_JS, url) or {}
     if not info.get("ok") or not (info.get("data") or "").startswith("data:"):
         return None
     head, b64 = info["data"].split(",", 1)
@@ -58,7 +58,7 @@ def _fetch(driver, url):
                                    or ""), info["data"]
 
 
-def _best_bytes(driver, url, want_orig=True):
+def _x_find_best_bytes(driver, url, want_orig=True):
     """Try name=orig, then name=large, then the URL as given — orig 404s on some media."""
     tries = []
     if want_orig:
@@ -66,23 +66,23 @@ def _best_bytes(driver, url, want_orig=True):
         tries.append(re.sub(r"name=\w+", "name=large", url))
     tries.append(url)
     for u in dict.fromkeys(tries):
-        got = _fetch(driver, u)
+        got = _x_fetch_data(driver, u)
         if got and got[0]:
             return got[0], got[1], u
     return None, "", url
 
 
-def save_media(driver, index=0, out_dir=None, want_orig=True, dry_run=False):
+def x_save_media(driver, index=0, out_dir=None, want_orig=True, dry_run=False):
     """Save one tweet's photos/video posters to out_dir (default: the system temp dir); returns the
     saved paths (alt text printed)."""
     out_dir = out_dir or os.path.join(tempfile.gettempdir(), "x_media")
-    items = media_list(driver, index)
+    items = x_list_media(driver, index)
     if not items:
         print(
             "NO_MEDIA: article %d has no photo (text-only, or its media is in a quoted tweet)"
             % index)
         return []
-    tid = _tweet_id(driver, index) or "notweet"
+    tid = _x_read_tweet_id(driver, index) or "notweet"
     if dry_run:
         for i, it in enumerate(items, 1):
             print("DRY: %s | alt: %s" % (it["url"], it["alt"] or "(none)"))
@@ -90,7 +90,7 @@ def save_media(driver, index=0, out_dir=None, want_orig=True, dry_run=False):
     os.makedirs(out_dir, exist_ok=True)
     paths = []
     for i, it in enumerate(items, 1):
-        data, ctype, used = _best_bytes(driver, it["url"], want_orig)
+        data, ctype, used = _x_find_best_bytes(driver, it["url"], want_orig)
         if not data:
             print("FAILED:", it["url"])
             continue

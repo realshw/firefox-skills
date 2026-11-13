@@ -6,15 +6,15 @@ import re
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 
-PAGE = "https://www.freebsd.org/releases/"
-_TIER = re.compile(r"(Production|Legacy|Upcoming) Release:\s*([\d.]+)")
-_DATED = re.compile(r"Release (\d+\.\d+) \(([^)]+)\)")
+FREEBSD_RELEASES_URL = "https://www.freebsd.org/releases/"
+_FREEBSD_TIER = re.compile(r"(Production|Legacy|Upcoming) Release:\s*([\d.]+)")
+_FREEBSD_DATED = re.compile(r"Release (\d+\.\d+) \(([^)]+)\)")
 
 
-def open_releases(driver, timeout=30):
+def freebsd_open_releases(driver, timeout=30):
     """Load the releases page and wait for the tier summary to render."""
     site_tab(driver, "freebsd.org")
-    driver.get(PAGE)
+    driver.get(FREEBSD_RELEASES_URL)
     wait_js(
         driver,
         "!!document.body.innerText.match(/Production Release:\\s*[\\d.]+/)",
@@ -26,13 +26,13 @@ def open_releases(driver, timeout=30):
     return t
 
 
-def releases(driver):
+def freebsd_list_releases(driver):
     """{production: [...], legacy: [...], upcoming: [...], dated: [(version, date)]}"""
     t = driver.execute_script("return document.body.innerText")
     out = {'production': [], 'legacy': [], 'upcoming': []}
-    for tier, ver in _TIER.findall(t):
+    for tier, ver in _FREEBSD_TIER.findall(t):
         out[tier.lower()].append(ver)
-    out['dated'] = _DATED.findall(t)
+    out['dated'] = _FREEBSD_DATED.findall(t)
     for k in ('production', 'legacy', 'upcoming'):
         print("%-11s %s" % (k + ":", " ".join(out[k]) or "-"))
     for ver, date in out['dated'][:6]:
@@ -40,7 +40,7 @@ def releases(driver):
     return out
 
 
-def latest(driver):
+def freebsd_read_latest_release(driver):
     """The current production version, as a string ('15.1')."""
-    t = open_releases(driver)
+    t = freebsd_open_releases(driver)
     return re.search(r"Production Release:\s*([\d.]+)", t).group(1)

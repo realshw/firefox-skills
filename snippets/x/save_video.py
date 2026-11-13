@@ -10,10 +10,10 @@ import tempfile
 import time
 from urllib.parse import urljoin
 
-CHUNK = 4 * 1024 * 1024  # per-fetch slice; base64 of this is ~5.5 MB on the wire
-SYND = "https://cdn.syndication.twimg.com/tweet-result?id=%s&token=%s"
+X_CHUNK = 4 * 1024 * 1024  # per-fetch slice; base64 of this is ~5.5 MB on the wire
+X_SYNDICATION_URL = "https://cdn.syndication.twimg.com/tweet-result?id=%s&token=%s"
 
-FETCH_RANGE_JS = r"""
+X_FETCH_RANGE_JS = r"""
 const url = arguments[0], start = arguments[1], end = arguments[2];
 const done = arguments[arguments.length - 1];
 let finished = false;
@@ -28,7 +28,7 @@ fetch(url, {headers: {'Range': 'bytes=' + start + '-' + end}}).then(r => r.blob(
 })).catch(e => fin({ok: false, err: String(e)}));
 """
 
-FETCH_TEXT_JS = r"""
+X_FETCH_TEXT_JS = r"""
 const url = arguments[0], done = arguments[arguments.length - 1];
 let finished = false;
 const fin = o => { if (!finished) { finished = true; done(o); } };
@@ -37,7 +37,7 @@ fetch(url).then(r => r.text().then(t => fin({ok: r.ok, status: r.status, body: t
            .catch(e => fin({ok: false, err: String(e)}));
 """
 
-RAW_JS = r"""
+X_RAW_JS = r"""
 const b = [...document.querySelectorAll('button, a')]
     .find(el => /raw data/i.test(el.textContent || ''));
 if (b) b.click();
@@ -49,7 +49,7 @@ return p ? p.textContent : null;
 # Status/timeline pages mount their articles a beat after driver.get() returns: reading index 0 too
 # early reports NO_TWEET while the DOM is still empty, which looks exactly like "this post has no
 # video". Poll for the article instead of sleeping a guessed 3 s.
-def _wait_articles(driver, index, timeout=15):
+def _x_wait_articles(driver, index, timeout=15):
     end = time.time() + timeout
     while time.time() < end:
         n = driver.execute_script(
@@ -61,8 +61,8 @@ def _wait_articles(driver, index, timeout=15):
     return False
 
 
-def tweet_id(driver, index=0):
-    _wait_articles(driver, index)
+def x_read_tweet_id(driver, index=0):
+    _x_wait_articles(driver, index)
     try:
         return driver.execute_script(
             "const a = document.querySelectorAll('article[data-testid=\"tweet\"]')[arguments[0]];"
@@ -74,7 +74,7 @@ def tweet_id(driver, index=0):
         return None
 
 
-def _syndication(driver, tid, timeout=25):
+def _x_read_syndication(driver, tid, timeout=25):
     """The syndication JSON for tid, read out of its own tab's raw pane."""
     token = driver.execute_script(
         "return ((%s/1e15)*Math.PI).toString(36).replace(/(0+|\\.)/g,'')" %
@@ -83,11 +83,11 @@ def _syndication(driver, tid, timeout=25):
     driver.switch_to.new_window('tab')
     # the new tab has focus, so driver.get() navigates it and leaves the tweet tab alone
     try:
-        driver.get(SYND % (tid, token))
+        driver.get(X_SYNDICATION_URL % (tid, token))
         end = time.time() + timeout
         raw = None
         while time.time() < end:
-            raw = driver.execute_script(RAW_JS)
+            raw = driver.execute_script(X_RAW_JS)
             if raw and raw.lstrip().startswith("{"):
                 break
             time.sleep(0.5)
@@ -100,18 +100,18 @@ def _syndication(driver, tid, timeout=25):
             driver.switch_to.window(current)
 
 
-def x_video_info(driver, index=0, tid=None):
+def x_read_video_info(driver, index=0, tid=None):
     """{tid, duration_ms, poster, variants: [{type, bitrate, url}]} or None if the post has no video.
 
     `tid` skips the DOM read entirely — a timeline/search result row's status id is enough.
     """
-    tid = tid or tweet_id(driver, index)
+    tid = tid or x_read_tweet_id(driver, index)
     if not tid:
         print(
             "NO_TWEET: no article at index %d — not an x.com timeline/status, or still loading?"
             % index)
         return None
-    j = _syndication(driver, tid) or {}
+    j = _x_read_syndication(driver, tid) or {}
     media = (j.get("mediaDetails") or [{}])[0]
     vi = media.get("video_info") or {}
     out = {
@@ -141,9 +141,9 @@ def x_video_info(driver, index=0, tid=None):
     return out if out["variants"] else None
 
 
-def _slice(driver, url, start, end):
+def _x_fetch_range(driver, url, start, end):
     """(bytes, status) for one Range request — status is the http code, or None on failure."""
-    info = driver.execute_async_script(FETCH_RANGE_JS, url, start, end) or {}
+    info = driver.execute_async_script(X_FETCH_RANGE_JS, url, start, end) or {}
     if not info.get("ok") or not (info.get("data") or "").startswith("data:"):
         print("FETCH_FAILED:", info.get("err") or info.get("status"), url[:90])
         return None, None
@@ -151,7 +151,7 @@ def _slice(driver, url, start, end):
     return base64.b64decode(b64), info.get("status")
 
 
-def _download(driver, url, path, chunk=CHUNK, verbose=True):
+def _x_download_chunked(driver, url, path, chunk=X_CHUNK, verbose=True):
     """Chunked Range download through the page fetch; returns bytes written or None.
 
     The total size *cannot* be read from Content-Range: it is not a CORS-safelisted response
@@ -162,7 +162,7 @@ def _download(driver, url, path, chunk=CHUNK, verbose=True):
     """
     parts, got, guard = [], 0, 0
     while True:
-        part, status = _slice(driver, url, got, got + chunk - 1)
+        part, status = _x_fetch_range(driver, url, got, got + chunk - 1)
         if part is None:
             if not parts:
                 return None
@@ -187,9 +187,9 @@ def _download(driver, url, path, chunk=CHUNK, verbose=True):
     return len(blob)
 
 
-def _hls(driver, url, path_base, verbose=True):
+def _x_download_hls(driver, url, path_base, verbose=True):
     """Fallback: pull a media playlist's segments and concatenate them into a .ts."""
-    info = driver.execute_async_script(FETCH_TEXT_JS, url) or {}
+    info = driver.execute_async_script(X_FETCH_TEXT_JS, url) or {}
     if not info.get("ok"):
         print("HLS_PLAYLIST_FAILED:", info.get("err") or info.get("status"))
         return None
@@ -206,7 +206,7 @@ def _hls(driver, url, path_base, verbose=True):
                     None)
                 if nxt and bw and int(bw.group(1)) > level:
                     best, level = nxt, int(bw.group(1))
-        return _hls(driver, urljoin(url, best), path_base,
+        return _x_download_hls(driver, urljoin(url, best), path_base,
                     verbose) if best else None
     segs = [urljoin(url, l) for l in lines if l and not l.startswith("#")]
     for l in lines:
@@ -219,7 +219,7 @@ def _hls(driver, url, path_base, verbose=True):
         return None
     blob = b""
     for i, s in enumerate(segs, 1):
-        part, _st = _slice(driver, s, 0, CHUNK * 8 - 1)
+        part, _st = _x_fetch_range(driver, s, 0, X_CHUNK * 8 - 1)
         if not part:
             print("HLS_SEGMENT_FAILED", i)
             return None
@@ -233,7 +233,7 @@ def _hls(driver, url, path_base, verbose=True):
     return len(blob), path
 
 
-def save_video(driver,
+def x_save_video(driver,
                index=0,
                out_dir=None,
                max_height=720,
@@ -249,7 +249,7 @@ def save_video(driver,
     except Exception:
         pass
     out_dir = out_dir or os.path.join(tempfile.gettempdir(), "x_video")
-    vi = x_video_info(driver, index)
+    vi = x_read_video_info(driver, index)
     if not vi:
         print(
             "NO_VIDEO: article %d carries no video (photo-only, or the media is in a quoted post)"
@@ -288,13 +288,13 @@ def save_video(driver,
             print("PICK: %s  bitrate=%s  %s" %
                   (pick["type"], pick["bitrate"],
                    (dims.group(1) + "x" + dims.group(2)) if dims else "?"))
-        size = _download(driver, pick["url"], path, verbose=verbose)
+        size = _x_download_chunked(driver, pick["url"], path, verbose=verbose)
         if size:
             print("SAVED: %s (%.1f MB)" % (path, size / 1048576.0))
             return [path]
         return []
     if hls:
-        got = _hls(driver, hls[0]["url"], base, verbose=verbose)
+        got = _x_download_hls(driver, hls[0]["url"], base, verbose=verbose)
         if got:
             size, path = got
             print("SAVED: %s (%.1f MB, HLS fallback — .ts container)" %

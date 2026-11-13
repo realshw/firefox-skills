@@ -5,28 +5,28 @@ import json
 
 exec(open("snippets/common/wait_js.py").read())
 
-LIKE = '[data-testid="like"], [data-testid="unlike"]'
+X_LIKE = '[data-testid="like"], [data-testid="unlike"]'
 
-_LABEL_JS = ("(function(){const a = "
+_X_LABEL_JS = ("(function(){const a = "
              "document.querySelectorAll('article[data-testid=\"tweet\"]')[%d];"
              "if (!a) return '';"
              "const b = a.querySelector('%s');"
              "return b ? b.getAttribute('data-testid') : '';})()")
 
 
-def _label(driver, index):
+def _x_read_label(driver, index):
     """data-testid of the like button in that article, '' while it is not mounted."""
-    return driver.execute_script("return " + _LABEL_JS % (index, LIKE) + ";")
+    return driver.execute_script("return " + _X_LABEL_JS % (index, X_LIKE) + ";")
 
 
-def like_tweet(driver, index=0, undo=False):
+def x_like_tweet(driver, index=0, undo=False):
     """Like (or un-like with undo=True) the article at `index`."""
     arts = driver.find_elements("css selector", 'article[data-testid="tweet"]')
     if index >= len(arts):
         print("LIKE_FAILED: only %d articles mounted (index %d)" %
               (len(arts), index))
         return False
-    btns = arts[index].find_elements("css selector", LIKE)
+    btns = arts[index].find_elements("css selector", X_LIKE)
     if not btns:
         print("LIKE_FAILED: no like button in article %d" % index)
         return False
@@ -37,9 +37,9 @@ def like_tweet(driver, index=0, undo=False):
     btns[0].click()
     want = "like" if undo else "unlike"
     ok = wait_js(driver,
-                 "%s === %s" % (_LABEL_JS % (index, LIKE), json.dumps(want)),
+                 "%s === %s" % (_X_LABEL_JS % (index, X_LIKE), json.dumps(want)),
                  10)
-    got = _label(driver, index) or before
+    got = _x_read_label(driver, index) or before
     print(("UNLIKED" if undo else "LIKED") if ok else "LIKE_FAILED",
           "| article %d: %s -> %s" % (index, before, got))
     return ok

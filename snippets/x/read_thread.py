@@ -3,8 +3,8 @@
 exec(open("snippets/x/extract_tweets.py").read())
 
 
-def read_thread(driver):
-    rows = collect_tweets(driver, n=200, max_scrolls=6)
+def x_read_thread(driver):
+    rows = x_collect_tweets(driver, n=200, max_scrolls=6)
     if not rows:
         print("NO_THREAD: not on a /status/ page? url =", driver.current_url)
     else:

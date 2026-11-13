@@ -12,7 +12,7 @@ _X_INLINE = ("[...document.querySelectorAll('" + X_BOX + "')]"
              ".find(e => !e.closest('[role=\"dialog\"]')) || null")
 
 
-def set_reply_draft(driver, text, timeout=25):
+def x_set_reply_draft(driver, text, timeout=25):
     """Replace the inline reply draft with text. Returns the draft read back from the editor."""
     wait_js(driver, "!!(" + _X_INLINE + ")", timeout)
     box = driver.execute_script("return (" + _X_INLINE + ")")

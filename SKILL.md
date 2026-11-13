@@ -10,7 +10,7 @@ Snippets are reusable Selenium blocks that take `driver` first; each site keeps 
 
 `scripts/exec.py` feeds one Python block on stdin to the live REPL in the tmux window `cowork:firefox`, where `driver` keeps its browser state from block to block. Snippets print a short labelled summary; read that instead of re-reading the page.
 
-Each file opens with one `exec(open("snippets/<site>/<file>.py").read())` line per neighbour. Everything lands in the single namespace the REPL holds, so a name two sites both want carries its site prefix — `bing_search`, `ddg_search`, `github_read_file`.
+Each file opens with one `exec(open("snippets/<site>/<file>.py").read())` line per neighbour. Everything lands in the single namespace the REPL holds, so a name two sites both want carries its site prefix.
 
 When `snippets/<site>/` has nothing that fits, feed your own block to the same REPL.
 
@@ -34,8 +34,10 @@ Read https://www.selenium.dev/llms.txt before writing a snippet, and https://age
 
 Site code and its DOM quirks go in a file under `snippets/<site>/`, beside its neighbours; shared code goes in a file under `snippets/common/`. Read a file before editing it: the comment at the top records the traps that file was written to avoid, and a blind overwrite throws those notes away.
 
+Name what you add as the library already reads: `SITE_NOUN` for a constant, `site_verb_noun(driver, ...)` for a function, a leading `_` on either while only its own file calls it. Files that hold one snippet are named after it.
+
 Save reusable snippets without being asked, but run them first; anything hard to undo takes `dry_run=True`. Format with `yapf -i`, commit as `<domain>: <verb phrase>`. Edits take effect on the next run: nothing needs reloading.
 
 ## Sourcing the answer
 
-Unsure about any fact? Run a search-engine snippet — `snippets/duckduckgo/` and `snippets/bing/` hold one each — before guessing, and read the results instead of composing an answer from recall. Cite the page each fact came from in your reply.
+Unsure about any fact? Run a search-engine snippet — `snippets/bing/` and `snippets/duckduckgo/` hold one each — before guessing, and read the results instead of composing an answer from recall. Cite the page each fact came from in your reply.

@@ -8,7 +8,7 @@ exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 
 
-def open_relnotes(driver, version='15.1', timeout=30, cache=True):
+def freebsd_open_relnotes(driver, version='15.1', timeout=30, cache=True):
     """Load one release's notes; returns the page text (cached to <tempdir>/relnotes_<v>.txt)."""
     v = version.strip().rstrip("Rr")
     url = "https://www.freebsd.org/releases/" + v + "R/relnotes/"

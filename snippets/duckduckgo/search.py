@@ -1,6 +1,6 @@
 # Class names are hashed per deploy but the hooks survive: article[data-testid=result],
 # a[data-testid=result-title-a] (the real target), [data-result=snippet]. ?s= is ignored and scrolling
-# loads nothing — paging is the "More Results" button, so ddg_search(driver, rounds=N) clicks it. Captcha pages
+# loads nothing — paging is the "More Results" button, so duckduckgo_search(driver, rounds=N) clicks it. Captcha pages
 # swap the cards for a bot check and have no articles at all. Searching navigates this session's own tab,
 # so the page the user is reading keeps its url.
 import time
@@ -10,11 +10,11 @@ exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 exec(open("snippets/common/wait_stable.py").read())
 
-DDG_BASE = "https://duckduckgo.com/?q="
+DUCKDUCKGO_BASE = "https://duckduckgo.com/?q="
 
-_DDG_COUNT_JS = "document.querySelectorAll('article[data-testid=result]').length"
+_DUCKDUCKGO_COUNT_JS = "document.querySelectorAll('article[data-testid=result]').length"
 
-DDG_EXTRACT_JS = r"""
+DUCKDUCKGO_EXTRACT_JS = r"""
 const clean = s => (s || '').replace(/\s+/g, ' ').trim();
 const DATE = /^(Today|Yesterday|\d+\s+(?:min|hour|day|week|month|year)s?\s+ago|[A-Z][a-z]{2} \d{1,2}, \d{4})$/;
 const out = [];
@@ -38,24 +38,24 @@ return out;
 """
 
 
-def ddg_goto_search(driver, query):
+def duckduckgo_goto_search(driver, query):
     """Navigate the DDG tab to the results page (opening it when the current tab is elsewhere)."""
     site_tab(driver, "duckduckgo.com")
-    driver.get(DDG_BASE + quote_plus(query) + "&ia=web")
+    driver.get(DUCKDUCKGO_BASE + quote_plus(query) + "&ia=web")
     # Cards mount in batches: trust the count only once it has stopped growing. Bot-check pages never have
     # one, so they settle nowhere and the caller's retry is what handles it.
-    wait_js_stable(driver, _DDG_COUNT_JS, 10, tick=0.4, stable_ticks=2)
+    wait_js_stable(driver, _DUCKDUCKGO_COUNT_JS, 10, tick=0.4, stable_ticks=2)
     print("SEARCH:", driver.title)
 
 
-def _organic(rows):
+def _duckduckgo_filter_organic(rows):
     return [
         r for r in rows if r["title"] and (r["url"] or "").startswith("http")
         and "duckduckgo.com" not in r["url"]
     ]
 
 
-def _grow(driver):
+def _duckduckgo_grow_results(driver):
     """Click "More Results" and wait for the appended batch of cards."""
     before = len(
         driver.find_elements("css selector", "article[data-testid=result]"))
@@ -65,20 +65,20 @@ def _grow(driver):
             "b.scrollIntoView(); b.click();"
             "return true;"):
         return False
-    return wait_js(driver, "%s > %d" % (_DDG_COUNT_JS, before), 10, tick=0.4)
+    return wait_js(driver, "%s > %d" % (_DUCKDUCKGO_COUNT_JS, before), 10, tick=0.4)
 
 
-def ddg_search(driver, query, rounds=1, tries=3):
+def duckduckgo_search(driver, query, rounds=1, tries=3):
     """Run query, return [{title, snippet, time, site, url}] (retries on bot-check pages)."""
     rows = []
     for attempt in range(tries):
-        ddg_goto_search(driver, query)
-        rows = _organic(driver.execute_script(DDG_EXTRACT_JS) or [])
+        duckduckgo_goto_search(driver, query)
+        rows = _duckduckgo_filter_organic(driver.execute_script(DUCKDUCKGO_EXTRACT_JS) or [])
         if rows:
             for _ in range(max(rounds - 1, 0)):
-                if not _grow(driver):
+                if not _duckduckgo_grow_results(driver):
                     break
-            rows = _organic(driver.execute_script(DDG_EXTRACT_JS) or [])
+            rows = _duckduckgo_filter_organic(driver.execute_script(DUCKDUCKGO_EXTRACT_JS) or [])
             return rows
         print("NO RESULTS attempt %d (url=%s)" %
               (attempt + 1, driver.current_url))
@@ -86,7 +86,7 @@ def ddg_search(driver, query, rounds=1, tries=3):
     return rows
 
 
-def ddg_print_results(rows, n=10):
+def duckduckgo_print_results(rows, n=10):
     """Print title / date / site / snippet / url for the first n rows."""
     for i, r in enumerate(rows[:n], 1):
         print("%d. %s" % (i, r["title"]))

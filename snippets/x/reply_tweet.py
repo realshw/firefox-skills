@@ -9,14 +9,14 @@ X_BOX = '[data-testid="tweetTextarea_0"]'
 X_SEND = '[data-testid="tweetButtonInline"]'
 
 
-def _inline_box(driver):
+def _x_find_inline_box(driver):
     """The composer outside any modal (None if only a modal one exists)."""
     return driver.execute_script(
         "return [...document.querySelectorAll('" + X_BOX + "')]"
         ".find(e => !e.closest('[role=\"dialog\"]')) || null")
 
 
-def reply_tweet(driver, url, text, dry_run=False):
+def x_reply_tweet(driver, url, text, dry_run=False):
     """Open `url` (a /status/ link or handle/status/id) and reply with the inline composer."""
     if not url.startswith("http"):
         url = "https://x.com/" + url.lstrip("/")
@@ -30,7 +30,7 @@ def reply_tweet(driver, url, text, dry_run=False):
             "REPLY_FAILED: inline composer never mounted (deleted post? replies limited?)"
         )
         return False
-    box = _inline_box(driver)
+    box = _x_find_inline_box(driver)
     box.click()
     box.send_keys(text)
     ready = wait_js(driver,
