@@ -7,8 +7,8 @@ import time
 exec(open("snippets/common/connect.py").read())
 
 
-def reattach():
-    """Kill stray geckodrivers, then attach and return the driver."""
+def reattach(port=2828):
+    """Kill stray geckodrivers, then attach on `port` and return the driver."""
     strays = []
     for pid in os.listdir("/proc"):
         if not pid.isdigit():
@@ -28,4 +28,4 @@ def reattach():
             except OSError:
                 pass  # already gone between scan and kill
         time.sleep(1)
-    return connect(reuse=False)
+    return connect(reuse=False, port=port)
