@@ -4,11 +4,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from snippets.cloudmusic.open_rec import open_rec
 
-_JS = 'return document.body.innerText.includes("反复聆听你最爱的歌");'
+_RADAR_JS = 'return document.body.innerText.includes("反复聆听你最爱的歌");'
 
 
 def open_radar(driver):
-    if not driver.execute_script(_JS):
+    if not driver.execute_script(_RADAR_JS):
         open_rec(driver)
         spans = [
             e for e in driver.find_elements(
@@ -22,5 +22,5 @@ def open_radar(driver):
         driver.execute_script(
             "arguments[0].click()", card
         )  # JS click: the cover <img> sits over the span and intercepts a real click
-        WebDriverWait(driver, 15).until(lambda d: d.execute_script(_JS))
+        WebDriverWait(driver, 15).until(lambda d: d.execute_script(_RADAR_JS))
     print("OPENED_RADAR")

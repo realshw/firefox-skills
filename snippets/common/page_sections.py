@@ -73,7 +73,7 @@ def section(driver, name, limit=2000, show=True):
     return body
 
 
-def find(driver, term, context=200, limit=12, pattern=None, text=None):
+def sections_find(driver, term, context=200, limit=12, pattern=None, text=None):
     """Print the snippets around each hit of term; pattern, if given, replaces term as the regex, and
     text, if given, replaces the page read (callers that already hold the settled text pass it)."""
     t = page_text(driver) if text is None else text

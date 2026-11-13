@@ -25,7 +25,7 @@ return rows.map(r => {
 """
 
 
-def goto_search(driver, query, kind='repositories', timeout=45):
+def github_goto_search(driver, query, kind='repositories', timeout=45):
     """Load a search results page and wait for the result list to mount. Returns the url."""
     if kind not in _KINDS:
         raise ValueError("kind must be one of " + ", ".join(_KINDS))
@@ -45,9 +45,9 @@ def _abs(href):
     return href if href.startswith('http') else "https://github.com" + href
 
 
-def search(driver, query, kind='repositories', limit=10, timeout=45):
+def github_search(driver, query, kind='repositories', limit=10, timeout=45):
     """Print and return [{title, url, extra}] for a GitHub search; kind see _KINDS."""
-    goto_search(driver, query, kind, timeout=timeout)
+    github_goto_search(driver, query, kind, timeout=timeout)
     rows = driver.execute_script(_ROWS_JS)
     out, seen = [], set()
     for r in rows or []:

@@ -4,7 +4,7 @@
 # count only outside that box. /notifications has no articles; promoted rows need a handle filter.
 import time
 
-EXTRACT_JS = r"""
+X_EXTRACT_JS = r"""
 const clean = s => (s || '').replace(/\s+/g, ' ').trim();
 const KEY = {reply: 'replies', replies: 'replies', repost: 'reposts', reposts: 'reposts',
              quote: 'quotes', quotes: 'quotes', like: 'likes', likes: 'likes',
@@ -69,7 +69,7 @@ def read_tweets(driver, limit=100):
     `url` is site-relative (prefix https://x.com). `stats` holds the exact aria-label numbers, not
     the rounded "1.4K" on screen; 0 means the field was missing, which on X means "none yet".
     """
-    return (driver.execute_script(EXTRACT_JS) or [])[:limit]
+    return (driver.execute_script(X_EXTRACT_JS) or [])[:limit]
 
 
 def collect_tweets(driver, n=30, max_scrolls=20, pause=2.5):

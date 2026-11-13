@@ -7,13 +7,13 @@ from snippets.common.site_tab import site_tab
 from snippets.github.file import _read_in_tab
 from snippets.github.issues import thread
 
-_NUM = re.compile(r"/pull/(\d+)")
+_PULL_NUM = re.compile(r"/pull/(\d+)")
 
 
 def _pr_url(url_or_num, slug):
     if str(url_or_num).startswith('http'):
         return url_or_num
-    m = _NUM.search(str(url_or_num))
+    m = _PULL_NUM.search(str(url_or_num))
     num = m.group(1) if m else str(url_or_num)
     if not slug:
         raise ValueError("read_pull(driver, num) needs slug='owner/repo'")

@@ -6,7 +6,7 @@ import time
 from snippets.common.wait_js import wait_js
 
 
-def _icon(driver):
+def _TOGGLE_ICON(driver):
     els = [
         e for e in driver.find_elements(
             "css selector",
@@ -17,7 +17,7 @@ def _icon(driver):
 
 
 def toggle_play(driver):
-    before = _icon(driver)
+    before = _TOGGLE_ICON(driver)
     if before is None:
         raise RuntimeError("play/pause control not found in mini bar")
     before_label = before.get_attribute("aria-label")
@@ -31,6 +31,6 @@ def toggle_play(driver):
         want,
         5,
         tick=0.3)
-    after = _icon(driver)
+    after = _TOGGLE_ICON(driver)
     print("TOGGLED:", before_label, "->",
           after.get_attribute("aria-label") if after else "MISSING")

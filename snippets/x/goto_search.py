@@ -8,7 +8,7 @@ from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 
-def goto_search(driver, query, latest=True, timeout=25):
+def x_goto_search(driver, query, latest=True, timeout=25):
     """Navigate the x.com tab to the search results; return the number of tweets mounted."""
     site_tab(driver, "//x.com/")
     driver.get("https://x.com/search?q=" + quote(query) +

@@ -14,10 +14,10 @@ from urllib.parse import quote_plus
 from snippets.common.site_tab import site_tab
 from snippets.common.wait_stable import wait_js_stable
 
-BASE = "https://cn.bing.com/search?q="
+BING_BASE = "https://cn.bing.com/search?q="
 EDITIONS = {"cn": 0, "int": 1}
 
-_COUNT_JS = "document.querySelectorAll('#b_results > li.b_algo').length"
+_BING_COUNT_JS = "document.querySelectorAll('#b_results > li.b_algo').length"
 
 # est_cn/est_en carry est_selected on the edition that is live; empty when the SERP has no switch (bot page).
 _EDITION_JS = (
@@ -28,7 +28,7 @@ _EDITION_JS = (
 
 _PAGE_JS = "(document.querySelector('.sb_pagS')||{}).textContent || ''"
 
-EXTRACT_JS = r"""
+BING_EXTRACT_JS = r"""
 const clean = s => (s || '').replace(/\s+/g, ' ').trim();
 const DATE = new RegExp('^(?:\\d+\\s+(?:min|hour|day|week|month|year)s?\\s+ago'
   + '|[A-Z][a-z]{2}\\s+\\d{1,2},\\s+\\d{4}|\\d{4}年\\d{1,2}月\\d{1,2}日'
@@ -57,7 +57,7 @@ return out;
 def _url(query, edition, page):
     # The param on every request, not only for 国际版: a bare url leaves whatever the cookie already says,
     # so asking for 国内版 after a 国际版 call would come back 国际版 again.
-    url = BASE + quote_plus(query) + "&ensearch=%d" % EDITIONS[edition]
+    url = BING_BASE + quote_plus(query) + "&ensearch=%d" % EDITIONS[edition]
     if page > 1:
         url += "&first=%d" % ((page - 1) * 10 + 1)
     return url
@@ -73,42 +73,42 @@ def _set_edition(driver, edition):
     })
 
 
-def goto_search(driver, query, edition="cn", page=1, timeout=20):
+def bing_goto_search(driver, query, edition="cn", page=1, timeout=20):
     """Load one results page in the requested edition, and say which edition and page Bing actually served."""
     if edition not in EDITIONS:
         raise ValueError("edition is 'cn' or 'int', not %r" % (edition, ))
     site_tab(driver, "bing.com")
     driver.get(_url(query, edition, page))
     # Cards mount in batches and page 2 holds fewer of them, so trust the count only once it stops moving.
-    wait_js_stable(driver, _COUNT_JS, timeout, tick=0.5, stable_ticks=2)
+    wait_js_stable(driver, _BING_COUNT_JS, timeout, tick=0.5, stable_ticks=2)
     served = driver.execute_script("return %s;" % _EDITION_JS)
     if served and served != edition:
         print("EDITION: asked for %s, page says %s - re-pinning the cookie" %
               (edition, served))
         _set_edition(driver, edition)
         driver.get(_url(query, edition, page))
-        wait_js_stable(driver, _COUNT_JS, timeout, tick=0.5, stable_ticks=2)
+        wait_js_stable(driver, _BING_COUNT_JS, timeout, tick=0.5, stable_ticks=2)
         served = driver.execute_script("return %s;" % _EDITION_JS) or served
     mark = driver.execute_script("return %s;" % _PAGE_JS) or "?"
     print("SEARCH: %s | edition=%s | page=%s of %d results" %
           (driver.title, served
-           or "?", mark, driver.execute_script("return %s;" % _COUNT_JS)))
+           or "?", mark, driver.execute_script("return %s;" % _BING_COUNT_JS)))
     return mark
 
 
 def read_results(driver):
     """The organic cards on the current SERP as [{title, snippet, date, site, cite, url}]."""
-    rows = driver.execute_script(EXTRACT_JS) or []
+    rows = driver.execute_script(BING_EXTRACT_JS) or []
     return [
         r for r in rows if r["title"] and (r["url"] or "").startswith("http")
     ]
 
 
-def search(driver, query, edition="cn", pages=1, tries=3):
+def bing_search(driver, query, edition="cn", pages=1, tries=3):
     """Run query on 国内版 ("cn") or 国际版 ("int"), return the rows of pages 1..pages, deduped by url."""
     rows = []
     for attempt in range(tries):
-        mark = goto_search(driver, query, edition)
+        mark = bing_goto_search(driver, query, edition)
         rows = read_results(driver)
         if not rows:
             print("NO RESULTS attempt %d (url=%s)" %
@@ -123,7 +123,7 @@ def search(driver, query, edition="cn", pages=1, tries=3):
                   mark)
             last = 1
         for page in range(2, last + 1):
-            served = goto_search(driver, query, edition, page)
+            served = bing_goto_search(driver, query, edition, page)
             if served != str(page) and served != "?":
                 print(
                     "PAGE: asked for page %d, bing served page %s - stopping" %
@@ -143,7 +143,7 @@ def search(driver, query, edition="cn", pages=1, tries=3):
     return rows
 
 
-def print_results(rows, n=10):
+def bing_print_results(rows, n=10):
     """Print title / date / site / snippet / url for the first n rows."""
     for i, r in enumerate(rows[:n], 1):
         print("%d. %s" % (i, r["title"]))

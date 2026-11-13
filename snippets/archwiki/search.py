@@ -6,7 +6,7 @@ from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 
-def search(driver, query, limit=10, timeout=30):
+def archwiki_search(driver, query, limit=10, timeout=30):
     """Print and return [{title, url, snippet}] for an ArchWiki full-text search."""
     site_tab(driver, "//wiki.archlinux.org/")
     driver.get("https://wiki.archlinux.org/index.php?search=" + quote(query) +

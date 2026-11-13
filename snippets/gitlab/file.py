@@ -11,13 +11,13 @@ from snippets.common.wait_js import wait_js
 BOT = "not a bot"
 
 
-def raw_url(project, path, ref="main", host="gitlab.archlinux.org"):
+def gitlab_raw_url(project, path, ref="main", host="gitlab.archlinux.org"):
     """https://<host>/<group>/<project>/-/raw/<ref>/<path> — the only form that serves text/plain."""
     return "https://%s/%s/-/raw/%s/%s" % (host, project.strip("/"), ref,
                                           path.lstrip("/"))
 
 
-def _settle(driver, timeout=90):
+def _GITLAB_SETTLE(driver, timeout=90):
     """True once the Anubis interstitial is gone and the document has finished loading."""
     return wait_js(
         driver,
@@ -27,7 +27,7 @@ def _settle(driver, timeout=90):
         tick=1)
 
 
-def read_file(driver,
+def gitlab_read_file(driver,
               project,
               path,
               ref="main",
@@ -35,13 +35,13 @@ def read_file(driver,
               host="gitlab.archlinux.org",
               preview=0):
     """Load one repo file in a tab; return its text, optionally writing it to out_path."""
-    url = raw_url(project, path, ref, host)
+    url = gitlab_raw_url(project, path, ref, host)
     site_tab(driver, host)
     try:
         driver.get(url)
     except TimeoutException:
         pass  # the challenge keeps the load open; _settle is what decides
-    if not _settle(driver):
+    if not _GITLAB_SETTLE(driver):
         print("NO_FILE:", url, "-> still on the challenge page")
         return ""
     body = driver.find_element("tag name", "body")

@@ -23,7 +23,7 @@ fetch(url, {method: 'POST', credentials: 'include',
   .then(r => r.json()).then(j => cb(JSON.stringify(j))).catch(e => cb('ERR:' + e));
 """
 
-BASE = 'https://api.bilibili.com'
+BILI_BASE = 'https://api.bilibili.com'
 PAGE_SLEEP = 0.6
 
 
@@ -44,7 +44,7 @@ def csrf(driver):
 
 def fav_get(driver, path, **params):
     """GET an api.bilibili.com path as the logged-in user; params go into the query string."""
-    url = BASE + path
+    url = BILI_BASE + path
     if params:
         url += '?' + '&'.join('%s=%s' % (k, v) for k, v in params.items())
     return _reply(driver.execute_async_script(GET_JS, url), path)
@@ -54,7 +54,7 @@ def fav_post(driver, path, params):
     """POST a form body to api.bilibili.com, with csrf filled in from the cookie."""
     params = dict(params)
     params['csrf'] = csrf(driver)
-    return _reply(driver.execute_async_script(POST_JS, BASE + path, params), path)
+    return _reply(driver.execute_async_script(POST_JS, BILI_BASE + path, params), path)
 
 
 def fav_folders(driver):

@@ -3,7 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
 
-def send_message(driver):
+def grok_send_message(driver):
     btns = []
     for b in driver.find_elements("css selector", "button"):
         try:

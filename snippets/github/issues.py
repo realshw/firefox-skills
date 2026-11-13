@@ -44,14 +44,14 @@ def _issue_url(url_or_num, slug=None):
     """Full issue URL: a URL passes through as given, a bare number needs slug='owner/repo'."""
     if str(url_or_num).startswith('http'):
         return url_or_num
-    m = _NUM.search(str(url_or_num))
+    m = _ISSUES_NUM.search(str(url_or_num))
     num = m.group(1) if m else str(url_or_num)
     if not slug:
         raise ValueError("an issue number needs slug='owner/repo'")
     return "https://github.com/" + slug.strip("/") + "/issues/" + num
 
 
-_NUM = re.compile(r"/issues/(\d+)")
+_ISSUES_NUM = re.compile(r"/issues/(\d+)")
 
 _THREAD_JS = """
 const txt = s => { const e = document.querySelector(s); return e ? e.innerText.trim() : ''; };
@@ -136,7 +136,7 @@ def read_issue(driver,
     """Load an issue (full url, or a number when slug is given); print and return it as a dict."""
     url = url_or_num
     if not str(url_or_num).startswith('http'):
-        m = _NUM.search(str(url_or_num))
+        m = _ISSUES_NUM.search(str(url_or_num))
         num = m.group(1) if m else str(url_or_num)
         if not slug:
             raise ValueError("read_issue(driver, num) needs slug='owner/repo'")

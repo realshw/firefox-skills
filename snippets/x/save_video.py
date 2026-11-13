@@ -100,7 +100,7 @@ def _syndication(driver, tid, timeout=25):
             driver.switch_to.window(current)
 
 
-def video_info(driver, index=0, tid=None):
+def x_video_info(driver, index=0, tid=None):
     """{tid, duration_ms, poster, variants: [{type, bitrate, url}]} or None if the post has no video.
 
     `tid` skips the DOM read entirely — a timeline/search result row's status id is enough.
@@ -249,7 +249,7 @@ def save_video(driver,
     except Exception:
         pass
     out_dir = out_dir or os.path.join(tempfile.gettempdir(), "x_video")
-    vi = video_info(driver, index)
+    vi = x_video_info(driver, index)
     if not vi:
         print(
             "NO_VIDEO: article %d carries no video (photo-only, or the media is in a quoted post)"

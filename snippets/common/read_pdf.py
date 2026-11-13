@@ -7,7 +7,7 @@ import time
 
 PDF_TEXT = os.path.join(tempfile.gettempdir(), 'pdf_text.txt')
 
-_JS = """
+_PDF_JS = """
 const cb = arguments[arguments.length - 1];
 const want = arguments[0];
 (async () => {
@@ -54,7 +54,7 @@ def read_pdf(driver, pages=None, out_path=PDF_TEXT, script_timeout=300):
     want = list(pages) if pages else list(range(1, info['pages'] + 1))
     driver.set_script_timeout(script_timeout)
     try:
-        res = driver.execute_async_script(_JS, want)
+        res = driver.execute_async_script(_PDF_JS, want)
     finally:
         driver.set_script_timeout(20)
     if res.get('error'):
@@ -71,7 +71,7 @@ def read_pdf(driver, pages=None, out_path=PDF_TEXT, script_timeout=300):
     return text
 
 
-def find(driver, term, context=160, limit=10, path=PDF_TEXT):
+def pdf_find(driver, term, context=160, limit=10, path=PDF_TEXT):
     """Grep the saved PDF text (run read_pdf first); prints each hit with context."""
     import re
     try:

@@ -31,13 +31,13 @@ def open_video(driver, url_or_id, timeout=30):
         timeout,
         tick=0.8)
     wait_js(driver, "!!document.querySelector('ytd-watch-metadata')", timeout)
-    info = video_info(driver)
+    info = youtube_video_info(driver)
     print("YOUTUBE:", info["title"][:80], "|", info["author"], "|",
           info["length"], "s |", info["id"])
     return info
 
 
-def video_info(driver):
+def youtube_video_info(driver):
     """Current watch page as a dict: id / title / author / length / views / publish / description."""
     js = """
     var r = window.ytInitialPlayerResponse; if (!r || !r.videoDetails) return null;

@@ -13,7 +13,7 @@ _CLOCK_JS = (
     " return t.length ? t[0] : null;})()")
 
 
-def _icon(driver):
+def _PLAY_ICON(driver):
     els = [
         e for e in driver.find_elements(
             "css selector",
@@ -44,11 +44,11 @@ def play_all(driver):
         "css selector", "footer span[aria-label=pause]"))
     first = _clock(driver)
     if not _clock_moves(driver, first):
-        icon = _icon(driver)
+        icon = _PLAY_ICON(driver)
         if icon is not None and icon.get_attribute("aria-label") == "play":
             icon.click()
             _clock_moves(driver, first)
     print(
         "PLAY_ALL_CLICKED", "clock=" + str(first),
-        "icon=" + (_icon(driver).get_attribute("aria-label")
-                   if _icon(driver) else "MISSING"))
+        "icon=" + (_PLAY_ICON(driver).get_attribute("aria-label")
+                   if _PLAY_ICON(driver) else "MISSING"))

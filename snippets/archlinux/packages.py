@@ -8,7 +8,7 @@ from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
 
-def search(driver, query, limit=10, timeout=30):
+def archlinux_search(driver, query, limit=10, timeout=30):
     """Print and return [{repo, arch, name, version, desc, updated, url}]."""
     site_tab(driver, "//archlinux.org/")
     driver.get("https://archlinux.org/packages/?q=" + query.replace(" ", "+"))

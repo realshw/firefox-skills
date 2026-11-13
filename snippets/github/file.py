@@ -36,16 +36,16 @@ def _read_in_tab(driver, url, settle=1.2, timeout=30):
             pass  # the session itself is gone; nothing left to switch to
 
 
-def raw_url(slug, path, ref='HEAD'):
+def github_raw_url(slug, path, ref='HEAD'):
     """https://github.com/<slug>/raw/<ref>/<path> — the redirecting form is the one that works."""
     return "https://github.com/" + slug.strip(
         "/") + "/raw/" + ref + "/" + path.lstrip("/")
 
 
-def _fetch(driver, slug, path, ref):
+def _GITHUB_FETCH(driver, slug, path, ref):
     """(text, content_type) for one file; GitHub answers a wrong path with an html 404 page, which is a
     successful read of the wrong thing — say so instead of handing back the page as the file."""
-    text, ctype = _read_in_tab(driver, raw_url(slug, path, ref))
+    text, ctype = _read_in_tab(driver, github_raw_url(slug, path, ref))
     if ctype and not ctype.startswith('text/plain'):
         print("NO_FILE:",
               slug.strip('/') + "/" + path + " @" + ref, "->", ctype,
@@ -56,7 +56,7 @@ def _fetch(driver, slug, path, ref):
 
 def save_file(driver, slug, path, ref='HEAD', out_path=None):
     """Download one file's text to out_path (default: the system temp dir); return the text."""
-    text, ctype = _fetch(driver, slug, path, ref)
+    text, ctype = _GITHUB_FETCH(driver, slug, path, ref)
     if not text:
         print("SAVE_FAILED: nothing to write")
         return ''
@@ -70,9 +70,9 @@ def save_file(driver, slug, path, ref='HEAD', out_path=None):
     return text
 
 
-def read_file(driver, slug, path, ref='HEAD', preview=0):
+def github_read_file(driver, slug, path, ref='HEAD', preview=0):
     """Return a file's text and print its exact length; preview > 0 prints that many chars."""
-    text, ctype = _fetch(driver, slug, path, ref)
+    text, ctype = _GITHUB_FETCH(driver, slug, path, ref)
     print("FILE:",
           slug.strip('/') + "/" + path + " @" + ref, "->", len(text), "chars",
           "(" + (ctype or '?') + ")")

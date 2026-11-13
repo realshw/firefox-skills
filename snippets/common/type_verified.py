@@ -130,7 +130,7 @@ def _paste(driver, text):
     return True
 
 
-def _settle(el, target, timeout=2.0, tick=0.1):
+def _VERIFIED_SETTLE(el, target, timeout=2.0, tick=0.1):
     """Pasting fires before the editor writes the text: poll instead of reading on the next line."""
     t0 = time.time()
     typed = _read(el)
@@ -153,7 +153,7 @@ def type_verified(driver,
     target = _norm(msg)
     if len(target) >= paste_over and _focus(driver, el) and _paste(
             driver, target):
-        typed = _settle(el, target)
+        typed = _VERIFIED_SETTLE(el, target)
         print("SETTLE: read back %d/%d chars" % (len(typed), len(target)))
     for attempt in range(tries):
         typed = _read(el)

@@ -3,33 +3,33 @@
 # Confirmation is "the editor emptied"; the toast is reported, never required.
 from snippets.common.wait_js import wait_js
 
-BOX = '[data-testid="tweetTextarea_0"]'
-SEND = '[data-testid="tweetButtonInline"]'
+X_BOX = '[data-testid="tweetTextarea_0"]'
+X_SEND = '[data-testid="tweetButtonInline"]'
 
-_INLINE = ("[...document.querySelectorAll('" + BOX + "')]"
-           ".find(e => !e.closest('[role=\"dialog\"]')) || null")
+_X_INLINE = ("[...document.querySelectorAll('" + X_BOX + "')]"
+             ".find(e => !e.closest('[role=\"dialog\"]')) || null")
 
 
 def send_reply_draft(driver, timeout=30):
     """Click Reply on the current inline draft; True once the composer is empty again."""
-    box = driver.execute_script("return (" + _INLINE + ")")
+    box = driver.execute_script("return (" + _X_INLINE + ")")
     if not box:
         print("NO_COMPOSER: no inline reply box on this page")
         return False
-    before = driver.execute_script("return (" + _INLINE +
+    before = driver.execute_script("return (" + _X_INLINE +
                                    ").innerText").strip()
     if not before:
         print("EMPTY: nothing typed, not clicking Reply")
         return False
     if not wait_js(
-            driver, "!!document.querySelector('" + SEND + "')"
-            " && document.querySelector('" + SEND +
+            driver, "!!document.querySelector('" + X_SEND + "')"
+            " && document.querySelector('" + X_SEND +
             "').getAttribute('aria-disabled') !== 'true'", 15):
         print("NOT_SENT: Reply button never enabled")
         return False
-    driver.find_element("css selector", SEND).click()
+    driver.find_element("css selector", X_SEND).click()
     ok = wait_js(
-        driver, "!(function(){var e=" + _INLINE +
+        driver, "!(function(){var e=" + _X_INLINE +
         "; return e && e.innerText.trim()})()", timeout)
     toast = driver.execute_script(
         "const t = document.querySelector('[data-testid=\"toast\"]'); return t ? t.innerText.trim() : ''"

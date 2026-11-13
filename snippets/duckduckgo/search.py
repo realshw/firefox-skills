@@ -10,11 +10,11 @@ from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 from snippets.common.wait_stable import wait_js_stable
 
-BASE = "https://duckduckgo.com/?q="
+DDG_BASE = "https://duckduckgo.com/?q="
 
-_COUNT_JS = "document.querySelectorAll('article[data-testid=result]').length"
+_DDG_COUNT_JS = "document.querySelectorAll('article[data-testid=result]').length"
 
-EXTRACT_JS = r"""
+DDG_EXTRACT_JS = r"""
 const clean = s => (s || '').replace(/\s+/g, ' ').trim();
 const DATE = /^(Today|Yesterday|\d+\s+(?:min|hour|day|week|month|year)s?\s+ago|[A-Z][a-z]{2} \d{1,2}, \d{4})$/;
 const out = [];
@@ -38,13 +38,13 @@ return out;
 """
 
 
-def goto_search(driver, query):
+def ddg_goto_search(driver, query):
     """Navigate the DDG tab to the results page (opening it when the current tab is elsewhere)."""
     site_tab(driver, "duckduckgo.com")
-    driver.get(BASE + quote_plus(query) + "&ia=web")
+    driver.get(DDG_BASE + quote_plus(query) + "&ia=web")
     # Cards mount in batches: trust the count only once it has stopped growing. Bot-check pages never have
     # one, so they settle nowhere and the caller's retry is what handles it.
-    wait_js_stable(driver, _COUNT_JS, 10, tick=0.4, stable_ticks=2)
+    wait_js_stable(driver, _DDG_COUNT_JS, 10, tick=0.4, stable_ticks=2)
     print("SEARCH:", driver.title)
 
 
@@ -65,20 +65,20 @@ def _grow(driver):
             "b.scrollIntoView(); b.click();"
             "return true;"):
         return False
-    return wait_js(driver, "%s > %d" % (_COUNT_JS, before), 10, tick=0.4)
+    return wait_js(driver, "%s > %d" % (_DDG_COUNT_JS, before), 10, tick=0.4)
 
 
-def search(driver, query, rounds=1, tries=3):
+def ddg_search(driver, query, rounds=1, tries=3):
     """Run query, return [{title, snippet, time, site, url}] (retries on bot-check pages)."""
     rows = []
     for attempt in range(tries):
-        goto_search(driver, query)
-        rows = _organic(driver.execute_script(EXTRACT_JS) or [])
+        ddg_goto_search(driver, query)
+        rows = _organic(driver.execute_script(DDG_EXTRACT_JS) or [])
         if rows:
             for _ in range(max(rounds - 1, 0)):
                 if not _grow(driver):
                     break
-            rows = _organic(driver.execute_script(EXTRACT_JS) or [])
+            rows = _organic(driver.execute_script(DDG_EXTRACT_JS) or [])
             return rows
         print("NO RESULTS attempt %d (url=%s)" %
               (attempt + 1, driver.current_url))
@@ -86,7 +86,7 @@ def search(driver, query, rounds=1, tries=3):
     return rows
 
 
-def print_results(rows, n=10):
+def ddg_print_results(rows, n=10):
     """Print title / date / site / snippet / url for the first n rows."""
     for i, r in enumerate(rows[:n], 1):
         print("%d. %s" % (i, r["title"]))

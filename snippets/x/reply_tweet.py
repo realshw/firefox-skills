@@ -5,14 +5,14 @@ from selenium.webdriver.common.keys import Keys
 from snippets.common.site_tab import site_tab
 from snippets.common.wait_js import wait_js
 
-BOX = '[data-testid="tweetTextarea_0"]'
-SEND = '[data-testid="tweetButtonInline"]'
+X_BOX = '[data-testid="tweetTextarea_0"]'
+X_SEND = '[data-testid="tweetButtonInline"]'
 
 
 def _inline_box(driver):
     """The composer outside any modal (None if only a modal one exists)."""
     return driver.execute_script(
-        "return [...document.querySelectorAll('" + BOX + "')]"
+        "return [...document.querySelectorAll('" + X_BOX + "')]"
         ".find(e => !e.closest('[role=\"dialog\"]')) || null")
 
 
@@ -24,7 +24,7 @@ def reply_tweet(driver, url, text, dry_run=False):
     driver.get(url)
     if not wait_js(
             driver, "!!(function(){return [...document.querySelectorAll('" +
-            BOX + "')]"
+            X_BOX + "')]"
             ".find(e => !e.closest('[role=\"dialog\"]'))})()"):
         print(
             "REPLY_FAILED: inline composer never mounted (deleted post? replies limited?)"
@@ -34,8 +34,8 @@ def reply_tweet(driver, url, text, dry_run=False):
     box.click()
     box.send_keys(text)
     ready = wait_js(driver,
-                    "!!document.querySelector('" + SEND +
-                    "') && document.querySelector('" + SEND +
+                    "!!document.querySelector('" + X_SEND +
+                    "') && document.querySelector('" + X_SEND +
                     "').getAttribute('aria-disabled') !== 'true'",
                     timeout=15)
     print("TYPED: %d chars | READY: %s" % (len(box.text), ready))
@@ -44,16 +44,16 @@ def reply_tweet(driver, url, text, dry_run=False):
         box.send_keys(Keys.DELETE)
         cleared = wait_js(
             driver,
-            "!(function(){var e=[...document.querySelectorAll('" + BOX + "')]"
+            "!(function(){var e=[...document.querySelectorAll('" + X_BOX + "')]"
             ".find(x => !x.closest('[role=\"dialog\"]'));return e && e.innerText.trim()})()",
             timeout=5)
         print("DRY_RUN: cleared=%s - no reply sent" %
               cleared if dry_run else "NOT_SENT: Reply button never enabled")
         return False
-    driver.find_element("css selector", SEND).click()
+    driver.find_element("css selector", X_SEND).click()
     ok = wait_js(
         driver,
-        "!(function(){var e=[...document.querySelectorAll('" + BOX + "')]"
+        "!(function(){var e=[...document.querySelectorAll('" + X_BOX + "')]"
         ".find(x => !x.closest('[role=\"dialog\"]'));return e && e.innerText.trim()})()",
         timeout=30)
     print("REPLIED:" if ok else "REPLY_UNCONFIRMED:", ok, "|",
