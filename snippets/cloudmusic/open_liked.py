@@ -5,19 +5,15 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 
 def _cloudmusic_check_toolbar(driver):
-    return bool(
-        driver.execute_script(
-            "return document.body.innerText.includes('播放全部')"))
+    return bool(driver.execute_script("return document.body.innerText.includes('播放全部')"))
 
 
 def _cloudmusic_check_on_liked(driver):
     # the playlist page's header h2 — other pages have their own h2 (visible = non-zero rect)
     return bool(
-        driver.execute_script(
-            "return [...document.querySelectorAll('h2')].some(h => {"
-            "const r = h.getBoundingClientRect();"
-            "return r.width > 0 && r.height > 0 && (h.innerText || '').includes('我喜欢的音乐');})"
-        ))
+        driver.execute_script("return [...document.querySelectorAll('h2')].some(h => {"
+                              "const r = h.getBoundingClientRect();"
+                              "return r.width > 0 && r.height > 0 && (h.innerText || '').includes('我喜欢的音乐');})"))
 
 
 def cloudmusic_open_liked(driver):
@@ -28,8 +24,7 @@ def cloudmusic_open_liked(driver):
         if not _cloudmusic_check_on_liked(driver):
             try:
                 els = [
-                    e for e in driver.find_elements(
-                        "xpath", '//*[contains(text(), "我喜欢的音乐")]')
+                    e for e in driver.find_elements("xpath", '//*[contains(text(), "我喜欢的音乐")]')
                     if e.is_displayed() and e.location["x"] < 240
                 ]
                 if els:

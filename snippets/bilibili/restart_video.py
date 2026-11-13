@@ -21,5 +21,4 @@ def bilibili_restart_video(driver):
         driver.find_element('css selector', '.bpx-player-ctrl-play').click()
 
     ok = wait_js(driver, BILIBILI_MOVING_JS, 30, tick=2.0)
-    print('RESTARTED' if ok else 'FAILED',
-          json.dumps(driver.execute_script(js)))
+    print('RESTARTED' if ok else 'FAILED', json.dumps(driver.execute_script(js)))

@@ -6,6 +6,7 @@ import json
 import os
 import tempfile
 import time
+
 exec(open("snippets/common/wait_js.py").read())
 exec(open("snippets/common/wait_stable.py").read())
 
@@ -40,12 +41,10 @@ def deepseek_read_reply(driver, since=0.0):
         prev = driver.execute_script(DEEPSEEK_JS_TEXT)
         if prev:
             DEEPSEEK_JS_TEXT = DEEPSEEK_JS_TEXT.replace(
-                "if (ok.length === 0) return '';",
-                "if (ok.length === 0) return '';\n"
-                "if (Date.now() < %d && ok[ok.length - 1].innerText === %s) return '';"
-                % (int((since + 5) * 1000), json.dumps(prev)))
-            print("VETO: previous reply ignored for %ds after send" %
-                  max(0, round(since + 5 - time.time())))
+                "if (ok.length === 0) return '';", "if (ok.length === 0) return '';\n"
+                "if (Date.now() < %d && ok[ok.length - 1].innerText === %s) return '';" % (int(
+                    (since + 5) * 1000), json.dumps(prev)))
+            print("VETO: previous reply ignored for %ds after send" % max(0, round(since + 5 - time.time())))
     print("NUM_RESPONSES:", driver.execute_script(DEEPSEEK_JS_COUNT))
 
     if not driver.execute_script(DEEPSEEK_JS_DONE):
@@ -69,9 +68,7 @@ def deepseek_read_reply(driver, since=0.0):
                                 label="REPLY",
                                 js_done=DEEPSEEK_JS_DONE)
     else:
-        print(
-            "REPLY nothing to read (no reply appeared in %ds) - skipping stability wait"
-            % grace)
+        print("REPLY nothing to read (no reply appeared in %ds) - skipping stability wait" % grace)
         text = ""
     if text:
         open(DEEPSEEK_REPLY_PATH, 'w', encoding='utf-8').write(text)

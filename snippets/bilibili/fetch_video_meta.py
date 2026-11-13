@@ -12,19 +12,16 @@ def bilibili_fetch_video_meta(driver, vids, out_path=None):
     for i, m in enumerate(vids):
         aid = m['avid']
         if not m.get('bvid'):
-            m['bvid'] = (bilibili_get_api(driver, '/x/web-interface/view',
-                                 aid=aid).get('data') or {}).get('bvid') or ''
+            m['bvid'] = (bilibili_get_api(driver, '/x/web-interface/view', aid=aid).get('data') or {}).get('bvid') or ''
             time.sleep(0.4)
         d = bilibili_get_api(driver, '/x/web-interface/view', aid=aid).get('data') or {}
         m['tname'] = d.get('tname')
         m['desc'] = (d.get('desc') or '')[:150]
         tags = []
         if m['bvid']:
-            tags = (bilibili_get_api(driver, '/x/tag/archive/tags',
-                            bvid=m['bvid']).get('data') or [])
+            tags = (bilibili_get_api(driver, '/x/tag/archive/tags', bvid=m['bvid']).get('data') or [])
         m['tags'] = [t['tag_name'] for t in tags][:8]
-        print('meta %d/%d' % (i + 1, len(vids)), m['bvid'], '|',
-              ','.join(m['tags'][:6]))
+        print('meta %d/%d' % (i + 1, len(vids)), m['bvid'], '|', ','.join(m['tags'][:6]))
         time.sleep(0.5)
     if out_path:
         json.dump(vids, open(out_path, 'w'), ensure_ascii=False, indent=1)

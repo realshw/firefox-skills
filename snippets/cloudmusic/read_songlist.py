@@ -8,9 +8,8 @@ from selenium.webdriver.common.by import By
 
 exec(open("snippets/common/wait_js.py").read())
 
-_CLOUDMUSIC_FIRST_NUM_JS = (
-    "(function(){const s = document.querySelector('div.tr div.td-num span');"
-    "return s ? (s.textContent || '').trim() : '';})()")
+_CLOUDMUSIC_FIRST_NUM_JS = ("(function(){const s = document.querySelector('div.tr div.td-num span');"
+                            "return s ? (s.textContent || '').trim() : '';})()")
 
 
 def _cloudmusic_read_first_num(driver):
@@ -20,10 +19,7 @@ def _cloudmusic_read_first_num(driver):
 
 def _cloudmusic_count_window_slides(driver, before, timeout=2.5):
     """True once a different row has mounted on top; False when the list did not move at all."""
-    return wait_js(driver,
-                   "%s !== %s" % (_CLOUDMUSIC_FIRST_NUM_JS, json.dumps(before)),
-                   timeout,
-                   tick=0.2)
+    return wait_js(driver, "%s !== %s" % (_CLOUDMUSIC_FIRST_NUM_JS, json.dumps(before)), timeout, tick=0.2)
 
 
 def _cloudmusic_collect_rows(driver, rows):
@@ -39,20 +35,12 @@ def _cloudmusic_collect_rows(driver, rows):
         dur = r.find_elements(By.CSS_SELECTOR, "div.td-duration")
         artists = r.find_elements(By.CSS_SELECTOR, "h5.artists")
         rows[int(num)] = {
-            "num":
-            int(num),
-            "title":
-            title_els[0].text,
-            "artists":
-            artists[0].text if artists else "",
-            "album":
-            album[0].text if album else "",
-            "duration":
-            dur[0].text if dur else "",
-            "playing":
-            bool(
-                r.find_elements(By.CSS_SELECTOR,
-                                "div.td-num div.play.playing")),
+            "num": int(num),
+            "title": title_els[0].text,
+            "artists": artists[0].text if artists else "",
+            "album": album[0].text if album else "",
+            "duration": dur[0].text if dur else "",
+            "playing": bool(r.find_elements(By.CSS_SELECTOR, "div.td-num div.play.playing")),
         }
 
 
@@ -103,6 +91,4 @@ def cloudmusic_read_songlist(driver):
     print(f"SONGLIST: {len(rows)} songs")
     for r in rows:
         mark = "▶" if r["playing"] else " "
-        print(
-            f"{mark} {r['num']:02d}. {r['title']} — {r['artists']}  [{r['duration']}]"
-        )
+        print(f"{mark} {r['num']:02d}. {r['title']} — {r['artists']}  [{r['duration']}]")

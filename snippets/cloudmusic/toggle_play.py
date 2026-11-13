@@ -8,9 +8,7 @@ exec(open("snippets/common/wait_js.py").read())
 
 def _cloudmusic_find_toggle_icon(driver):
     els = [
-        e for e in driver.find_elements(
-            "css selector",
-            "footer span[aria-label=pause], footer span[aria-label=play]")
+        e for e in driver.find_elements("css selector", "footer span[aria-label=pause], footer span[aria-label=play]")
         if e.is_displayed()
     ]
     return els[0] if els else None
@@ -24,13 +22,10 @@ def cloudmusic_toggle_play(driver):
     want = "play" if before_label == "pause" else "pause"
     time.sleep(0.3)
     before.click()
-    wait_js(
-        driver,
-        "[...document.querySelectorAll('footer span[aria-label]')]"
-        ".some(e => e.offsetParent && e.getAttribute('aria-label') === '%s')" %
-        want,
-        5,
-        tick=0.3)
+    wait_js(driver,
+            "[...document.querySelectorAll('footer span[aria-label]')]"
+            ".some(e => e.offsetParent && e.getAttribute('aria-label') === '%s')" % want,
+            5,
+            tick=0.3)
     after = _cloudmusic_find_toggle_icon(driver)
-    print("TOGGLED:", before_label, "->",
-          after.get_attribute("aria-label") if after else "MISSING")
+    print("TOGGLED:", before_label, "->", after.get_attribute("aria-label") if after else "MISSING")

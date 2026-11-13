@@ -20,11 +20,10 @@ BING_EDITIONS = {"cn": 0, "int": 1}
 _BING_COUNT_JS = "document.querySelectorAll('#b_results > li.b_algo').length"
 
 # est_cn/est_en carry est_selected on the edition that is live; empty when the SERP has no switch (bot page).
-_BING_EDITION_JS = (
-    "(function(){const c=document.querySelector('#est_cn'),e=document.querySelector('#est_en');"
-    "if(!c||!e||!document.querySelector('#b_results'))return '';"
-    "return /est_selected/.test(e.className)?'int':"
-    "/est_selected/.test(c.className)?'cn':'';})()")
+_BING_EDITION_JS = ("(function(){const c=document.querySelector('#est_cn'),e=document.querySelector('#est_en');"
+                    "if(!c||!e||!document.querySelector('#b_results'))return '';"
+                    "return /est_selected/.test(e.className)?'int':"
+                    "/est_selected/.test(c.className)?'cn':'';})()")
 
 _BING_PAGE_JS = "(document.querySelector('.sb_pagS')||{}).textContent || ''"
 
@@ -83,25 +82,21 @@ def bing_goto_search(driver, query, edition="cn", page=1, timeout=20):
     wait_js_stable(driver, _BING_COUNT_JS, timeout, tick=0.5, stable_ticks=2)
     served = driver.execute_script("return %s;" % _BING_EDITION_JS)
     if served and served != edition:
-        print("EDITION: asked for %s, page says %s - re-pinning the cookie" %
-              (edition, served))
+        print("EDITION: asked for %s, page says %s - re-pinning the cookie" % (edition, served))
         _bing_set_edition(driver, edition)
         driver.get(_bing_build_url(query, edition, page))
         wait_js_stable(driver, _BING_COUNT_JS, timeout, tick=0.5, stable_ticks=2)
         served = driver.execute_script("return %s;" % _BING_EDITION_JS) or served
     mark = driver.execute_script("return %s;" % _BING_PAGE_JS) or "?"
     print("SEARCH: %s | edition=%s | page=%s of %d results" %
-          (driver.title, served
-           or "?", mark, driver.execute_script("return %s;" % _BING_COUNT_JS)))
+          (driver.title, served or "?", mark, driver.execute_script("return %s;" % _BING_COUNT_JS)))
     return mark
 
 
 def bing_read_results(driver):
     """The organic cards on the current SERP as [{title, snippet, date, site, cite, url}]."""
     rows = driver.execute_script(BING_EXTRACT_JS) or []
-    return [
-        r for r in rows if r["title"] and (r["url"] or "").startswith("http")
-    ]
+    return [r for r in rows if r["title"] and (r["url"] or "").startswith("http")]
 
 
 def bing_search(driver, query, edition="cn", pages=1, tries=3):
@@ -111,23 +106,19 @@ def bing_search(driver, query, edition="cn", pages=1, tries=3):
         mark = bing_goto_search(driver, query, edition)
         rows = bing_read_results(driver)
         if not rows:
-            print("NO RESULTS attempt %d (url=%s)" %
-                  (attempt + 1, driver.current_url))
+            print("NO RESULTS attempt %d (url=%s)" % (attempt + 1, driver.current_url))
             time.sleep(3)
             continue
         last = pages
         if pages > 1 and mark not in ("", "?", "1"):
             # Paging is only worth walking while the marker moves: a page-1 answer to a bare request
             # means every first= will hand the same page back.
-            print("PAGE: bing served page %s for page 1 - paging skipped" %
-                  mark)
+            print("PAGE: bing served page %s for page 1 - paging skipped" % mark)
             last = 1
         for page in range(2, last + 1):
             served = bing_goto_search(driver, query, edition, page)
             if served != str(page) and served != "?":
-                print(
-                    "PAGE: asked for page %d, bing served page %s - stopping" %
-                    (page, served))
+                print("PAGE: asked for page %d, bing served page %s - stopping" % (page, served))
                 break
             more = bing_read_results(driver)
             if not more:

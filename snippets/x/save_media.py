@@ -54,8 +54,7 @@ def _x_fetch_data(driver, url):
     if not info.get("ok") or not (info.get("data") or "").startswith("data:"):
         return None
     head, b64 = info["data"].split(",", 1)
-    return base64.b64decode(b64), (info.get("type") or head.split(";")[0][5:]
-                                   or ""), info["data"]
+    return base64.b64decode(b64), (info.get("type") or head.split(";")[0][5:] or ""), info["data"]
 
 
 def _x_find_best_bytes(driver, url, want_orig=True):
@@ -78,9 +77,7 @@ def x_save_media(driver, index=0, out_dir=None, want_orig=True, dry_run=False):
     out_dir = out_dir or os.path.join(tempfile.gettempdir(), "x_media")
     items = x_list_media(driver, index)
     if not items:
-        print(
-            "NO_MEDIA: article %d has no photo (text-only, or its media is in a quoted tweet)"
-            % index)
+        print("NO_MEDIA: article %d has no photo (text-only, or its media is in a quoted tweet)" % index)
         return []
     tid = _x_read_tweet_id(driver, index) or "notweet"
     if dry_run:
@@ -104,10 +101,8 @@ def x_save_media(driver, index=0, out_dir=None, want_orig=True, dry_run=False):
         with open(path, "wb") as f:
             f.write(data)
         paths.append(path)
-        print("SAVED: %s (%d KB) alt: %s" %
-              (path, len(data) // 1024, it["alt"] or "(none)"))
+        print("SAVED: %s (%d KB) alt: %s" % (path, len(data) // 1024, it["alt"] or "(none)"))
         if used != it["url"]:
             print("  via", used)
-    print("SAVED_COUNT:", len(paths),
-          "-> read each path to actually look at it")
+    print("SAVED_COUNT:", len(paths), "-> read each path to actually look at it")
     return paths

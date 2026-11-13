@@ -37,34 +37,18 @@ def _poll_stable(read, timeout, tick, stable_ticks, done=None, label=None):
     return last, False
 
 
-def wait_js_stable(driver,
-                   expr,
-                   timeout=30,
-                   tick=1.0,
-                   stable_ticks=2,
-                   js_done=None):
+def wait_js_stable(driver, expr, timeout=30, tick=1.0, stable_ticks=2, js_done=None):
     """Return the expression's value once unchanged for stable_ticks ticks, else the last value seen."""
-    done = None if js_done is None else (
-        lambda: driver.execute_script("return (%s);" % js_done))
-    value, _ = _poll_stable(
-        lambda: driver.execute_script("return (%s);" % expr), timeout, tick,
-        stable_ticks, done)
+    done = None if js_done is None else (lambda: driver.execute_script("return (%s);" % js_done))
+    value, _ = _poll_stable(lambda: driver.execute_script("return (%s);" % expr), timeout, tick, stable_ticks, done)
     return value
 
 
-def wait_text_stable(driver,
-                     js_text,
-                     timeout=90,
-                     tick=1.5,
-                     stable_ticks=2,
-                     label="text",
-                     js_done=None):
+def wait_text_stable(driver, js_text, timeout=90, tick=1.5, stable_ticks=2, label="text", js_done=None):
     """wait_js_stable for a statement that returns the text; prints the settle line or the timeout."""
     t0 = time.time()
-    done = None if js_done is None else (
-        lambda: driver.execute_script(js_done))
-    text, settled = _poll_stable(lambda: driver.execute_script(js_text),
-                                 timeout, tick, stable_ticks, done, label)
+    done = None if js_done is None else (lambda: driver.execute_script(js_done))
+    text, settled = _poll_stable(lambda: driver.execute_script(js_text), timeout, tick, stable_ticks, done, label)
     if settled:
         print("%s STABLE after %.1fs" % (label, time.time() - t0))
         return text

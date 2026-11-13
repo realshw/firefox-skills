@@ -33,10 +33,8 @@ def pdf_info(driver, timeout=30):
     """{pages, url} for the PDF in the current tab, or None (poll until the viewer is ready)."""
     deadline = time.time() + timeout
     while time.time() < deadline:
-        d = driver.execute_script(
-            "const a = window.PDFViewerApplication;"
-            "return a && a.pagesCount ? {pages: a.pagesCount, url: a.url || ''} : null;"
-        )
+        d = driver.execute_script("const a = window.PDFViewerApplication;"
+                                  "return a && a.pagesCount ? {pages: a.pagesCount, url: a.url || ''} : null;")
         if d:
             return d
         time.sleep(0.5)
@@ -47,9 +45,7 @@ def read_pdf(driver, pages=None, out_path=PDF_TEXT, script_timeout=300):
     """Extract the PDF's text; pages = 1-based numbers (default: all). Saves + prints a SAVED line."""
     info = pdf_info(driver)
     if not info:
-        print(
-            "NO_PDF: PDFViewerApplication not found — is this tab actually a PDF?"
-        )
+        print("NO_PDF: PDFViewerApplication not found — is this tab actually a PDF?")
         return ''
     want = list(pages) if pages else list(range(1, info['pages'] + 1))
     driver.set_script_timeout(script_timeout)
@@ -60,14 +56,12 @@ def read_pdf(driver, pages=None, out_path=PDF_TEXT, script_timeout=300):
     if res.get('error'):
         print("PDF_ERROR:", res['error'])
         return ''
-    text = "\n\n".join("[page %d]\n%s" % (n, t)
-                       for n, t in zip(want, res['pages']))
+    text = "\n\n".join("[page %d]\n%s" % (n, t) for n, t in zip(want, res['pages']))
     with open(out_path, "w") as f:
         f.write(text + "\n")
-    print(
-        "SAVED:", out_path, "(" + str(len(want)) + "/" + str(res['total']) +
-        " pages, " + str(len(text)) + " chars) |", (res.get('title')
-                                                    or 'untitled')[:70])
+    print("SAVED:", out_path,
+          "(" + str(len(want)) + "/" + str(res['total']) + " pages, " + str(len(text)) + " chars) |",
+          (res.get('title') or 'untitled')[:70])
     return text
 
 

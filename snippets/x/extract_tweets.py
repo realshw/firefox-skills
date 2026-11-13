@@ -101,19 +101,15 @@ def x_print_tweets(rows, n=10, text_len=200):
         st = r["stats"]
         flags = ("  [pinned]" if r["pinned"] else "") + ("  [liked]" if r["liked"] else "") + \
                 ("  [reposted]" if r["reposted"] else "")
-        print("%s @%s  %s%s" %
-              (r["name"], r["handle"], r["datetime"] or "", flags))
+        print("%s @%s  %s%s" % (r["name"], r["handle"], r["datetime"] or "", flags))
         text = (r["text"] or "").replace("\n", " ")
         if not text:
-            text = "(no text: %d photo(s))" % len(
-                r["media"]) if r["media"] else "(no text)"
+            text = "(no text: %d photo(s))" % len(r["media"]) if r["media"] else "(no text)"
         print("  " + text[:text_len])
         if r["quoted_text"]:
             print("  quote: " + r["quoted_text"][:120].replace("\n", " "))
-        print(
-            "  replies %d  reposts %d  quotes %d  likes %d  bookmarks %d  views %d"
-            % (st["replies"], st["reposts"], st["quotes"], st["likes"],
-               st["bookmarks"], st["views"]))
+        print("  replies %d  reposts %d  quotes %d  likes %d  bookmarks %d  views %d" %
+              (st["replies"], st["reposts"], st["quotes"], st["likes"], st["bookmarks"], st["views"]))
         if r["url"]:
             print("  https://x.com" + r["url"])
     print("SHOWN: %d of %d" % (min(n, len(rows)), len(rows)))

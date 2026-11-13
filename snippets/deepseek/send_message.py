@@ -7,8 +7,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 def deepseek_send_message(driver):
     btns = []
-    for b in driver.find_elements("css selector",
-                                  "div.ds-button--circle, button"):
+    for b in driver.find_elements("css selector", "div.ds-button--circle, button"):
         try:
             cls = b.get_attribute("class") or ""
             if b.is_displayed() and "disabled" not in cls:

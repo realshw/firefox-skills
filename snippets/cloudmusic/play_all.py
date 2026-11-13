@@ -5,19 +5,16 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 exec(open("snippets/common/wait_js.py").read())
 
-_CLOUDMUSIC_CLOCK_JS = (
-    "(function(){const f = document.querySelector('footer');"
-    " if (!f) return null;"
-    " const t = [...f.querySelectorAll('[class*=miniBarTimeTextStyle]')]"
-    ".map(e => e.innerText.trim());"
-    " return t.length ? t[0] : null;})()")
+_CLOUDMUSIC_CLOCK_JS = ("(function(){const f = document.querySelector('footer');"
+                        " if (!f) return null;"
+                        " const t = [...f.querySelectorAll('[class*=miniBarTimeTextStyle]')]"
+                        ".map(e => e.innerText.trim());"
+                        " return t.length ? t[0] : null;})()")
 
 
 def _cloudmusic_find_play_icon(driver):
     els = [
-        e for e in driver.find_elements(
-            "css selector",
-            "footer span[aria-label=pause], footer span[aria-label=play]")
+        e for e in driver.find_elements("css selector", "footer span[aria-label=pause], footer span[aria-label=play]")
         if e.is_displayed()
     ]
     return els[0] if els else None
@@ -32,16 +29,11 @@ def _cloudmusic_check_clock_moves(driver, first):
 
 
 def cloudmusic_play_all(driver):
-    els = [
-        e
-        for e in driver.find_elements("xpath", '//*[contains(text(), "播放全部")]')
-        if e.is_displayed()
-    ]
+    els = [e for e in driver.find_elements("xpath", '//*[contains(text(), "播放全部")]') if e.is_displayed()]
     if not els:
         raise RuntimeError("播放全部 button not found")
     els[0].click()
-    WebDriverWait(driver, 15).until(lambda d: d.find_elements(
-        "css selector", "footer span[aria-label=pause]"))
+    WebDriverWait(driver, 15).until(lambda d: d.find_elements("css selector", "footer span[aria-label=pause]"))
     first = _cloudmusic_read_clock(driver)
     if not _cloudmusic_check_clock_moves(driver, first):
         icon = _cloudmusic_find_play_icon(driver)

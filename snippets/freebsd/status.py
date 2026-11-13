@@ -3,6 +3,7 @@
 import os
 import re
 import tempfile
+
 exec(open("snippets/common/page_sections.py").read())
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
@@ -20,9 +21,7 @@ def freebsd_list_quarters(driver, force=False):
     site_tab(driver, "freebsd.org")
     driver.get(FREEBSD_BASE)
     wait_js(driver, "document.body.innerText.length > 1500", 30)
-    hrefs = driver.execute_script(
-        "return [...document.querySelectorAll('a')].map(a => a.getAttribute('href') || '')"
-    )
+    hrefs = driver.execute_script("return [...document.querySelectorAll('a')].map(a => a.getAttribute('href') || '')")
     slugs = []
     for h in hrefs:
         m = _FREEBSD_SLUG.search(h or '')
@@ -45,7 +44,4 @@ def freebsd_open_status(driver, report=None, timeout=30, cache=True):
     driver.get(FREEBSD_BASE + slug + "/")
     wait_js(driver, "document.querySelectorAll('h2').length > 3", timeout)
     print("STATUS:", slug, "|", driver.title.replace("\n", " ")[:70])
-    return page_text(
-        driver,
-        os.path.join(tempfile.gettempdir(), 'fbsd_status_' + slug +
-                     '.txt') if cache else None)
+    return page_text(driver, os.path.join(tempfile.gettempdir(), 'fbsd_status_' + slug + '.txt') if cache else None)

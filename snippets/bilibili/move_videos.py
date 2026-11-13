@@ -48,14 +48,13 @@ def bilibili_move_videos(driver, plan, out_path=None, verify=True):
     results = []
     for t in plan['targets']:
         resources = ','.join(_bilibili_read_entry(a) for a in t['avids'])
-        j = bilibili_post_api(
-            driver, '/x/v3/fav/resource/move', {
-                'src_media_id': src,
-                'tar_media_id': t['mid'],
-                'mid': account,
-                'resources': resources,
-                'platform': 'web'
-            })
+        j = bilibili_post_api(driver, '/x/v3/fav/resource/move', {
+            'src_media_id': src,
+            'tar_media_id': t['mid'],
+            'mid': account,
+            'resources': resources,
+            'platform': 'web'
+        })
         code_ok = j.get('code') == 0
         missing, tries = [], 0
         if code_ok and verify:
@@ -71,14 +70,11 @@ def bilibili_move_videos(driver, plan, out_path=None, verify=True):
             'resp': j
         })
         if ok:
-            print(
-                'OK  ', t['name'], len(t['avids']), 'items landed',
-                '(settled after %d pull%s)' %
-                (tries, '' if tries == 1 else 's'))
+            print('OK  ', t['name'], len(t['avids']), 'items landed',
+                  '(settled after %d pull%s)' % (tries, '' if tries == 1 else 's'))
         else:
-            print('FAIL', t['name'], len(t['avids']), 'items |', 'code:',
-                  j.get('code'), j.get('message'), '| not in target:', missing
-                  or '(code rejected)')
+            print('FAIL', t['name'], len(t['avids']), 'items |', 'code:', j.get('code'), j.get('message'),
+                  '| not in target:', missing or '(code rejected)')
         time.sleep(2)
     ok_n = sum(1 for r in results if r['ok'])
     print('DONE %d/%d batches ok' % (ok_n, len(results)))

@@ -15,14 +15,9 @@ def freebsd_open_releases(driver, timeout=30):
     """Load the releases page and wait for the tier summary to render."""
     site_tab(driver, "freebsd.org")
     driver.get(FREEBSD_RELEASES_URL)
-    wait_js(
-        driver,
-        "!!document.body.innerText.match(/Production Release:\\s*[\\d.]+/)",
-        timeout)
+    wait_js(driver, "!!document.body.innerText.match(/Production Release:\\s*[\\d.]+/)", timeout)
     t = driver.execute_script("return document.body.innerText")
-    print("RELEASES:",
-          re.search(r"Production Release:\s*([\d.]+)", t).group(1),
-          "is the production release")
+    print("RELEASES:", re.search(r"Production Release:\s*([\d.]+)", t).group(1), "is the production release")
     return t
 
 

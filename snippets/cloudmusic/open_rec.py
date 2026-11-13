@@ -28,6 +28,5 @@ def cloudmusic_open_rec(driver):
             if time.time() > deadline:
                 raise RuntimeError("sidebar item 推荐 not found")
             time.sleep(0.5)
-        WebDriverWait(driver, 15).until(
-            lambda d: "推荐歌单" in d.find_element("tag name", "body").text)
+        WebDriverWait(driver, 15).until(lambda d: "推荐歌单" in d.find_element("tag name", "body").text)
     print("OPENED_REC")

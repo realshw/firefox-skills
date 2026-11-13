@@ -11,15 +11,11 @@ exec(open("snippets/common/wait_js.py").read())
 def x_goto_search(driver, query, latest=True, timeout=25):
     """Navigate the x.com tab to the search results; return the number of tweets mounted."""
     site_tab(driver, "//x.com/")
-    driver.get("https://x.com/search?q=" + quote(query) +
-               ("&f=live" if latest else ""))
-    wait_js(driver,
-            'document.querySelectorAll(\'article[data-testid="tweet"]\')'
+    driver.get("https://x.com/search?q=" + quote(query) + ("&f=live" if latest else ""))
+    wait_js(driver, 'document.querySelectorAll(\'article[data-testid="tweet"]\')'
             '.length || /No results|没有结果/.test(document.body.innerText)',
             timeout,
             tick=1.0)
-    n = driver.execute_script(
-        'return document.querySelectorAll(\'article[data-testid="tweet"]\').length'
-    )
+    n = driver.execute_script('return document.querySelectorAll(\'article[data-testid="tweet"]\').length')
     print("SEARCH:", driver.title, "| tweets:", n)
     return n

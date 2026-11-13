@@ -88,8 +88,7 @@ def github_read_thread(driver, timeout=30):
     wait_js(
         driver, "!!(document.querySelector('[data-testid=\"issue-body\"]')"
         " || document.querySelector('div.timeline-comment-group')"
-        " || document.querySelector('[data-testid=\"issue-title\"]'))",
-        timeout)
+        " || document.querySelector('[data-testid=\"issue-title\"]'))", timeout)
     d = driver.execute_script(_GITHUB_THREAD_JS)
     if not d['body'] and d['items']:
         d['body'], d['comments'] = d['items'][0]['text'], d['items'][1:]
@@ -101,12 +100,8 @@ def github_read_thread(driver, timeout=30):
 def github_list_issues(driver, slug, state='open', limit=25, timeout=30):
     """Print and return [{num, title, url, time}] for one state of a repo's issues."""
     site_tab(driver, "github.com")
-    driver.get("https://github.com/" + slug.strip("/") +
-               "/issues?q=is%3Aissue+is%3A" + state)
-    wait_js(
-        driver,
-        "!!document.querySelector('[data-testid=\"issue-listitem-title-link\"]')",
-        timeout)
+    driver.get("https://github.com/" + slug.strip("/") + "/issues?q=is%3Aissue+is%3A" + state)
+    wait_js(driver, "!!document.querySelector('[data-testid=\"issue-listitem-title-link\"]')", timeout)
     rows = driver.execute_script("""
     const out = [];
     document.querySelectorAll('[data-testid="issue-listitem-title-link"]').forEach(a => {
@@ -129,11 +124,7 @@ def github_list_issues(driver, slug, state='open', limit=25, timeout=30):
     return rows
 
 
-def github_read_issue(driver,
-               url_or_num,
-               slug=None,
-               body_limit=6000,
-               comment_limit=1500):
+def github_read_issue(driver, url_or_num, slug=None, body_limit=6000, comment_limit=1500):
     """Load an issue (full url, or a number when slug is given); print and return it as a dict."""
     url = url_or_num
     if not str(url_or_num).startswith('http'):
@@ -148,8 +139,7 @@ def github_read_issue(driver,
     print("ISSUE:", d['title'][:90], "|", d['state'] or '-')
     print("BODY:", d['body'][:body_limit] or "(empty)")
     for c in d['comments']:
-        print("---- @" + (c['author'] or '?') + ":",
-              c['text'][:comment_limit].replace("\n", " "))
+        print("---- @" + (c['author'] or '?') + ":", c['text'][:comment_limit].replace("\n", " "))
     print("COMMENTS", len(d['comments']), "|", url)
     d['url'] = url
     return d
@@ -166,15 +156,13 @@ def github_append_body(driver, url_or_num, text, slug=None, timeout=60):
     driver.get(url)
     github_read_thread(driver, timeout)
 
-    driver.find_elements("css selector",
-                         '[data-testid="issue-body"] button')[0].click()
+    driver.find_elements("css selector", '[data-testid="issue-body"] button')[0].click()
     for item in driver.find_elements("css selector", '[role="menuitem"]'):
         if (item.text or '').strip() == 'Edit':
             item.click()
             break
     else:
-        raise RuntimeError(
-            "no Edit menu item - the issue body is not editable")
+        raise RuntimeError("no Edit menu item - the issue body is not editable")
 
     old = _github_wait_editor(driver, _GITHUB_BODY_SEL, timeout)
     want = old.rstrip() + "\n\n" + text.strip()
@@ -187,8 +175,7 @@ def github_append_body(driver, url_or_num, text, slug=None, timeout=60):
     saved = d['body'].rstrip().endswith(text.strip())
     print("BODY_APPENDED:", saved, "| chars:", len(d['body']))
     if not saved:
-        raise RuntimeError(
-            "the saved body does not end with the appended text")
+        raise RuntimeError("the saved body does not end with the appended text")
     return d['body']
 
 
@@ -212,9 +199,8 @@ def github_post_comment(driver, url_or_num, text, slug=None, timeout=60, dry_run
         raise RuntimeError("comment did not type back exactly")
     print("SUBMIT_BUTTONS:", driver.execute_script(_GITHUB_SUBMIT_COMMENT_JS))
     wait_js(
-        driver,
-        "!document.querySelector('%s') || !document.querySelector('%s').value"
-        % (_GITHUB_COMMENT_SEL, _GITHUB_COMMENT_SEL), timeout)
+        driver, "!document.querySelector('%s') || !document.querySelector('%s').value" %
+        (_GITHUB_COMMENT_SEL, _GITHUB_COMMENT_SEL), timeout)
 
     driver.get(url)
     d = github_read_thread(driver, timeout)

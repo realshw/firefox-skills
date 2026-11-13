@@ -17,8 +17,7 @@ def connect(reuse=True, port=2828):
         print("SELENIUM: reusing the driver already attached")
     else:
         service_args = ["--connect-existing", "--marionette-port", str(port)]
-        service = Service(executable_path=shutil.which("geckodriver"),
-                          service_args=service_args)
+        service = Service(executable_path=shutil.which("geckodriver"), service_args=service_args)
         driver = Firefox(service=service)
         print("SELENIUM: driver attaches to Marionette")
     # The session keeps whichever tab it landed on - a fresh attach may be on the page the user is reading,

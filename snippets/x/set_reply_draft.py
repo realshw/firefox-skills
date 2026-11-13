@@ -20,10 +20,8 @@ def x_set_reply_draft(driver, text, timeout=25):
     if text:
         box.send_keys(text)
     draft = driver.execute_script("return (" + _X_INLINE + ").innerText")
-    ready = driver.execute_script(
-        "const b = document.querySelector('" + X_SEND + "');"
-        "return !!(b && b.getAttribute('aria-disabled') !== 'true');")
+    ready = driver.execute_script("const b = document.querySelector('" + X_SEND + "');"
+                                  "return !!(b && b.getAttribute('aria-disabled') !== 'true');")
     print("DRAFT:", repr(draft.strip()))
-    print("LEN %d | REPLY_BUTTON_READY %s | NOT SENT" %
-          (len(draft.strip()), ready))
+    print("LEN %d | REPLY_BUTTON_READY %s | NOT SENT" % (len(draft.strip()), ready))
     return draft.strip()

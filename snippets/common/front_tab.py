@@ -25,18 +25,13 @@ def _firefox_envs():
             raw = open("/proc/%s/environ" % pid, "rb").read().split(b"\0")
         except OSError:
             continue
-        envs.append(
-            dict(
-                item.decode(errors="replace").split("=", 1) for item in raw
-                if b"=" in item))
+        envs.append(dict(item.decode(errors="replace").split("=", 1) for item in raw if b"=" in item))
     return envs or [{"HOME": os.path.expanduser("~")}]
 
 
 def _firefox_homes():
     """$HOME of every running firefox: the profile sits under its user's home, not ours."""
-    return [
-        env.get("HOME", os.path.expanduser("~")) for env in _firefox_envs()
-    ]
+    return [env.get("HOME", os.path.expanduser("~")) for env in _firefox_envs()]
 
 
 def store(limit=2):
@@ -47,9 +42,7 @@ def store(limit=2):
         return None
     paths = [
         p for home in _firefox_homes() for layout in LAYOUTS
-        for p in glob.glob(
-            os.path.join(home, layout, "*", "sessionstore-backups",
-                         "recovery.jsonlz4"))
+        for p in glob.glob(os.path.join(home, layout, "*", "sessionstore-backups", "recovery.jsonlz4"))
     ]
     for path in sorted(paths, key=os.path.getmtime, reverse=True)[:limit]:
         try:
@@ -73,17 +66,12 @@ def _xprop(args):
     env = dict(os.environ)
     for key in ("DISPLAY", "XAUTHORITY"):
         if not env.get(key):
-            borrowed = next((e[key] for e in _firefox_envs() if e.get(key)),
-                            "")
+            borrowed = next((e[key] for e in _firefox_envs() if e.get(key)), "")
             if borrowed:
                 env[key] = borrowed
     env["DISPLAY"] = env.get("DISPLAY") or ":0"
     try:
-        done = subprocess.run(["xprop"] + args,
-                              capture_output=True,
-                              text=True,
-                              timeout=10,
-                              env=env)
+        done = subprocess.run(["xprop"] + args, capture_output=True, text=True, timeout=10, env=env)
     except (OSError, subprocess.SubprocessError):
         return ""
     return done.stdout
@@ -98,8 +86,7 @@ def wm_title():
             continue
         if '"Navigator"' not in info or "_NET_WM_NAME" not in info:
             continue
-        title = info.split("_NET_WM_NAME",
-                           1)[1].split("=", 1)[-1].strip().strip('"')
+        title = info.split("_NET_WM_NAME", 1)[1].split("=", 1)[-1].strip().strip('"')
         for suffix in SUFFIXES:
             if title.endswith(suffix):
                 return title[:-len(suffix)].strip()
@@ -112,20 +99,13 @@ def tabs(driver):
     start = driver.current_window_handle
     out = []
     for index, handle in enumerate(driver.window_handles):
-        row = {
-            "handle": handle,
-            "index": index,
-            "title": "",
-            "url": "",
-            "error": ""
-        }
+        row = {"handle": handle, "index": index, "title": "", "url": "", "error": ""}
         try:
             driver.switch_to.window(handle)
             row["url"] = driver.current_url
             row["title"] = driver.title
         except Exception as e:  # privileged context, closed mid-scan: a row, not a crash
-            row["error"] = type(e).__name__ + ": " + str(
-                e).splitlines()[0][:80]
+            row["error"] = type(e).__name__ + ": " + str(e).splitlines()[0][:80]
         out.append(row)
     try:
         driver.switch_to.window(start)
@@ -149,11 +129,9 @@ def front_tab(driver, switch=False, rows=None):
                 picked, source = row, "window title %r" % title
                 break
     if picked is None:
-        print("FRONT_TAB: no signal — %d tabs, index=%r, title=%r" %
-              (len(rows), index, title))
+        print("FRONT_TAB: no signal — %d tabs, index=%r, title=%r" % (len(rows), index, title))
         return None
     if switch:
         driver.switch_to.window(picked["handle"])
-    print("FRONT_TAB: #%d %s | %s | via %s" %
-          (picked["index"], picked["title"][:60], picked["url"][:80], source))
+    print("FRONT_TAB: #%d %s | %s | via %s" % (picked["index"], picked["title"][:60], picked["url"][:80], source))
     return picked

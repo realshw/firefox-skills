@@ -32,8 +32,7 @@ def archlinux_read_news_item(driver, url_or_slug, limit=5000):
         "https://archlinux.org/news/" + url_or_slug.strip("/") + "/"
     site_tab(driver, "//archlinux.org/")
     driver.get(url)
-    wait_js(driver,
-            "!!document.querySelector('.article-content, .news-article')", 30)
+    wait_js(driver, "!!document.querySelector('.article-content, .news-article')", 30)
     text = driver.execute_script(
         "const e = document.querySelector('.article-content') || document.querySelector('.news-article');"
         "return e ? e.innerText.trim() : ''")

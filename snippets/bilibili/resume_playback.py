@@ -33,21 +33,18 @@ def bilibili_resume_playback(driver):
         else:
             if s0['paused']:
                 # a real WebDriver click doubles as the user gesture (a JS click may not count)
-                driver.find_element('css selector',
-                                    '.bpx-player-ctrl-play').click()
+                driver.find_element('css selector', '.bpx-player-ctrl-play').click()
             # Wait for the media clock, not for a duration: read currentTime within the same media-clock tick
             # and you get the value you started with, so the click alone proves nothing.
             wait_js(driver,
                     "!document.querySelector('video').paused"
-                    " && document.querySelector('video').currentTime > %r" %
-                    s0['t'],
+                    " && document.querySelector('video').currentTime > %r" % s0['t'],
                     10,
                     tick=0.5)
             s1 = driver.execute_script(state_js)
             print('BEFORE:', json.dumps(s0))
             print('AFTER:', json.dumps(s1))
-            print('RESUME_OK' if (
-                not s1['paused'] and s1['t'] > s0['t']) else 'RESUME_FAILED')
+            print('RESUME_OK' if (not s1['paused'] and s1['t'] > s0['t']) else 'RESUME_FAILED')
     finally:
         # the video tab is the user's: leave the session where it was, or its next navigation replaces
         # the page the user is watching.

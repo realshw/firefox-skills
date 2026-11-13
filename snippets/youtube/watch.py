@@ -8,8 +8,7 @@ import re
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 
-_YOUTUBE_ID = re.compile(
-    r"(?:v=|/shorts/|/live/|youtu\.be/|/embed/)([A-Za-z0-9_-]{11})")
+_YOUTUBE_ID = re.compile(r"(?:v=|/shorts/|/live/|youtu\.be/|/embed/)([A-Za-z0-9_-]{11})")
 
 
 def youtube_get_video_id(url_or_id):
@@ -23,17 +22,14 @@ def youtube_open_video(driver, url_or_id, timeout=30):
     vid = youtube_get_video_id(url_or_id)
     site_tab(driver, "youtube.com")
     driver.get("https://www.youtube.com/watch?v=" + vid)
-    wait_js(
-        driver,
-        "(window.ytInitialPlayerResponse"
-        " && window.ytInitialPlayerResponse.videoDetails || {}).videoId === %s"
-        % json.dumps(vid),
-        timeout,
-        tick=0.8)
+    wait_js(driver,
+            "(window.ytInitialPlayerResponse"
+            " && window.ytInitialPlayerResponse.videoDetails || {}).videoId === %s" % json.dumps(vid),
+            timeout,
+            tick=0.8)
     wait_js(driver, "!!document.querySelector('ytd-watch-metadata')", timeout)
     info = youtube_video_info(driver)
-    print("YOUTUBE:", info["title"][:80], "|", info["author"], "|",
-          info["length"], "s |", info["id"])
+    print("YOUTUBE:", info["title"][:80], "|", info["author"], "|", info["length"], "s |", info["id"])
     return info
 
 
@@ -48,19 +44,14 @@ def youtube_video_info(driver):
     """
     d = driver.execute_script(js)
     if not d:
-        raise RuntimeError(
-            "no player response on this page — not a watch page?")
+        raise RuntimeError("no player response on this page — not a watch page?")
     return d
 
 
 def youtube_read_description(driver, limit=4000, timeout=15):
     """Print the description (the page's collapsed text, not the truncated meta one)."""
-    wait_js(
-        driver,
-        "!!document.querySelector('ytd-watch-metadata #description-inline-expander')",
-        timeout)
-    t = driver.execute_script(
-        "var e = document.querySelector('ytd-watch-metadata #description-inline-expander');"
-        "return e ? e.innerText : '';")
+    wait_js(driver, "!!document.querySelector('ytd-watch-metadata #description-inline-expander')", timeout)
+    t = driver.execute_script("var e = document.querySelector('ytd-watch-metadata #description-inline-expander');"
+                              "return e ? e.innerText : '';")
     print(t[:limit] or "NO DESCRIPTION")
     return len(t)

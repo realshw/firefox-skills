@@ -29,8 +29,7 @@ def grok_read_reply(driver):
     # a working Stop button within seconds.
     grace = 15
     pending = wait_js(driver,
-                      "%s || %s || !%s" %
-                      (as_expr(GROK_JS_COUNT), as_expr(GROK_JS_TEXT), as_expr(GROK_JS_DONE)),
+                      "%s || %s || !%s" % (as_expr(GROK_JS_COUNT), as_expr(GROK_JS_TEXT), as_expr(GROK_JS_DONE)),
                       grace,
                       tick=1.5)
 
@@ -43,9 +42,7 @@ def grok_read_reply(driver):
                                 label="REPLY",
                                 js_done=GROK_JS_DONE)
     else:
-        print(
-            "REPLY nothing to read (no reply appeared in %ds) - skipping stability wait"
-            % grace)
+        print("REPLY nothing to read (no reply appeared in %ds) - skipping stability wait" % grace)
         text = ""
     if text:
         open(GROK_REPLY_PATH, 'w', encoding='utf-8').write(text)

@@ -78,10 +78,7 @@ def composer(driver, selector=None, timeout=20):
     sel = selector or "[contenteditable='true']"
     end = time.time() + timeout
     while time.time() < end:
-        els = [
-            e for e in driver.find_elements("css selector", sel)
-            if e.is_displayed()
-        ]
+        els = [e for e in driver.find_elements("css selector", sel) if e.is_displayed()]
         if els:
             return els[0]
         time.sleep(0.3)
@@ -104,8 +101,7 @@ def _focus(driver, el):
     for _ in range(2):
         el.click()
         time.sleep(0.3)
-        if driver.execute_script(
-                "return document.activeElement === arguments[0]", el):
+        if driver.execute_script("return document.activeElement === arguments[0]", el):
             return True
     print("FOCUS: composer never took focus")
     return False
@@ -118,14 +114,11 @@ def _paste(driver, text):
         print("PASTE: no xclip - typing instead")
         return False
     try:
-        subprocess.run(["xclip", "-selection", "clipboard"],
-                       input=text.encode(),
-                       check=True)
+        subprocess.run(["xclip", "-selection", "clipboard"], input=text.encode(), check=True)
     except (OSError, subprocess.CalledProcessError) as e:
         print("PASTE: xclip failed (%s) - typing instead" % type(e).__name__)
         return False
-    ActionChains(driver).key_down(Keys.CONTROL).send_keys("v").key_up(
-        Keys.CONTROL).perform()
+    ActionChains(driver).key_down(Keys.CONTROL).send_keys("v").key_up(Keys.CONTROL).perform()
     print("PASTED: %d chars" % len(text))
     return True
 
@@ -140,19 +133,12 @@ def _VERIFIED_SETTLE(el, target, timeout=2.0, tick=0.1):
     return typed
 
 
-def type_verified(driver,
-                  msg,
-                  selector=None,
-                  chunk=24,
-                  delay=(0.06, 0.14),
-                  tries=3,
-                  paste_over=80):
+def type_verified(driver, msg, selector=None, chunk=24, delay=(0.06, 0.14), tries=3, paste_over=80):
     """Type msg (paste first when long), verifying the read-back; True only when it matches exactly."""
     el = composer(driver, selector)
     base = driver.execute_script(_JS_ATTACH, el)
     target = _norm(msg)
-    if len(target) >= paste_over and _focus(driver, el) and _paste(
-            driver, target):
+    if len(target) >= paste_over and _focus(driver, el) and _paste(driver, target):
         typed = _VERIFIED_SETTLE(el, target)
         print("SETTLE: read back %d/%d chars" % (len(typed), len(target)))
     for attempt in range(tries):
@@ -161,12 +147,10 @@ def type_verified(driver,
             break
         if typed and not target.startswith(typed):
             if attempt == 0:
-                print("DRIFT: editor rewrote the paste (%r) - clearing it" %
-                      typed[:40])
+                print("DRIFT: editor rewrote the paste (%r) - clearing it" % typed[:40])
                 print("CLEARED:", driver.execute_script(_JS_CLEAR, el))
                 continue
-            raise RuntimeError("composer drifted off the message: %r" %
-                               typed[:60])
+            raise RuntimeError("composer drifted off the message: %r" % typed[:60])
         driver.execute_script(_JS_CARET_END, el)
         rest = target[len(typed):]
         for i in range(0, len(rest), chunk):
@@ -175,6 +159,5 @@ def type_verified(driver,
     typed = _read(el)
     ok = typed == target
     print("VERIFIED_TYPED: %s | chars: %d/%d | input events: %d" %
-          (ok, len(typed), len(target),
-           driver.execute_script(_JS_RECEIVED) - base))
+          (ok, len(typed), len(target), driver.execute_script(_JS_RECEIVED) - base))
     return ok

@@ -34,9 +34,7 @@ def cloudmusic_goto_player(driver):
         if not _cloudmusic_find_player(driver):
             site_tab(driver, "music.163.com")
             driver.get(CLOUDMUSIC_PLAYER_URL)
-    WebDriverWait(driver, 25).until(
-        lambda d: d.execute_script("return document.readyState") == "complete")
-    WebDriverWait(
-        driver, 25).until(lambda d: d.find_elements("css selector", "footer"))
+    WebDriverWait(driver, 25).until(lambda d: d.execute_script("return document.readyState") == "complete")
+    WebDriverWait(driver, 25).until(lambda d: d.find_elements("css selector", "footer"))
     print("TITLE:", driver.title)
     print("URL:", driver.current_url)

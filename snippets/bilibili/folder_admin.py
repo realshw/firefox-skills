@@ -36,43 +36,26 @@ def bilibili_create_folder(driver, title, intro='', privacy=1):
         return None
     time.sleep(1.5)
     created = (j.get('data') or {})
-    settled = next(
-        (f for f in bilibili_read_folder_list(driver) if f['id'] == created.get('id')), None)
-    print('CREATED: %s id=%s attr=%s (privacy=%d)' %
-          (title, created.get('id'), (settled or {}).get('attr'), privacy))
+    settled = next((f for f in bilibili_read_folder_list(driver) if f['id'] == created.get('id')), None)
+    print('CREATED: %s id=%s attr=%s (privacy=%d)' % (title, created.get('id'), (settled or {}).get('attr'), privacy))
     return settled or created
 
 
 def bilibili_read_folder_info(driver, media_id):
     """data.info for one folder."""
-    return (bilibili_get_api(driver,
-                    '/x/v3/fav/resource/list',
-                    media_id=media_id,
-                    pn=1,
-                    ps=1,
-                    platform='web').get('data') or {}).get('info') or {}
+    return (bilibili_get_api(driver, '/x/v3/fav/resource/list', media_id=media_id, pn=1, ps=1,
+                             platform='web').get('data') or {}).get('info') or {}
 
 
 def bilibili_read_first_cover(driver, media_id):
     """Cover URL of the folder's first video — the obvious thing to put on the folder itself."""
-    medias = (bilibili_get_api(driver,
-                      '/x/v3/fav/resource/list',
-                      media_id=media_id,
-                      pn=1,
-                      ps=1,
-                      platform='web',
-                      order='mtime',
-                      type=0,
-                      tid=0).get('data') or {}).get('medias') or []
+    medias = (bilibili_get_api(
+        driver, '/x/v3/fav/resource/list', media_id=media_id, pn=1, ps=1, platform='web', order='mtime', type=0,
+        tid=0).get('data') or {}).get('medias') or []
     return (medias[0].get('cover') or '') if medias else ''
 
 
-def bilibili_rename_folder(driver,
-                  media_id,
-                  title=None,
-                  intro=None,
-                  privacy=None,
-                  cover=None):
+def bilibili_rename_folder(driver, media_id, title=None, intro=None, privacy=None, cover=None):
     """Edit a folder, keeping title / intro / privacy / cover unless told otherwise."""
     info = bilibili_read_folder_info(driver, media_id)
     if not info:
@@ -86,18 +69,16 @@ def bilibili_rename_folder(driver,
         privacy = 1 if int(info.get('attr') or 0) & 1 else 0
     if cover is None:
         cover = info.get('cover') or ''
-    j = bilibili_post_api(
-        driver, '/x/v3/fav/folder/edit', {
-            'media_id': str(media_id),
-            'title': title,
-            'intro': intro,
-            'privacy': str(privacy),
-            'cover': cover
-        })
+    j = bilibili_post_api(driver, '/x/v3/fav/folder/edit', {
+        'media_id': str(media_id),
+        'title': title,
+        'intro': intro,
+        'privacy': str(privacy),
+        'cover': cover
+    })
     ok = j.get('code') == 0
     if ok:
-        print('EDITED: %s | intro=%r | cover=%s' %
-              (title, intro, 'set' if cover else 'empty'))
+        print('EDITED: %s | intro=%r | cover=%s' % (title, intro, 'set' if cover else 'empty'))
     else:
         print('RENAME_FAILED: %s (%s)' % (info.get('title'), j.get('message')))
     return ok

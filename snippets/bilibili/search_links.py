@@ -10,8 +10,7 @@ exec(open("snippets/common/wait_stable.py").read())
 
 def bilibili_search_links(driver, keyword, limit=40, timeout=30):
     site_tab(driver, "bilibili.com")
-    driver.get('https://search.bilibili.com/all?keyword=' +
-               urllib.parse.quote(keyword))
+    driver.get('https://search.bilibili.com/all?keyword=' + urllib.parse.quote(keyword))
     js = r"""
     const out = [], seen = new Set();
     for (const a of document.querySelectorAll('a')) {
@@ -31,6 +30,5 @@ def bilibili_search_links(driver, keyword, limit=40, timeout=30):
     }
     return out;
     """
-    links = wait_js_stable(
-        driver, as_expr(js), timeout, tick=1.0, stable_ticks=2) or []
+    links = wait_js_stable(driver, as_expr(js), timeout, tick=1.0, stable_ticks=2) or []
     return links[:limit]

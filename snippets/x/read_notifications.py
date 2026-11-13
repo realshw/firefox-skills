@@ -3,8 +3,7 @@
 
 
 def x_read_notifications(driver):
-    cells = driver.find_elements("css selector",
-                                 '[data-testid="notification"]')
+    cells = driver.find_elements("css selector", '[data-testid="notification"]')
     print("NOTIFICATIONS:", len(cells), "|", driver.title)
     for i, c in enumerate(cells, 1):
         txt = " ".join((c.text or "").split())
@@ -17,6 +16,4 @@ def x_read_notifications(driver):
         if links:
             print("   links:", " ".join(links[:3]))
     if not cells:
-        print(
-            "(none mounted — /notifications not open, or the list hasn't loaded yet)"
-        )
+        print("(none mounted — /notifications not open, or the list hasn't loaded yet)")

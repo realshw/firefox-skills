@@ -11,12 +11,9 @@ def github_open_repo(driver, slug, timeout=45):
     """Load a repo home page; return {name, desc, stars, forks, branch}."""
     site_tab(driver, "github.com")
     driver.get("https://github.com/" + slug.strip("/"))
-    wait_js(driver,
-            "!!document.querySelector('[data-testid=\"repo-name-link\"]')",
-            timeout)
+    wait_js(driver, "!!document.querySelector('[data-testid=\"repo-name-link\"]')", timeout)
     info = github_read_repo_info(driver)
-    print("REPO:", info["name"], "|", info["stars"], "stars |", info["forks"],
-          "forks |", info["desc"][:80])
+    print("REPO:", info["name"], "|", info["stars"], "stars |", info["forks"], "forks |", info["desc"][:80])
     return info
 
 
@@ -38,14 +35,11 @@ def github_read_repo_info(driver):
 def github_read_readme(driver, out_path=None, limit=6000):
     """Save the rendered README (article.markdown-body) to out_path (default: the system temp dir)
     and print its head."""
-    if not driver.execute_script(
-            "return !!document.querySelector('article.markdown-body')"):
+    if not driver.execute_script("return !!document.querySelector('article.markdown-body')"):
         print("NO README on this page")
         return ''
-    text = driver.execute_script(
-        "return document.querySelector('article.markdown-body').innerText")
-    out_path = out_path or os.path.join(tempfile.gettempdir(),
-                                        'github_readme.md')
+    text = driver.execute_script("return document.querySelector('article.markdown-body').innerText")
+    out_path = out_path or os.path.join(tempfile.gettempdir(), 'github_readme.md')
     with open(out_path, "w") as f:
         f.write(text + "\n")
     print("README saved:", out_path, "(" + str(len(text)) + " chars)")

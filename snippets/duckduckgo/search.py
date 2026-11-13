@@ -49,16 +49,12 @@ def duckduckgo_goto_search(driver, query):
 
 
 def _duckduckgo_filter_organic(rows):
-    return [
-        r for r in rows if r["title"] and (r["url"] or "").startswith("http")
-        and "duckduckgo.com" not in r["url"]
-    ]
+    return [r for r in rows if r["title"] and (r["url"] or "").startswith("http") and "duckduckgo.com" not in r["url"]]
 
 
 def _duckduckgo_grow_results(driver):
     """Click "More Results" and wait for the appended batch of cards."""
-    before = len(
-        driver.find_elements("css selector", "article[data-testid=result]"))
+    before = len(driver.find_elements("css selector", "article[data-testid=result]"))
     if not driver.execute_script(
             "const b = [...document.querySelectorAll('button')].find(b => /more results/i.test(b.innerText));"
             "if (!b) return false;"
@@ -80,8 +76,7 @@ def duckduckgo_search(driver, query, rounds=1, tries=3):
                     break
             rows = _duckduckgo_filter_organic(driver.execute_script(DUCKDUCKGO_EXTRACT_JS) or [])
             return rows
-        print("NO RESULTS attempt %d (url=%s)" %
-              (attempt + 1, driver.current_url))
+        print("NO RESULTS attempt %d (url=%s)" % (attempt + 1, driver.current_url))
         time.sleep(3)
     return rows
 

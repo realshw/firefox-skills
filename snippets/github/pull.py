@@ -3,6 +3,7 @@
 import os
 import re
 import tempfile
+
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/github/file.py").read())
 exec(open("snippets/github/issues.py").read())
@@ -20,11 +21,7 @@ def _github_build_pull_url(url_or_num, slug):
     return "https://github.com/" + slug.strip("/") + "/pull/" + num
 
 
-def github_read_pull(driver,
-              url_or_num,
-              slug=None,
-              body_limit=6000,
-              comment_limit=1200):
+def github_read_pull(driver, url_or_num, slug=None, body_limit=6000, comment_limit=1200):
     """Print and return {title, state, body, comments, url} for a PR."""
     url = _github_build_pull_url(url_or_num, slug)
     site_tab(driver, "github.com")
@@ -33,8 +30,7 @@ def github_read_pull(driver,
     print("PR:", d['title'][:90], "|", d['state'] or '-')
     print("BODY:", d['body'][:body_limit] or "(empty)")
     for c in d['comments']:
-        print("---- @" + (c['author'] or '?') + ":",
-              c['text'][:comment_limit].replace("\n", " "))
+        print("---- @" + (c['author'] or '?') + ":", c['text'][:comment_limit].replace("\n", " "))
     print("COMMENTS", len(d['comments']), "|", url)
     d['url'] = url
     return d
@@ -45,8 +41,7 @@ def github_read_pull_diff(driver, url_or_num, slug=None, out_path=None):
     Returns the text."""
     url = _github_build_pull_url(url_or_num, slug)
     text, ctype = _github_read_in_tab(driver, url.rstrip('/') + '.diff', settle=1.5)
-    files = text.count("\ndiff --git ") + (1 if text.startswith("diff --git ")
-                                           else 0)
+    files = text.count("\ndiff --git ") + (1 if text.startswith("diff --git ") else 0)
     out_path = out_path or os.path.join(tempfile.gettempdir(), 'pr.diff')
     with open(out_path, "w") as f:
         f.write(text)

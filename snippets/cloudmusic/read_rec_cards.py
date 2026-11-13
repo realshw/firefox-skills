@@ -6,10 +6,8 @@ import json
 
 exec(open("snippets/common/wait_js.py").read())
 
-_CLOUDMUSIC_FIRST_CARD_JS = (
-    "(function(){const e = document.querySelector('[class*=CardWrapper], [class*=cmd-card]');"
-    "return e ? (e.innerText || '').replace(/\\s+/g, ' ').trim().slice(0, 80) : '';})()"
-)
+_CLOUDMUSIC_FIRST_CARD_JS = ("(function(){const e = document.querySelector('[class*=CardWrapper], [class*=cmd-card]');"
+                             "return e ? (e.innerText || '').replace(/\\s+/g, ' ').trim().slice(0, 80) : '';})()")
 
 
 def _cloudmusic_find_first_card(driver):
@@ -19,10 +17,7 @@ def _cloudmusic_find_first_card(driver):
 
 def _cloudmusic_count_grid_slides(driver, before, timeout=2.5):
     """True once a different card has mounted on top; False when the grid did not move at all."""
-    return wait_js(driver,
-                   "%s !== %s" % (_CLOUDMUSIC_FIRST_CARD_JS, json.dumps(before)),
-                   timeout,
-                   tick=0.2)
+    return wait_js(driver, "%s !== %s" % (_CLOUDMUSIC_FIRST_CARD_JS, json.dumps(before)), timeout, tick=0.2)
 
 
 _CLOUDMUSIC_CARDS_JS = r"""
@@ -40,8 +35,7 @@ return out;
 
 def cloudmusic_read_rec_cards(driver):
     orig = driver.execute_script(
-        "const c = document.querySelector('[class*=AppScrollContainer]'); return c ? c.scrollTop : 0;"
-    )
+        "const c = document.querySelector('[class*=AppScrollContainer]'); return c ? c.scrollTop : 0;")
     seen = []
     top = None
     for _ in range(15):
@@ -62,10 +56,8 @@ def cloudmusic_read_rec_cards(driver):
         if s[0] + s[2] >= s[1] - 2:
             break
     driver.execute_script(
-        "const c = document.querySelector('[class*=AppScrollContainer]'); if (c) c.scrollTop = arguments[0];",
-        orig)
-    cards = [c for c in seen if not any(c != o and c in o for o in seen)
-             ]  # nested cards repeat the same title
+        "const c = document.querySelector('[class*=AppScrollContainer]'); if (c) c.scrollTop = arguments[0];", orig)
+    cards = [c for c in seen if not any(c != o and c in o for o in seen)]  # nested cards repeat the same title
     print(f"CARDS: {len(cards)}")
     for c in cards:
         print(" ", c)

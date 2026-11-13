@@ -24,22 +24,18 @@ return out;
 
 
 def _github_open_dialog(driver, timeout=15):
-    if driver.execute_script("return !!document.querySelector(%r)" %
-                             _GITHUB_BACKDROP):
+    if driver.execute_script("return !!document.querySelector(%r)" % _GITHUB_BACKDROP):
         return
     gear = [
         b for b in driver.find_elements(By.CSS_SELECTOR, "button")
-        if (b.get_attribute("aria-label") or "") == "Edit repository metadata"
-        and b.is_displayed()
+        if (b.get_attribute("aria-label") or "") == "Edit repository metadata" and b.is_displayed()
     ]
     if not gear:
         raise RuntimeError("no About gear — logged out?")
-    driver.execute_script("arguments[0].scrollIntoView({block:'center'})",
-                          gear[0])
+    driver.execute_script("arguments[0].scrollIntoView({block:'center'})", gear[0])
     time.sleep(0.5)
     gear[0].click()
-    if not wait_js(driver, "!!document.querySelector(%r)" % _GITHUB_BACKDROP,
-                   timeout):
+    if not wait_js(driver, "!!document.querySelector(%r)" % _GITHUB_BACKDROP, timeout):
         raise RuntimeError("about dialog did not open")
 
 
@@ -55,8 +51,7 @@ def _github_set_desc(driver, text):
     return box.value;
     """, text, _GITHUB_DESC)
     if got != text:
-        raise RuntimeError("description field did not take the text: %r" %
-                           (got))
+        raise RuntimeError("description field did not take the text: %r" % (got))
 
 
 def _github_set_sections(driver, wanted):
@@ -75,8 +70,7 @@ def _github_set_sections(driver, wanted):
         if state is None:
             raise RuntimeError("no checkbox labelled %r" % (name))
         if state != bool(want):
-            raise RuntimeError("checkbox %r did not flip, still %r" %
-                               (name, state))
+            raise RuntimeError("checkbox %r did not flip, still %r" % (name, state))
 
 
 def github_edit_about(driver, new_desc=None, sections=None, timeout=20):
@@ -96,9 +90,7 @@ def github_edit_about(driver, new_desc=None, sections=None, timeout=20):
         raise RuntimeError("Save changes button not found")
     save[-1].click()
     if not wait_js(driver, "!document.querySelector(%r)" % _GITHUB_BACKDROP, timeout):
-        raise RuntimeError(
-            "dialog stayed open after Save — check the console for a failed request"
-        )
+        raise RuntimeError("dialog stayed open after Save — check the console for a failed request")
     time.sleep(1)
     after = driver.execute_script(_GITHUB_STATE_JS)
     print("ABOUT:", repr(before), "->", repr(after))

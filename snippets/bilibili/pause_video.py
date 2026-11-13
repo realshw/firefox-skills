@@ -34,13 +34,9 @@ def bilibili_pause_video(driver):
             print('ALREADY_PAUSED', json.dumps(s0))
         else:
             # a real WebDriver click doubles as the user gesture (a JS click may not count)
-            driver.find_element('css selector',
-                                '.bpx-player-ctrl-play').click()
+            driver.find_element('css selector', '.bpx-player-ctrl-play').click()
             # paused flips asynchronously: wait for it rather than re-reading a fixed delay later.
-            wait_js(driver,
-                    "document.querySelector('video').paused",
-                    10,
-                    tick=0.3)
+            wait_js(driver, "document.querySelector('video').paused", 10, tick=0.3)
             s1 = driver.execute_script(state_js)
             print('BEFORE:', json.dumps(s0))
             print('AFTER:', json.dumps(s1))

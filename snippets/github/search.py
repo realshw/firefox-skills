@@ -8,8 +8,7 @@ from urllib.parse import quote
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 
-_GITHUB_KINDS = ('repositories', 'code', 'issues', 'pullrequests', 'users',
-          'discussions')
+_GITHUB_KINDS = ('repositories', 'code', 'issues', 'pullrequests', 'users', 'discussions')
 
 _GITHUB_ROWS_JS = """
 const list = document.querySelector('[data-testid="results-list"]');
@@ -32,9 +31,7 @@ def github_goto_search(driver, query, kind='repositories', timeout=45):
     url = "https://github.com/search?q=" + quote(query) + "&type=" + kind
     site_tab(driver, "github.com")
     driver.get(url)
-    wait_js(driver,
-            "!!document.querySelector('[data-testid=\"results-list\"]')",
-            timeout)
+    wait_js(driver, "!!document.querySelector('[data-testid=\"results-list\"]')", timeout)
     print("SEARCH:", kind, "|", (driver.title or '')[:70])
     return url
 
@@ -61,23 +58,17 @@ def github_search(driver, query, kind='repositories', limit=10, timeout=45):
             url = _github_abs_url(href)
             title, extra = repo + "/" + path, " ".join(lines[1:])[:300]
         elif kind in ('issues', 'pullrequests'):
-            hit = next((a for a in r['anchors']
-                        if re.search(r"/(issues|pull)/\d+", a['href'] or '')),
-                       None)
+            hit = next((a for a in r['anchors'] if re.search(r"/(issues|pull)/\d+", a['href'] or '')), None)
             url = _github_abs_url(hit['href']) if hit else ''
             # an issue row's first line is the repo name; the title is the anchor's own text
-            title = (hit['text'] if hit and hit['text'] else
-                     (lines[1] if len(lines) > 1 else lines[0]))
+            title = (hit['text'] if hit and hit['text'] else (lines[1] if len(lines) > 1 else lines[0]))
             extra = " ".join(lines[1:])[:200]
             if extra.startswith(title):
-                extra = extra[len(title):].strip(
-                )  # the row repeats the title before the snippet
+                extra = extra[len(title):].strip()  # the row repeats the title before the snippet
         else:
             name = lines[0]
             if not re.match(r"^[\w.-]+/[\w.-]+$", name):
-                name = next((h.strip('/') for h in r['hrefs']
-                             if re.match(r"^/[\w.-]+/[\w.-]+$", h or '')),
-                            lines[0])
+                name = next((h.strip('/') for h in r['hrefs'] if re.match(r"^/[\w.-]+/[\w.-]+$", h or '')), lines[0])
             url = _github_abs_url("/" + name.strip('/'))
             title, extra = name, " ".join(lines[1:])[:200]
         if not url or url in seen:
@@ -85,7 +76,6 @@ def github_search(driver, query, kind='repositories', limit=10, timeout=45):
         seen.add(url)
         out.append({'title': title, 'url': url, 'extra': extra})
     for r in out[:limit]:
-        print("-", r['title'], "|", r['extra'][:120] if r['extra'] else '',
-              "|", r['url'])
+        print("-", r['title'], "|", r['extra'][:120] if r['extra'] else '', "|", r['url'])
     print("RESULTS", len(out))
     return out

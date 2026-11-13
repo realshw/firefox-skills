@@ -5,6 +5,7 @@
 import os
 
 from selenium.common.exceptions import TimeoutException
+
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 
@@ -13,27 +14,19 @@ GITLAB_BOT_TEXT = "not a bot"
 
 def gitlab_raw_url(project, path, ref="main", host="gitlab.archlinux.org"):
     """https://<host>/<group>/<project>/-/raw/<ref>/<path> — the only form that serves text/plain."""
-    return "https://%s/%s/-/raw/%s/%s" % (host, project.strip("/"), ref,
-                                          path.lstrip("/"))
+    return "https://%s/%s/-/raw/%s/%s" % (host, project.strip("/"), ref, path.lstrip("/"))
 
 
 def _gitlab_settle(driver, timeout=90):
     """True once the Anubis interstitial is gone and the document has finished loading."""
-    return wait_js(
-        driver,
-        "document.title.indexOf(%r) === -1 && document.readyState === "
-        "'complete'" % GITLAB_BOT_TEXT,
-        timeout,
-        tick=1)
+    return wait_js(driver,
+                   "document.title.indexOf(%r) === -1 && document.readyState === "
+                   "'complete'" % GITLAB_BOT_TEXT,
+                   timeout,
+                   tick=1)
 
 
-def gitlab_read_file(driver,
-              project,
-              path,
-              ref="main",
-              out_path=None,
-              host="gitlab.archlinux.org",
-              preview=0):
+def gitlab_read_file(driver, project, path, ref="main", out_path=None, host="gitlab.archlinux.org", preview=0):
     """Load one repo file in a tab; return its text, optionally writing it to out_path."""
     url = gitlab_raw_url(project, path, ref, host)
     site_tab(driver, host)
@@ -48,17 +41,14 @@ def gitlab_read_file(driver,
     text = body.text
     ctype = driver.execute_script("return document.contentType || ''")
     if ctype and not ctype.startswith("text/plain"):
-        print("NO_FILE:", url, "->", ctype,
-              "not text/plain (wrong path or ref?)")
+        print("NO_FILE:", url, "->", ctype, "not text/plain (wrong path or ref?)")
         return ""
     if out_path:
         os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
         with open(out_path, "w") as f:
             f.write(text + "\n")
         print("SAVED:", out_path)
-    print("FILE:",
-          project.strip("/") + "/" + path + " @" + ref, "->", len(text),
-          "chars", "(" + (ctype or "?") + ")")
+    print("FILE:", project.strip("/") + "/" + path + " @" + ref, "->", len(text), "chars", "(" + (ctype or "?") + ")")
     if preview:
         print(text[:preview])
     return text

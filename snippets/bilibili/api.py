@@ -59,9 +59,8 @@ def bilibili_post_api(driver, path, params):
 
 def bilibili_read_fav_folders(driver):
     """The account's own folders, in list-all's shape (id, title, media_count, attr)."""
-    data = bilibili_get_api(driver,
-                          '/x/v3/fav/folder/created/list-all',
-                          up_mid=bilibili_get_uid(driver)).get('data') or {}
+    data = bilibili_get_api(driver, '/x/v3/fav/folder/created/list-all',
+                            up_mid=bilibili_get_uid(driver)).get('data') or {}
     return data.get('list') or []
 
 
@@ -80,14 +79,14 @@ def bilibili_read_folder_medias(driver, media_id, sleep=BILIBILI_PAGE_SLEEP, ord
     out, pn = [], 1
     while True:
         data = bilibili_get_api(driver,
-                       '/x/v3/fav/resource/list',
-                       media_id=media_id,
-                       pn=pn,
-                       ps=20,
-                       platform='web',
-                       order=order,
-                       type=0,
-                       tid=0).get('data') or {}
+                                '/x/v3/fav/resource/list',
+                                media_id=media_id,
+                                pn=pn,
+                                ps=20,
+                                platform='web',
+                                order=order,
+                                type=0,
+                                tid=0).get('data') or {}
         out.extend(data.get('medias') or [])
         if not data.get('has_more'):
             return out

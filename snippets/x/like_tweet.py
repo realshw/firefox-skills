@@ -8,10 +8,10 @@ exec(open("snippets/common/wait_js.py").read())
 X_LIKE = '[data-testid="like"], [data-testid="unlike"]'
 
 _X_LABEL_JS = ("(function(){const a = "
-             "document.querySelectorAll('article[data-testid=\"tweet\"]')[%d];"
-             "if (!a) return '';"
-             "const b = a.querySelector('%s');"
-             "return b ? b.getAttribute('data-testid') : '';})()")
+               "document.querySelectorAll('article[data-testid=\"tweet\"]')[%d];"
+               "if (!a) return '';"
+               "const b = a.querySelector('%s');"
+               "return b ? b.getAttribute('data-testid') : '';})()")
 
 
 def _x_read_label(driver, index):
@@ -23,8 +23,7 @@ def x_like_tweet(driver, index=0, undo=False):
     """Like (or un-like with undo=True) the article at `index`."""
     arts = driver.find_elements("css selector", 'article[data-testid="tweet"]')
     if index >= len(arts):
-        print("LIKE_FAILED: only %d articles mounted (index %d)" %
-              (len(arts), index))
+        print("LIKE_FAILED: only %d articles mounted (index %d)" % (len(arts), index))
         return False
     btns = arts[index].find_elements("css selector", X_LIKE)
     if not btns:
@@ -36,10 +35,7 @@ def x_like_tweet(driver, index=0, undo=False):
         return True
     btns[0].click()
     want = "like" if undo else "unlike"
-    ok = wait_js(driver,
-                 "%s === %s" % (_X_LABEL_JS % (index, X_LIKE), json.dumps(want)),
-                 10)
+    ok = wait_js(driver, "%s === %s" % (_X_LABEL_JS % (index, X_LIKE), json.dumps(want)), 10)
     got = _x_read_label(driver, index) or before
-    print(("UNLIKED" if undo else "LIKED") if ok else "LIKE_FAILED",
-          "| article %d: %s -> %s" % (index, before, got))
+    print(("UNLIKED" if undo else "LIKED") if ok else "LIKE_FAILED", "| article %d: %s -> %s" % (index, before, got))
     return ok

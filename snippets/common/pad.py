@@ -6,8 +6,7 @@ import unicodedata
 
 def width(text):
     """Display columns taken by text, CJK and fullwidth counted as two."""
-    return sum(2 if unicodedata.east_asian_width(c) in 'WF' else 1
-               for c in str(text))
+    return sum(2 if unicodedata.east_asian_width(c) in 'WF' else 1 for c in str(text))
 
 
 def pad(text, columns, align='<'):

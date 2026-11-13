@@ -52,9 +52,7 @@ return p ? p.textContent : null;
 def _x_wait_articles(driver, index, timeout=15):
     end = time.time() + timeout
     while time.time() < end:
-        n = driver.execute_script(
-            "return document.querySelectorAll('article[data-testid=\"tweet\"]').length"
-        )
+        n = driver.execute_script("return document.querySelectorAll('article[data-testid=\"tweet\"]').length")
         if n and n > index:
             return True
         time.sleep(0.5)
@@ -76,9 +74,7 @@ def x_read_tweet_id(driver, index=0):
 
 def _x_read_syndication(driver, tid, timeout=25):
     """The syndication JSON for tid, read out of its own tab's raw pane."""
-    token = driver.execute_script(
-        "return ((%s/1e15)*Math.PI).toString(36).replace(/(0+|\\.)/g,'')" %
-        tid)
+    token = driver.execute_script("return ((%s/1e15)*Math.PI).toString(36).replace(/(0+|\\.)/g,'')" % tid)
     current = driver.current_window_handle
     driver.switch_to.new_window('tab')
     # the new tab has focus, so driver.get() navigates it and leaves the tweet tab alone
@@ -107,37 +103,23 @@ def x_read_video_info(driver, index=0, tid=None):
     """
     tid = tid or x_read_tweet_id(driver, index)
     if not tid:
-        print(
-            "NO_TWEET: no article at index %d — not an x.com timeline/status, or still loading?"
-            % index)
+        print("NO_TWEET: no article at index %d — not an x.com timeline/status, or still loading?" % index)
         return None
     j = _x_read_syndication(driver, tid) or {}
     media = (j.get("mediaDetails") or [{}])[0]
     vi = media.get("video_info") or {}
     out = {
-        "tid":
-        tid,
-        "duration_ms":
-        media.get("video_info", {}).get("duration_millis")
-        or media.get("video", {}).get("durationMs"),
-        "poster":
-        (media.get("media_url_https") or "") + "?name=orig" if media else "",
+        "tid": tid,
+        "duration_ms": media.get("video_info", {}).get("duration_millis") or media.get("video", {}).get("durationMs"),
+        "poster": (media.get("media_url_https") or "") + "?name=orig" if media else "",
         "variants": []
     }
     for v in vi.get("variants") or []:
-        out["variants"].append({
-            "type": v.get("content_type"),
-            "bitrate": v.get("bitrate") or 0,
-            "url": v.get("url")
-        })
+        out["variants"].append({"type": v.get("content_type"), "bitrate": v.get("bitrate") or 0, "url": v.get("url")})
     if not out["variants"]:
         alt = ((media.get("video") or {}).get("variants")) or []
         for v in alt:
-            out["variants"].append({
-                "type": v.get("type"),
-                "bitrate": 0,
-                "url": v.get("src")
-            })
+            out["variants"].append({"type": v.get("type"), "bitrate": 0, "url": v.get("src")})
     return out if out["variants"] else None
 
 
@@ -201,13 +183,10 @@ def _x_download_hls(driver, url, path_base, verbose=True):
         for i, l in enumerate(lines):
             if l.startswith("#EXT-X-STREAM-INF"):
                 bw = re.search(r"BANDWIDTH=(\d+)", l)
-                nxt = next(
-                    (x for x in lines[i + 1:] if x and not x.startswith("#")),
-                    None)
+                nxt = next((x for x in lines[i + 1:] if x and not x.startswith("#")), None)
                 if nxt and bw and int(bw.group(1)) > level:
                     best, level = nxt, int(bw.group(1))
-        return _x_download_hls(driver, urljoin(url, best), path_base,
-                    verbose) if best else None
+        return _x_download_hls(driver, urljoin(url, best), path_base, verbose) if best else None
     segs = [urljoin(url, l) for l in lines if l and not l.startswith("#")]
     for l in lines:
         if l.startswith("#EXT-X-MAP"):
@@ -233,12 +212,7 @@ def _x_download_hls(driver, url, path_base, verbose=True):
     return len(blob), path
 
 
-def x_save_video(driver,
-               index=0,
-               out_dir=None,
-               max_height=720,
-               dry_run=False,
-               verbose=True):
+def x_save_video(driver, index=0, out_dir=None, max_height=720, dry_run=False, verbose=True):
     """Save the video attached to article `index` (current page must be x.com) to out_dir (default:
     the system temp dir). Returns path(s)."""
     # Marionette kills execute_async_script at the *driver's* script timeout (20-30 s by default) long
@@ -251,15 +225,10 @@ def x_save_video(driver,
     out_dir = out_dir or os.path.join(tempfile.gettempdir(), "x_video")
     vi = x_read_video_info(driver, index)
     if not vi:
-        print(
-            "NO_VIDEO: article %d carries no video (photo-only, or the media is in a quoted post)"
-            % index)
+        print("NO_VIDEO: article %d carries no video (photo-only, or the media is in a quoted post)" % index)
         return []
     tid = vi["tid"]
-    mp4s = [
-        v for v in vi["variants"]
-        if (v["type"] or "").endswith("mp4") and v["url"]
-    ]
+    mp4s = [v for v in vi["variants"] if (v["type"] or "").endswith("mp4") and v["url"]]
     hls = [v for v in vi["variants"] if "mpegURL" in (v["type"] or "")]
 
     def _h(u):
@@ -275,19 +244,16 @@ def x_save_video(driver,
         print("DURATION: %.1fs" % ((vi["duration_ms"] or 0) / 1000.0))
         for v in vi["variants"]:
             print("  DRY: %-22s %8s  %s" % (v["type"], v["bitrate"], v["url"]))
-        print("DRY_PICK:", (pick or {}).get("url")
-              or (hls[0]["url"] if hls else "none"))
+        print("DRY_PICK:", (pick or {}).get("url") or (hls[0]["url"] if hls else "none"))
         return []
 
-    print("DURATION: %.1fs  (%d variant(s))" %
-          ((vi["duration_ms"] or 0) / 1000.0, len(vi["variants"])))
+    print("DURATION: %.1fs  (%d variant(s))" % ((vi["duration_ms"] or 0) / 1000.0, len(vi["variants"])))
     if pick:
         path = base + ".mp4"
         dims = re.search(r"/(\d+)x(\d+)/", pick["url"])
         if verbose:
-            print("PICK: %s  bitrate=%s  %s" %
-                  (pick["type"], pick["bitrate"],
-                   (dims.group(1) + "x" + dims.group(2)) if dims else "?"))
+            print("PICK: %s  bitrate=%s  %s" % (pick["type"], pick["bitrate"],
+                                                (dims.group(1) + "x" + dims.group(2)) if dims else "?"))
         size = _x_download_chunked(driver, pick["url"], path, verbose=verbose)
         if size:
             print("SAVED: %s (%.1f MB)" % (path, size / 1048576.0))
@@ -297,8 +263,7 @@ def x_save_video(driver,
         got = _x_download_hls(driver, hls[0]["url"], base, verbose=verbose)
         if got:
             size, path = got
-            print("SAVED: %s (%.1f MB, HLS fallback — .ts container)" %
-                  (path, size / 1048576.0))
+            print("SAVED: %s (%.1f MB, HLS fallback — .ts container)" % (path, size / 1048576.0))
             return [path]
     print("NO_DOWNLOADABLE_VARIANT")
     return []
