@@ -5,7 +5,8 @@
 # type 2 = video, 24 = PGC 番剧/film (move/delete need it); a dead entry stays behind under the exact
 # title 已失效视频 and remove_from_folder takes it out. It usually has an empty upper.name, but not always
 # (时政·社会 kept its uploader while the video was gone), so the title is the check that always fires.
-# type 24 never reports an upper.
+# type 24 never reports an upper, and an entry whose video is gone stays out of every page while
+# media_count still counts it — folder_ids is the view that shows that one.
 import json
 import os
 import tempfile

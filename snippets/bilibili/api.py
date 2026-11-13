@@ -63,6 +63,16 @@ def fav_folders(driver):
     return data.get('list') or []
 
 
+def folder_ids(driver, media_id):
+    """One folder's entries as [{id, type}] from /x/v3/fav/resource/ids — no paging, cheap enough to re-pull
+    the whole account for a verify. Two traps: a PGC type-24 entry is never in this list (影视·剧集 answers
+    media_count 10 and 9 ids), and it shows an entry resource/list hides — a favourite whose video is gone
+    (view answers 62012) still counts in media_count yet is on no page of the list, so a folder can read 20
+    there and 19 here with nothing lost. Its real use is a 412: risk control blocks resource/list alone
+    after a full-account dump, while list-all, view and ids keep answering 200, so a verify need not wait."""
+    return fav_get(driver, '/x/v3/fav/resource/ids', media_id=media_id).get('data') or []
+
+
 def folder_medias(driver, media_id, sleep=PAGE_SLEEP, order='mtime'):
     """Every media entry of one folder, page by page — has_more is the stop condition, ps is 20."""
     out, pn = [], 1
