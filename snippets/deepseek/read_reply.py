@@ -6,8 +6,8 @@ import json
 import os
 import tempfile
 import time
-from snippets.common.wait_js import as_expr, wait_js
-from snippets.common.wait_stable import wait_text_stable
+exec(open("snippets/common/wait_js.py").read())
+exec(open("snippets/common/wait_stable.py").read())
 
 DEEPSEEK_JS_COUNT = "return document.querySelectorAll('div.ds-assistant-message-main-content').length"
 DEEPSEEK_JS_TEXT = """
@@ -35,7 +35,7 @@ DEEPSEEK_REPLY_PATH = os.path.join(tempfile.gettempdir(), 'deepseek_reply.txt')
 
 
 def deepseek_read_reply(driver, since=0.0):
-    """Read the last reply; `since` is the return value of send_message() when one was just sent."""
+    """Read the last reply; `since` is the return value of deepseek_send_message() when one was just sent."""
     if time.time() - since < 5:
         prev = driver.execute_script(DEEPSEEK_JS_TEXT)
         if prev:

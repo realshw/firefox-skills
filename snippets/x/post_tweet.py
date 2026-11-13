@@ -2,7 +2,7 @@
 # into the inline box while you watch the modal's button. Post state lives in aria-disabled (never the
 # `disabled` property) and X counts CJK as 2 chars. The composer emptying is the signal, not the click.
 from selenium.webdriver.common.keys import Keys
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/wait_js.py").read())
 
 X_DIALOG_BOX = '[role="dialog"] [data-testid="tweetTextarea_0"]'
 POST = '[role="dialog"] [data-testid="tweetButton"]'

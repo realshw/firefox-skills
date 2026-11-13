@@ -5,8 +5,8 @@
 import json
 import re
 
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
 
 _ID = re.compile(
     r"(?:v=|/shorts/|/live/|youtu\.be/|/embed/)([A-Za-z0-9_-]{11})")

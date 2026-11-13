@@ -4,7 +4,7 @@
 # pipelines that toggle_play cannot reach, so an existing one is adopted, not opened next to.
 from selenium.webdriver.support.ui import WebDriverWait
 
-from snippets.common.site_tab import site_tab
+exec(open("snippets/common/site_tab.py").read())
 
 PLAYER = "https://music.163.com/st/webplayer"
 

@@ -3,7 +3,7 @@
 # click — the element goes stale on re-render. undo=True un-likes.
 import json
 
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/wait_js.py").read())
 
 LIKE = '[data-testid="like"], [data-testid="unlike"]'
 

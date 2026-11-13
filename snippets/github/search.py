@@ -5,8 +5,8 @@
 import re
 from urllib.parse import quote
 
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
 
 _KINDS = ('repositories', 'code', 'issues', 'pullrequests', 'users',
           'discussions')

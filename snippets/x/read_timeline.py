@@ -1,8 +1,8 @@
 # Reads the home timeline (For You), first 30 posts, printed. For the
 # Following feed use https://x.com/home?filter=following.
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_js import wait_js
-from snippets.x.extract_tweets import collect_tweets, print_tweets
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
+exec(open("snippets/x/extract_tweets.py").read())
 
 
 def read_timeline(driver):

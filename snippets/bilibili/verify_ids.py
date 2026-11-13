@@ -7,8 +7,8 @@
 # after a move batch; use verify_reorg (titles, dead-entry report) when the answer has to name the video.
 from collections import Counter
 
-from snippets.bilibili.api import fav_folders, folder_ids
-from snippets.common.pad import pad
+exec(open("snippets/bilibili/api.py").read())
+exec(open("snippets/common/pad.py").read())
 
 
 def verify_ids(driver, baseline):

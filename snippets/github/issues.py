@@ -4,9 +4,9 @@
 import re
 import time
 
-from snippets.common.site_tab import site_tab
-from snippets.common.type_verified import type_verified
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/type_verified.py").read())
+exec(open("snippets/common/wait_js.py").read())
 
 # Editing the issue body: the body's first icon button is the kebab holding "Edit", the editor is the same
 # textarea the new-issue form uses, and "Save" carries no testid (the comment box's own buttons sit too).

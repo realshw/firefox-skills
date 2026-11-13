@@ -10,7 +10,7 @@
 import json
 import time
 
-from snippets.bilibili.api import fav_post, folder_medias, uid
+exec(open("snippets/bilibili/api.py").read())
 
 
 def _entry(item):

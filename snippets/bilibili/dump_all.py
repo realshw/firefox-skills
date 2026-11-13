@@ -12,8 +12,8 @@ import os
 import tempfile
 from collections import defaultdict
 
-from snippets.bilibili.api import fav_folders, folder_medias
-from snippets.common.pad import pad
+exec(open("snippets/bilibili/api.py").read())
+exec(open("snippets/common/pad.py").read())
 
 DEFAULT_OUT = os.path.join(tempfile.gettempdir(), 'bili_all_media.json')
 

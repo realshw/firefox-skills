@@ -1,14 +1,14 @@
 # Class names are hashed per deploy but the hooks survive: article[data-testid=result],
 # a[data-testid=result-title-a] (the real target), [data-result=snippet]. ?s= is ignored and scrolling
-# loads nothing — paging is the "More Results" button, so search(driver, rounds=N) clicks it. Captcha pages
+# loads nothing — paging is the "More Results" button, so ddg_search(driver, rounds=N) clicks it. Captcha pages
 # swap the cards for a bot check and have no articles at all. Searching navigates this session's own tab,
 # so the page the user is reading keeps its url.
 import time
 from urllib.parse import quote_plus
 
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_js import wait_js
-from snippets.common.wait_stable import wait_js_stable
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
+exec(open("snippets/common/wait_stable.py").read())
 
 DDG_BASE = "https://duckduckgo.com/?q="
 

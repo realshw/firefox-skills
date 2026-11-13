@@ -1,11 +1,11 @@
-# search(driver, term) returns /packages/<repo>/<arch>/<name>/ urls — the handle the rest of the file takes. The
+# archlinux_search(driver, term) returns /packages/<repo>/<arch>/<name>/ urls — the handle the rest of the file takes. The
 # detail page is a Key:\tValue definition list (name/version are the h2, not lines) and dependencies sit
 # under an h3 "Dependencies (58)" — section(driver, 'Dependencies') matches it by prefix.
 import re
 
-from snippets.common.page_sections import section
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/page_sections.py").read())
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
 
 
 def archlinux_search(driver, query, limit=10, timeout=30):

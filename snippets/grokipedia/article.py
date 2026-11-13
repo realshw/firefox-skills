@@ -1,8 +1,8 @@
 # goto_page(driver) maps spaces to underscores ("Elon Musk" -> /page/Elon_Musk) and waits on wait_stable().
-# Entries run to tens of KB — use the shared find(driver); company pages open with a key-value summary block.
+# Entries run to tens of KB — use the shared sections_find(driver); company pages open with a key-value summary block.
 from urllib.parse import quote
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_stable import wait_text_stable
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_stable.py").read())
 
 
 def goto_page(driver, title, timeout=60):

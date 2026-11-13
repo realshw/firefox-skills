@@ -3,9 +3,9 @@
 import os
 import re
 import tempfile
-from snippets.common.page_sections import page_text
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/page_sections.py").read())
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
 
 FREEBSD_BASE = "https://www.freebsd.org/status/"
 _SLUG = re.compile(r"report-\d{4}-\d{2}-\d{4}-\d{2}")

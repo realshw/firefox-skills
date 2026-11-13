@@ -4,8 +4,8 @@
 # that as "no hits".
 from urllib.parse import quote
 
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
 
 
 def x_goto_search(driver, query, latest=True, timeout=25):

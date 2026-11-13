@@ -2,7 +2,7 @@
 # hidden copy). 35 songs, mixing repeats with fresh recommendations.
 from selenium.webdriver.support.ui import WebDriverWait
 
-from snippets.cloudmusic.open_rec import open_rec
+exec(open("snippets/cloudmusic/open_rec.py").read())
 
 _RADAR_JS = 'return document.body.innerText.includes("反复聆听你最爱的歌");'
 

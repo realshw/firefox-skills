@@ -1,5 +1,5 @@
 # Click the composer's send button (the first enabled one) — no wait, no confirmation. Returns the send
-# time so read_reply(since=...) can tell the new answer from the previous one during the submit spinner.
+# time so deepseek_read_reply(since=...) can tell the new answer from the previous one during the submit spinner.
 import time
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains

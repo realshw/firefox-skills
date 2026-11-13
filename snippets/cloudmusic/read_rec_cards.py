@@ -4,7 +4,7 @@
 # brand-new cards under the top edge is what says the grid has re-rendered.
 import json
 
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/wait_js.py").read())
 
 _FIRST_CARD_JS = (
     "(function(){const e = document.querySelector('[class*=CardWrapper], [class*=cmd-card]');"

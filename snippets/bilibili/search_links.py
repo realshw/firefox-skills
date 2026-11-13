@@ -3,9 +3,9 @@
 # PGC entries — with a title as keyword those are the official, playable ones.
 import urllib.parse
 
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_js import as_expr
-from snippets.common.wait_stable import wait_js_stable
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
+exec(open("snippets/common/wait_stable.py").read())
 
 
 def search_links(driver, keyword, limit=40, timeout=30):

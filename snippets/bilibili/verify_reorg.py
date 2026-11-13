@@ -8,8 +8,8 @@ import os
 import tempfile
 from collections import Counter
 
-from snippets.bilibili.dump_all import dump_all
-from snippets.common.pad import pad
+exec(open("snippets/bilibili/dump_all.py").read())
+exec(open("snippets/common/pad.py").read())
 
 
 def verify_reorg(driver, baseline, out_path=None):

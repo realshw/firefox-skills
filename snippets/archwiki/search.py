@@ -2,8 +2,8 @@
 # .mw-search-result-heading with the .searchresult div by index. The top hit is often a #REDIRECT stub and
 # matching is loose — don't dedupe, the redirect is frequently the canonical name.
 from urllib.parse import quote
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
 
 
 def archwiki_search(driver, query, limit=10, timeout=30):

@@ -2,7 +2,7 @@
 # h1 is the date, not a count.
 from selenium.webdriver.support.ui import WebDriverWait
 
-from snippets.cloudmusic.open_rec import open_rec
+exec(open("snippets/cloudmusic/open_rec.py").read())
 
 _DAILY_JS = ('const t = document.querySelector("h1.recommend-title .recommend");'
        'return !!t && t.innerText.includes("每日推荐");')

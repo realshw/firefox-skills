@@ -3,7 +3,7 @@
 # Draft.js needs real keys: clear with Control+A + DELETE, then read innerText back.
 from selenium.webdriver.common.keys import Keys
 
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/wait_js.py").read())
 
 X_BOX = '[data-testid="tweetTextarea_0"]'
 X_SEND = '[data-testid="tweetButtonInline"]'

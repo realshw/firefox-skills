@@ -6,7 +6,7 @@ import json
 
 from selenium.webdriver.common.by import By
 
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/wait_js.py").read())
 
 _FIRST_NUM_JS = (
     "(function(){const s = document.querySelector('div.tr div.td-num span');"

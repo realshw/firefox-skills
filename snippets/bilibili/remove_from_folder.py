@@ -5,7 +5,7 @@
 # re-pull of the list (a dead entry lingers in the list for a moment after the call).
 import time
 
-from snippets.bilibili.api import fav_post
+exec(open("snippets/bilibili/api.py").read())
 
 
 def remove_from_folder(driver, avids, media_id, sleep_s=1.5):

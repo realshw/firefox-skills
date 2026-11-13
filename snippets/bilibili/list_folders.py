@@ -5,7 +5,7 @@ import json
 import os
 import tempfile
 
-from snippets.bilibili.api import fav_folders, uid
+exec(open("snippets/bilibili/api.py").read())
 
 OUT_PATH = os.path.join(tempfile.gettempdir(), 'bili_folders.json')
 

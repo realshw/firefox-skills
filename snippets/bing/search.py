@@ -11,8 +11,8 @@
 import time
 from urllib.parse import quote_plus
 
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_stable import wait_js_stable
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_stable.py").read())
 
 BING_BASE = "https://cn.bing.com/search?q="
 EDITIONS = {"cn": 0, "int": 1}

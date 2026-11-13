@@ -5,7 +5,7 @@
 # folder_info(driver) (list-all lacks intro). 默认收藏夹 (attr=1) can be neither renamed nor deleted.
 import time
 
-from snippets.bilibili.api import fav_folders, fav_get, fav_post
+exec(open("snippets/bilibili/api.py").read())
 
 
 def folder_list(driver):

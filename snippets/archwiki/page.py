@@ -2,9 +2,9 @@
 # common/page_sections.py; MediaWiki wraps headings in div.mw-heading so [edit] never leaks into the h2.
 # What the wiki adds: <pre> blocks with real commands (code_blocks(driver)) and warning/note templates (notes(driver)).
 from urllib.parse import quote
-from snippets.common.page_sections import page_text
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/page_sections.py").read())
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
 
 
 def open_page(driver, title, timeout=30):

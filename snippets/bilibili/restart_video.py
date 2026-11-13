@@ -2,7 +2,7 @@
 # paused is already false while currentTime sits at 0: wait for the playing state, never read it once.
 import json
 
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/wait_js.py").read())
 
 PLAYING = "!document.querySelector('video').paused"
 MOVING = "!document.querySelector('video').paused && document.querySelector('video').currentTime > 1.0"

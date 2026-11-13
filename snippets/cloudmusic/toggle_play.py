@@ -3,7 +3,7 @@
 # lands somewhere else.
 import time
 
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/wait_js.py").read())
 
 
 def _TOGGLE_ICON(driver):

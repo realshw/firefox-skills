@@ -1,6 +1,6 @@
 # Reads the thread of the open /status/ page — the focal tweet is the *first* article, everything after
 # it is a reply. Needs extract_tweets.py; replies lazy-load, so a long chain needs a bigger max_scrolls.
-from snippets.x.extract_tweets import collect_tweets
+exec(open("snippets/x/extract_tweets.py").read())
 
 
 def read_thread(driver):

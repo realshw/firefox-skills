@@ -1,7 +1,7 @@
 # Either /video/ or /bangumi/play/ (covers PGC movies/series) counts; if paused, resume and verify.
 import json
 
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/wait_js.py").read())
 
 
 def resume_playback(driver):

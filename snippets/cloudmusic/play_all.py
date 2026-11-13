@@ -3,7 +3,7 @@
 import json
 from selenium.webdriver.support.ui import WebDriverWait
 
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/wait_js.py").read())
 
 _CLOCK_JS = (
     "(function(){const f = document.querySelector('footer');"

@@ -3,8 +3,8 @@
 # /releases/15.1.0/relnotes/ is a 404.
 import re
 
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
 
 PAGE = "https://www.freebsd.org/releases/"
 _TIER = re.compile(r"(Production|Legacy|Upcoming) Release:\s*([\d.]+)")

@@ -4,7 +4,7 @@
 import os
 import time
 
-from snippets.common.connect import connect
+exec(open("snippets/common/connect.py").read())
 
 
 def reattach():

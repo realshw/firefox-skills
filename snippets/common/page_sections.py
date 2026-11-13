@@ -1,4 +1,4 @@
-# outline(driver) / section(driver) / find(driver) / count(driver) for long official documents. Headings are walked as *elements*,
+# outline(driver) / section(driver) / sections_find(driver) / count(driver) for long official documents. Headings are walked as *elements*,
 # never by text offset (the TOC repeats every heading verbatim), the walk climbs out of heading-only
 # wrappers (MediaWiki div.mw-heading), and a section includes its subsections.
 import re

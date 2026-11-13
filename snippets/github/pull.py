@@ -3,9 +3,9 @@
 import os
 import re
 import tempfile
-from snippets.common.site_tab import site_tab
-from snippets.github.file import _read_in_tab
-from snippets.github.issues import thread
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/github/file.py").read())
+exec(open("snippets/github/issues.py").read())
 
 _PULL_NUM = re.compile(r"/pull/(\d+)")
 

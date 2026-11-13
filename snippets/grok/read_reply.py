@@ -4,8 +4,8 @@
 import os
 import tempfile
 
-from snippets.common.wait_js import as_expr, wait_js
-from snippets.common.wait_stable import wait_text_stable
+exec(open("snippets/common/wait_js.py").read())
+exec(open("snippets/common/wait_stable.py").read())
 
 GROK_JS_COUNT = "return document.querySelectorAll('[data-testid=assistant-message]').length"
 GROK_JS_TEXT = """

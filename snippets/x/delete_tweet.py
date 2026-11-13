@@ -1,8 +1,8 @@
 # The caret opens a [role="menu"] whose "Delete" item carries no testid — match the label exactly; the
 # confirm sheet has no [role="dialog"] wrapper. The caret is one click from a real deletion, so every call
 # takes `expect` and refuses unless the focal post's text contains it. /status/ pages only.
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
 
 CARET = 'article[data-testid="tweet"] [data-testid="caret"]'
 

@@ -5,7 +5,7 @@
 import time
 from selenium.webdriver.common.by import By
 
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/wait_js.py").read())
 
 _BACKDROP = "[class*=Dialog-Backdrop]"
 _DESC = 'input[placeholder="Short description of this repository"], input[maxlength="350"]'

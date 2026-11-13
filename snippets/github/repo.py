@@ -3,8 +3,8 @@
 import os
 import tempfile
 
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
 
 
 def open_repo(driver, slug, timeout=45):

@@ -1,8 +1,8 @@
 # /news is a plain table (Published / Title / Author) linking to /news/<slug>/, where manual-intervention
 # notices land and fail silently on upgrade. Item pages are div.article-content inside div.news-article —
 # not an <article>; narrow to it or the nav/footer makes a body dump useless.
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
 
 
 def news(driver, limit=8, timeout=30):

@@ -8,7 +8,7 @@
 The block runs in the REPL's globals, so the browser session survives between runs, and travels through
 send-keys as one base64 line (send-keys mangles literal newlines). Raised exceptions echo as a single
 "Type: message" line and exit 1 here; their tracebacks stay in the REPL. Blocks run in the REPL's cwd,
-the skill root, so snippets import as modules.
+the skill root, so the `exec(open("snippets/..."))` lines a snippet starts with find their files.
 """
 
 import base64

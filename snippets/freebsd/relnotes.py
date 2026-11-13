@@ -3,9 +3,9 @@
 # 404) and relnotes get edited after release, so check the last-modified date.
 import os
 import tempfile
-from snippets.common.page_sections import page_text
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/page_sections.py").read())
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
 
 
 def open_relnotes(driver, version='15.1', timeout=30, cache=True):

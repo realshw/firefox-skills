@@ -2,8 +2,8 @@
 # mounts a moment after navigation. Same aria-disabled rule as post_tweet; clear with select-all+DELETE,
 # never a click on the box (a floating hint intercepts it).
 from selenium.webdriver.common.keys import Keys
-from snippets.common.site_tab import site_tab
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
 
 X_BOX = '[data-testid="tweetTextarea_0"]'
 X_SEND = '[data-testid="tweetButtonInline"]'

@@ -7,7 +7,7 @@ import os
 import tempfile
 import time
 
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/wait_js.py").read())
 
 
 def _read_in_tab(driver, url, settle=1.2, timeout=30):

@@ -1,7 +1,7 @@
 # Sends whatever sits in the inline composer (the half set_reply_draft.py does not do). tweetButtonInline's
 # aria-disabled only clears once there is content and an early click is a silent no-op, so check it first.
 # Confirmation is "the editor emptied"; the toast is reported, never required.
-from snippets.common.wait_js import wait_js
+exec(open("snippets/common/wait_js.py").read())
 
 X_BOX = '[data-testid="tweetTextarea_0"]'
 X_SEND = '[data-testid="tweetButtonInline"]'

@@ -5,7 +5,7 @@
 import json
 import time
 
-from snippets.bilibili.api import fav_get
+exec(open("snippets/bilibili/api.py").read())
 
 
 def fetch_video_meta(driver, vids, out_path=None):
