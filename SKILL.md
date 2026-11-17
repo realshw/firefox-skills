@@ -9,6 +9,7 @@ description: >-
 - Snippet: a file under `snippets/<site>/`, whatever it holds.
 - Block: anything sent to the REPL — a snippet, or throwaway code that never lands in a file.
 - List `snippets/<site>/` before writing anything: a file there may already do the task.
+- `head -1 snippets/common/*.py` the same way: the helper a block needs usually already exists.
 - Each snippet opens with one `exec(open("snippets/<site>/<file>.py").read())` line per neighbour.
 - Everything lands in the one namespace the REPL holds: a name two sites both want carries its site prefix.
 - `scripts/exec.py` feeds one block on stdin to the live REPL in tmux window `cowork:firefox`.
@@ -16,7 +17,8 @@ description: >-
 - Nothing in `snippets/<site>/` fits? Send a block of your own to that same REPL.
 - Read the summary the block prints rather than re-reading the page.
 - Wait on a condition, never a duration.
-- Predicates: `snippets/common/wait_js.py`. Values that must settle: `snippets/common/wait_stable.py`.
+- Predicate to poll: `wait_js(driver, expr)` — `snippets/common/wait_js.py`.
+- Value that must settle: `wait_js_stable` / `wait_text_stable` — `snippets/common/wait_stable.py`.
 
 ## Handling the driver
 
@@ -39,7 +41,6 @@ description: >-
 - Read https://www.selenium.dev/llms.txt before writing a snippet.
 - Read https://agentskills.io/llms.txt before changing this file.
 - Both index what goes stale here: the Selenium docs and the skill format.
-- Writing a shared helper? `head -1 snippets/common/*.py` first: each file opens with what it hands back.
 - Site code and its DOM quirks go in `snippets/<site>/`; shared code goes in `snippets/common/`.
 - Read a file before editing it: the comment at the top records the traps it was written to avoid.
 - Name as the library does: `SITE_NOUN` constant, `site_verb_noun(driver, ...)` function.
