@@ -9,58 +9,51 @@ description: >-
 
 ## Running a snippet
 
-Snippets are reusable Selenium blocks that take `driver` first; each site keeps its own under `snippets/<site>/`. List
-that directory before writing anything of your own — a file there may already do the task, and doing it twice is a
-mistake that only surfaces at commit time.
-
-`scripts/exec.py` feeds one Python block on stdin to the live REPL in the tmux window `cowork:firefox`, where `driver`
-keeps its browser state from block to block. Snippets print a short labelled summary; read that instead of re-reading
-the page.
-
-Each file opens with one `exec(open("snippets/<site>/<file>.py").read())` line per neighbour. Everything lands in the
-single namespace the REPL holds, so a name two sites both want carries its site prefix.
-
-When `snippets/<site>/` has nothing that fits, feed your own block to the same REPL.
-
-Wait on a condition, never a duration: predicates through `snippets/common/wait_js.py`, values that must stop changing
-through `snippets/common/wait_stable.py`.
+- Snippets are reusable Selenium blocks taking `driver` first; each site keeps its own under `snippets/<site>/`.
+- List `snippets/<site>/` before writing anything: a file there may already do the task, and doing it twice only
+  surfaces at commit time.
+- Each file opens with one `exec(open("snippets/<site>/<file>.py").read())` line per neighbour. Everything lands in the
+  one namespace the REPL holds, so a name two sites both want carries its site prefix.
+- `scripts/exec.py` feeds one Python block on stdin to the live REPL in tmux window `cowork:firefox`; `driver` keeps its
+  browser state from block to block.
+- Nothing in `snippets/<site>/` fits? Feed your own block to that same REPL.
+- Read the summary a snippet prints rather than re-reading the page.
+- Wait on a condition, never a duration: predicates through `snippets/common/wait_js.py`, values that must stop changing
+  through `snippets/common/wait_stable.py`.
 
 ## Handling the driver
 
-`snippets/common/connect.py` and `snippets/common/reattach.py` hold the two callables that hand back a `driver` instead
-of taking one: `connect()` attaches to the running Firefox, `reattach()` is the way back when a session dies or loses
-its window.
-
-Reuse the `driver` the session already holds rather than attaching again in each block.
+- `connect()` (`snippets/common/connect.py`) attaches to the running Firefox.
+- `reattach()` (`snippets/common/reattach.py`) is the way back when a session dies or loses its window.
+- Both hand back a `driver` instead of taking one.
+- Reuse the `driver` the session already holds; do not attach again in each block.
 
 ## Respecting the tabs
 
-Open a new tab before going to a different site, through `snippets/common/site_tab.py`; the current tab keeps the page
-it was on, and staying within the same site reuses that tab. Tab handling is plain Selenium window handling: WebDriver
-draws no distinction between tabs and windows.
-
-Calling a site's API from a snippet issues the request from the page the driver is on, so that tab has to be a loaded
-page on that site: a blank or foreign one will not do. The `curl` or `wget` call you were about to run in a shell is
-that same request — send it as a `fetch` from that tab, and the session's cookies and origin travel with it.
+- Different site: open a new tab through `snippets/common/site_tab.py`; the old tab keeps its page.
+- Same site: reuse that tab.
+- Tab handling is plain Selenium window handling; WebDriver draws no distinction between tabs and windows.
+- Snippet API calls go out from the page the driver is on: that tab must be a loaded page on that site, and a blank or
+  foreign one fails.
+- `curl`/`wget` is that same request. Send it as a `fetch` from that tab and the session's cookies and origin travel
+  with it.
 
 ## Saving a snippet
 
-Read https://www.selenium.dev/llms.txt before writing a snippet, and https://agentskills.io/llms.txt before changing
-this file. They index the Selenium docs and the skill format, the two things this skill goes stale against.
-
-Site code and its DOM quirks go in a file under `snippets/<site>/`, beside its neighbours; shared code goes in a file
-under `snippets/common/`. Read a file before editing it: the comment at the top records the traps that file was written
-to avoid, and a blind overwrite throws those notes away.
-
-Name what you add as the library already reads: `SITE_NOUN` for a constant, `site_verb_noun(driver, ...)` for a
-function, a leading `_` on either while only its own file calls it. Files that hold one snippet are named after it.
-
-Save reusable snippets without being asked, but run them first; anything hard to undo takes `dry_run=True`. Format with
-`yapf -i` for Python and `prettier --write .` for the prose, both pinned to 120 columns (`.style.yapf`, `.prettierrc`);
-commit as `<domain>: <verb phrase>`. Edits take effect on the next run: nothing needs reloading.
+- Read https://www.selenium.dev/llms.txt before writing a snippet, and https://agentskills.io/llms.txt before changing
+  this file: they index the Selenium docs and the skill format, the two things this skill goes stale against.
+- Site code and its DOM quirks go in `snippets/<site>/`; shared code goes in `snippets/common/`.
+- Read a file before editing it: the comment at the top records the traps it was written to avoid.
+- Name it as the library reads: `SITE_NOUN` constant, `site_verb_noun(driver, ...)` function, a leading `_` on either
+  while only its own file calls it; one-snippet files are named after it.
+- Save reusable snippets without being asked, but run them first; anything hard to undo takes `dry_run=True`.
+- Format: `yapf -i` for Python, `prettier --write .` for the prose, both pinned to 120 columns (`.style.yapf`,
+  `.prettierrc`).
+- Commit as `<domain>: <verb phrase>`.
+- Edits take effect on the next run; nothing needs reloading.
 
 ## Sourcing the answer
 
-Unsure about any fact? Run a search-engine snippet — `snippets/bing/` and `snippets/duckduckgo/` hold one each — before
-guessing, and read the results instead of composing an answer from recall. Cite the page each fact came from in your
-reply.
+- Unsure about any fact? Run a search-engine snippet first: `snippets/bing/` and `snippets/duckduckgo/` hold one each.
+- Read the results; do not compose the answer from recall.
+- Cite the page each fact came from in your reply.
