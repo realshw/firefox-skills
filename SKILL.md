@@ -8,7 +8,7 @@ description: >-
 
 - Snippet: a file under `snippets/<site>/`, whatever it holds.
 - Block: anything sent to the REPL — a snippet, or throwaway code that never lands in a file.
-- List `snippets/<site>/` before writing anything: a file there may already do the task.
+- `head -1 snippets/<site>/*.py` before writing anything: a file there may already do the task.
 - `head -1 snippets/common/*.py` the same way: the helper a block needs usually already exists.
 - Each snippet opens with one `exec(open("snippets/<site>/<file>.py").read())` line per neighbour.
 - Everything lands in the one namespace the REPL holds: a name two sites both want carries its site prefix.
@@ -41,6 +41,8 @@ description: >-
 - Read https://www.selenium.dev/llms.txt before writing a snippet.
 - Read https://agentskills.io/llms.txt before changing this file.
 - Both index what goes stale here: the Selenium docs and the skill format.
+- Open with `# callable(driver, ...) -> what it hands back`: it is what `head -1` prints.
+- Siblings in the same shape follow on line 2; `head -3` when line 1 is not enough.
 - Site code and its DOM quirks go in `snippets/<site>/`; shared code goes in `snippets/common/`.
 - Read a file before editing it: the comment at the top records the traps it was written to avoid.
 - Name as the library does: `SITE_NOUN` constant, `site_verb_noun(driver, ...)` function.
