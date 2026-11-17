@@ -1,7 +1,10 @@
 ---
 name: firefox
-description: Browser automation with Selenium. Use when unsure about a fact, or a task needs a browser.
-compatibility: Firefox with Marionette, geckodriver, selenium, tmux window cowork:firefox.
+description: >-
+  Browser automation with Selenium against the session's live Firefox. Use it whenever a task reaches the web
+  — checking a fact, reading or verifying a page, and any request you would otherwise send with curl or wget.
+  Reach for the browser rather than a shell HTTP client even for a one-off GET: the fetch carries the cookies,
+  login state, and JavaScript-rendered content a bare request leaves behind.
 ---
 
 ## Running a snippet
@@ -26,7 +29,7 @@ Reuse the `driver` the session already holds rather than attaching again in each
 
 Open a new tab before going to a different site, through `snippets/common/site_tab.py`; the current tab keeps the page it was on, and staying within the same site reuses that tab. Tab handling is plain Selenium window handling: WebDriver draws no distinction between tabs and windows.
 
-Calling a site's API from a snippet issues the request from the page the driver is on, so that tab has to be a loaded page on that site: a blank or foreign one will not do.
+Calling a site's API from a snippet issues the request from the page the driver is on, so that tab has to be a loaded page on that site: a blank or foreign one will not do. The `curl` or `wget` call you were about to run in a shell is that same request — send it as a `fetch` from that tab, and the session's cookies and origin travel with it.
 
 ## Saving a snippet
 
