@@ -17,19 +17,19 @@ description: >-
 - Nothing in `snippets/<site>/` fits? Send a block of your own to that same REPL.
 - Read the summary the block prints rather than re-reading the page.
 - Wait on a condition, never a duration.
-- Predicate to poll: `wait_js(driver, expr)` — `snippets/common/wait_js.py`.
-- Value that must settle: `wait_js_stable` / `wait_text_stable` — `snippets/common/wait_stable.py`.
+- Predicate to poll: [`wait_js()`](snippets/common/wait_js.py).
+- Value that must settle: [`wait_js_stable()` / `wait_text_stable()`](snippets/common/wait_stable.py).
 
 ## Handling the driver
 
-- `connect()` (`snippets/common/connect.py`) attaches to the running Firefox.
-- `reattach()` (`snippets/common/reattach.py`) reconnects when a session dies or loses its window.
+- [`connect()`](snippets/common/connect.py) attaches to the running Firefox.
+- [`reattach()`](snippets/common/reattach.py) reconnects when a session dies or loses its window.
 - Both hand back a `driver` instead of taking one.
 - Reuse the `driver` the session already holds; do not attach again in each block.
 
 ## Respecting the tabs
 
-- Different site: open a new tab through `snippets/common/site_tab.py`; the old tab keeps its page.
+- Different site: [`site_tab()`](snippets/common/site_tab.py) opens a tab; the old tab keeps its page.
 - Same site: reuse that tab.
 - Tabs are plain Selenium windows: WebDriver draws no distinction.
 - Snippet API calls go out from the page the driver is on.
