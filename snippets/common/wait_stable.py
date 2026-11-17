@@ -1,5 +1,6 @@
-# Waiting for a value to settle rather than for a condition to turn true: a streamed reply, a results grid the
-# SPA keeps appending to. Poll and trust a value only once it has been unchanged for stable_ticks ticks —
+# wait_js_stable(driver, expr) / wait_text_stable(driver, js_text): wait for a value to settle rather than for
+# a condition to turn true — a streamed reply, a results grid the SPA keeps appending to. Poll and trust a
+# value only once it has been unchanged for stable_ticks ticks —
 # js_done is an optional JS predicate, and only ticks it passes count, so a pause mid-stream is not "stable".
 # One poller underneath, so the text form (a JS statement with its own return) and the value form (an
 # expression, like wait_js) cannot drift apart.

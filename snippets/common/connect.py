@@ -1,5 +1,6 @@
-# The one and only connection incantation — reattach.py calls this too, so args and timeout ceilings drift
-# in one place only. Precondition: Firefox up with -marionette and no stray geckodriver (reattach.py).
+# connect(reuse=True, port=2828) -> driver: the one and only connection incantation — reattach.py calls it
+# too, so args and timeout ceilings drift in one place only. Precondition: Firefox up with -marionette and no
+# stray geckodriver (reattach.py).
 # Calling it again hands back the driver the session already holds, so two attaches never fight over one
 # Marionette; reattach() asks for a fresh one instead, which is how a dead session gets replaced.
 import __main__

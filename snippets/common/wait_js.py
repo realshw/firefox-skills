@@ -1,5 +1,6 @@
-# One poll loop for the whole skill: send JS, stop at the first truthy answer; a raised exception means
-# "not yet", never a failure — the deadline decides. Pass a timeout when the site is slower than 25 s.
+# wait_js(driver, expr) / as_expr(js): one poll loop for the whole skill — send JS, stop at the first truthy
+# answer; a raised exception means "not yet", never a failure — the deadline decides. Pass a timeout when the
+# site is slower than 25 s.
 import time
 
 

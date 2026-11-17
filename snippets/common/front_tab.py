@@ -1,4 +1,5 @@
-# "Which page is the user on?" — WebDriver cannot answer this. window_handles carries no order,
+# front_tab(driver) / tabs(driver) / front_index() / wm_title() / store(): "which page is the user on?" —
+# WebDriver cannot answer this. window_handles carries no order,
 # switch_to.window does NOT move the tab the human sees (proved: sessionstore's `selected` survives a
 # 25 s switch), every tab answers visible + hasFocus, and a chrome-privileged context (about:newtab)
 # raises UnsupportedOperationError on every command, titles included. Two signals outside WebDriver do

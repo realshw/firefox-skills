@@ -1,5 +1,5 @@
-# '%-14s' counts characters; a terminal counts columns, and a CJK character is two of them, so every
-# Chinese folder title in a printed table drifts one column right per character. Pad by display width.
+# pad(text, columns) / width(text): '%-14s' counts characters, a terminal counts columns, and a CJK character
+# is two of them, so every Chinese folder title in a printed table drifts one column right per character.
 
 import unicodedata
 
