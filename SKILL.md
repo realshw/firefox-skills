@@ -1,7 +1,7 @@
 ---
 name: firefox
 description: >-
-  Browser automation with Selenium against the session's live Firefox. Use it whenever a task reaches the web — checking a fact, reading or verifying a page, and any request you would otherwise send with curl or wget. Reach for the browser rather than a shell HTTP client even for a one-off GET: the fetch carries the cookies, login state, and JavaScript-rendered content a bare request leaves behind.
+  Browser automation with Selenium against the session's live Firefox. Use it whenever a task reaches the web — checking a fact, reading or verifying a page, and any request you would otherwise send with curl or wget, even a one-off GET.
 ---
 
 ## Running a snippet or block
