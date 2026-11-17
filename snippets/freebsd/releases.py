@@ -1,3 +1,6 @@
+# freebsd_read_latest_release(driver) -> the production version;
+# freebsd_list_releases(driver) -> {production, legacy, upcoming, dated};
+# freebsd_open_releases(driver) -> None, leaves the releases page loaded.
 # The page states its own tiers ("Production Release: 15.1", …) then lists every release with a date —
 # parse those two shapes, not the markup. Url trap the folder depends on: /releases/15.1R/relnotes/ works,
 # /releases/15.1.0/relnotes/ is a 404.

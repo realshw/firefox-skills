@@ -1,3 +1,6 @@
+# bilibili_get_api(driver, path) / bilibili_post_api(driver, path) -> a JSON reply, csrf filled in;
+# bilibili_read_fav_folders(driver) -> the account's folders;
+# bilibili_read_folder_medias(driver, media_id) -> one folder's entries, page by page.
 # The favourite-API plumbing every bilibili snippet shares, so the traps live in one place.
 # Auth: fetch(..., {credentials: 'include'}) from a bilibili.com tab; a write also needs csrf = bili_jct.
 # That tab has to be a loaded bilibili page: a fresh about:blank one carries neither the cookies nor the

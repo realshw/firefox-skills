@@ -1,3 +1,4 @@
+# wikipedia_read_infobox(driver) -> None; prints table.infobox, or NO INFOBOX when the page has none.
 # Print the article's table.infobox, or NO INFOBOX when the page has none.
 
 

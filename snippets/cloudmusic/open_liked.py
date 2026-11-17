@@ -1,3 +1,4 @@
+# cloudmusic_open_liked(driver) -> None; leaves 我喜欢的音乐 open.
 # "我喜欢的音乐" appears in 4 nodes — take the sidebar one (x < 240). Clicks right after a cold load are
 # swallowed and handles go stale during hydration, so every check runs through JS and the click is retried.
 import time

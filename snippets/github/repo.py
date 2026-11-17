@@ -1,3 +1,6 @@
+# github_open_repo(driver, slug) -> {name, desc, stars, forks, branch};
+# github_read_readme(driver) -> the rendered README, saved;
+# github_list_tree(driver) -> the root listing, printed.
 # data-testid is stable, class names are CSS modules with a per-build hash — match the module prefix with
 # [class*=...]. The description is p[class*="SidebarAbout-module"]; the tree is plain /tree/ and /blob/ links.
 import os

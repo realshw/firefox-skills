@@ -1,3 +1,4 @@
+# bilibili_restart_video(driver) -> None; forces the open video back to 00:00 and proves playback resumed.
 # Bilibili resumes from account history, so force it to 00:00 — but after a seek the stream re-buffers and
 # paused is already false while currentTime sits at 0: wait for the playing state, never read it once.
 import json

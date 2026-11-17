@@ -1,3 +1,4 @@
+# x_like_tweet(driver, index) -> None; likes the article at `index` and confirms on the flipped label.
 # The like button's data-testid flips like → unlike, and that is the confirmation, not the count (which
 # lags). Index is DOM order on the page (0 = first mounted article). Re-query the articles after every
 # click — the element goes stale on re-render. undo=True un-likes.

@@ -1,3 +1,4 @@
+# cloudmusic_open_rec(driver) -> None; leaves the daily recommendation page open.
 # SPA — the url stays /st/webplayer, so poll for "推荐歌单" instead. The 推荐 item wraps an icon, so match
 # innerText in JS (text() is direct nodes only). Cold loads paint a logged-out skeleton first, so the item
 # is missing for a while: poll, never fail on the first look, and click through JS.

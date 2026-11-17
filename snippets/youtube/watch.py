@@ -1,3 +1,6 @@
+# youtube_open_video(driver, url_or_id) -> the watch page's metadata;
+# youtube_video_info(driver) -> id / title / author / length / views / publish;
+# youtube_read_description(driver) -> None, prints it; youtube_get_video_id(url_or_id) -> the 11-char id.
 # ytInitialPlayerResponse is the *initial load* snapshot, so an SPA hop leaves a stale one — youtube_open_video(driver)
 # always does a full driver.get() then waits until videoDetails.videoId matches (ytcfg is on the home page
 # too, never use it as the check). The DOM lands later, so every read waits first; one regex covers all

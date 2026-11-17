@@ -1,3 +1,5 @@
+# github_read_file(driver, slug, path) -> the text;
+# github_save_file(driver, slug, path) -> the same text, written to disk.
 # File contents cannot be fetch()ed (/raw/ 302s to raw.githubusercontent.com without CORS; a credentialed
 # api.github.com call loses the login and hits 60 req/h), so _github_read_in_tab(driver) *navigates* a tab of its
 # own, reads document.body — Firefox renders text/plain in a <pre> — then switches back, leaving the fetched

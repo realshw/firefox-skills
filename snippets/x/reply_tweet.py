@@ -1,3 +1,4 @@
+# x_reply_tweet(driver, url, text) -> None; replies in the inline composer, or stops before sending when dry_run.
 # The inline and modal composers share tweetTextarea_0 — take the box NOT inside [role="dialog"], and it
 # mounts a moment after navigation. Same aria-disabled rule as post_tweet; clear with select-all+DELETE,
 # never a click on the box (a floating hint intercepts it).

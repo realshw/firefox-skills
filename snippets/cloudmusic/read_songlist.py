@@ -1,3 +1,4 @@
+# cloudmusic_read_songlist(driver) -> None; prints every row of the virtualized list.
 # The list is virtualized (~20 rows mounted, the page itself does not scroll) — yank
 # [class*=AppScrollContainer] to the top and step down 0.75*clientHeight collecting div.tr rows, restoring
 # scrollTop after. The playing row hides its number but div.play.playing marks it; skip the '#' header.

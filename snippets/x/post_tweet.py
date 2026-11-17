@@ -1,3 +1,4 @@
+# x_post_tweet(driver, text) -> None; posts, or types then discards when dry_run.
 # Two composers share the testids: scope everything to [role="dialog"] or an unscoped querySelector types
 # into the inline box while you watch the modal's button. Post state lives in aria-disabled (never the
 # `disabled` property) and X counts CJK as 2 chars. The composer emptying is the signal, not the click.

@@ -1,3 +1,5 @@
+# gitlab_read_file(driver, project, path) -> the file text;
+# gitlab_raw_url(project, path) -> the one url form that serves text/plain.
 # GitLab raw URLs on archlinux.org sit behind an Anubis proof-of-work interstitial ("Making sure you're
 # not a bot!"). driver.get() can time out while the challenge is still being solved, and the bot page is
 # text/html, so wait for the title to lose "bot" before trusting the body. The tab stays on the fetched

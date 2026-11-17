@@ -1,3 +1,5 @@
+# bing_search(driver, query) -> [{title, snippet, date, site, cite, url}] over the requested pages, printed;
+# bing_goto_search(driver, query) -> the url served; bing_read_results(driver) -> the cards on the current SERP.
 # Bing's two editions share one endpoint: cn.bing.com serves 国内版 by default and 国际版 once the ENSEARCH
 # cookie is BENVER=1. The &ensearch=0/1 param is what writes that cookie, so it goes on every request — a
 # bare url keeps whichever edition the jar already holds — and #est_switch says which one won: est_cn/est_en,

@@ -1,7 +1,8 @@
-# bilibili_create_folder(driver, title, intro, privacy);
-# bilibili_rename_folder(driver, media_id, title/intro/privacy/cover=None);
-# bilibili_read_folder_list(driver); bilibili_read_folder_info(driver, media_id);
-# bilibili_read_first_cover(driver, media_id); bilibili_delete_folders(driver, ids).
+# bilibili_create_folder(driver, title, intro, privacy) -> the settled or created folder;
+# bilibili_rename_folder(driver, media_id, **fields) -> None;
+# bilibili_read_folder_list(driver) -> the folders list-all reports;
+# bilibili_read_folder_info(driver, media_id) -> data.info;
+# bilibili_read_first_cover(driver, media_id) -> a cover url; bilibili_delete_folders(driver, ids) -> None.
 # Traps: attr bit 0 is the only reliable privacy flag (never compare the whole number — add returns an
 # unsettled 6/7); edit overwrites every field it is given, cover='' wipes it, so unset args come from
 # bilibili_read_folder_info(driver) (list-all lacks intro). 默认收藏夹 (attr=1) can be neither renamed nor deleted.

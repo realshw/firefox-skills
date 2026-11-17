@@ -1,3 +1,4 @@
+# x_read_notifications(driver) -> None; prints the mounted notification cells.
 # Reads the mounted cells of /notifications (navigate there first) — they are
 # [data-testid="notification"], not articles. links[0] is the actor; the second link may be a quoted excerpt.
 

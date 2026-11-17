@@ -1,3 +1,4 @@
+# cloudmusic_play_all(driver) -> None; presses 播放全部 and proves the clock moves.
 # Click 播放全部 and wait for the pause icon in the mini bar. Right after a cold load the track can park
 # itself at PAUSED, so sample the mini-bar clock too and resume once if it has not moved.
 import json

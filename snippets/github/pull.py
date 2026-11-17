@@ -1,3 +1,5 @@
+# github_read_pull(driver, url_or_num) -> {title, state, body, comments, url};
+# github_read_pull_diff(driver, url_or_num) -> the diff text.
 # Reuses issues.py's github_read_thread(driver): PR pages still render the classic timeline while issues render React.
 # /pull/N.diff 302s to a host without CORS, so the diff is read in a tab of its own (file.py).
 import os

@@ -1,3 +1,4 @@
+# x_goto_user(driver, handle, tab) -> tweets mounted on the profile page.
 # Tab urls are plain (/handle, /handle/replies, /handle/media): don't click the role="tab" buttons. Wait
 # for the tweets, not [data-testid="UserName"] — a count taken when the header mounts is still 0. The
 # empty-profile wording differs by tab and owner, so match the fragments.

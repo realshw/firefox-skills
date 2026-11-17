@@ -1,3 +1,4 @@
+# cloudmusic_toggle_play(driver) -> None; flips play/pause and reads the label back.
 # Toggle play/pause and verify by reading the label back — read it *before* the click, the toggle swaps
 # the node out. The 0.3 s is not a condition: the mini bar slides in, and a click aimed at a moving element
 # lands somewhere else.

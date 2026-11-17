@@ -1,3 +1,4 @@
+# cloudmusic_open_daily(driver) -> None; leaves the 每日推荐 list open.
 # Already open when h1.recommend-title .recommend shows 每日推荐. 30 songs per list; the "10 / 10" on the
 # h1 is the date, not a count.
 from selenium.webdriver.support.ui import WebDriverWait
