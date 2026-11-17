@@ -39,6 +39,7 @@ description: >-
 - Read https://www.selenium.dev/llms.txt before writing a snippet.
 - Read https://agentskills.io/llms.txt before changing this file.
 - Both index what goes stale here: the Selenium docs and the skill format.
+- Writing a shared helper? `head -1 snippets/common/*.py` first: each file opens with what it hands back.
 - Site code and its DOM quirks go in `snippets/<site>/`; shared code goes in `snippets/common/`.
 - Read a file before editing it: the comment at the top records the traps it was written to avoid.
 - Name as the library does: `SITE_NOUN` constant, `site_verb_noun(driver, ...)` function.
