@@ -4,6 +4,12 @@ description: >-
   Browser automation with Selenium against the session's live Firefox. Use it whenever a task reaches the web — checking a fact, reading or verifying a page, and any request you would otherwise send with curl or wget, even a one-off GET.
 ---
 
+## The loop
+
+- Find: `scripts/help.py` names the sites, the snippets, and each snippet's callables.
+- Run: `scripts/exec.py` sends one block at a time to the REPL that holds `driver`.
+- Maintain: what a block proved goes back into `snippets/` as a file, so the next task starts from the tree.
+
 ## Running a snippet or block
 
 - Snippet: a reusable `.py` file under `snippets/`, kept for the next run.
