@@ -1,7 +1,4 @@
-"""cloudmusic_open_liked(driver) -> None; leaves 我喜欢的音乐 open.
-"我喜欢的音乐" appears in 4 nodes — take the sidebar one (x < 240). Clicks right after a cold load are
-swallowed and handles go stale during hydration, so every check runs through JS and the click is retried.
-"""
+"""Leave cloudmusic's 我喜欢的音乐 playlist open."""
 
 import time
 from selenium.common.exceptions import StaleElementReferenceException
@@ -20,6 +17,11 @@ def _cloudmusic_check_on_liked(driver):
 
 
 def cloudmusic_open_liked(driver):
+    """Click through to 我喜欢的音乐 until its toolbar is there.
+
+    "我喜欢的音乐" appears in 4 nodes — take the sidebar one (x < 240). Clicks right after a cold load are
+    swallowed and handles go stale during hydration, so every check runs through JS and the click is retried.
+    """
     deadline = time.time() + 30
     while not _cloudmusic_check_toolbar(driver):
         if time.time() > deadline:

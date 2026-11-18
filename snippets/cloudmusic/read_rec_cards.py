@@ -1,9 +1,4 @@
-"""cloudmusic_read_rec_cards(driver) -> None; prints the recommendation cards.
-Lazily-scrolled card grid: playlists, per-genre 每日推荐 and 私人漫游 look alike and cards nest
-duplicates — collect by text, dedupe, keep only cards >150px right of the 240px sidebar. The document
-doesn't grow: scroll [class*=AppScrollContainer] by 0.8*clientHeight and restore scrollTop. The row of
-brand-new cards under the top edge is what says the grid has re-rendered.
-"""
+"""Print the cards on cloudmusic's recommendation home."""
 
 import json
 
@@ -37,6 +32,13 @@ return out;
 
 
 def cloudmusic_read_rec_cards(driver):
+    """Print every card on the recommendation home, deduped, then put the scroll position back.
+
+    A lazily-scrolled card grid: playlists, per-genre 每日推荐 and 私人漫游 look alike and cards nest, so collect
+    by text, dedupe, and keep only cards >150px right of the 240px sidebar. The document does not grow:
+    scroll [class*=AppScrollContainer] by 0.8*clientHeight and restore scrollTop. The row of brand-new cards
+    under the top edge is what says the grid has re-rendered.
+    """
     orig = driver.execute_script(
         "const c = document.querySelector('[class*=AppScrollContainer]'); return c ? c.scrollTop : 0;")
     seen = []

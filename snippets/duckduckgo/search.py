@@ -1,12 +1,4 @@
-"""duckduckgo_search(driver, query) -> [{title, snippet, time, site, url}];
-duckduckgo_goto_search(driver, query) -> the results url it landed on;
-duckduckgo_print_results(rows) -> None, prints them.
-Class names are hashed per deploy but the hooks survive: article[data-testid=result],
-a[data-testid=result-title-a] (the real target), [data-result=snippet]. ?s= is ignored and scrolling
-loads nothing — paging is the "More Results" button, so duckduckgo_search(driver, rounds=N) clicks it. Captcha pages
-swap the cards for a bot check and have no articles at all. Searching navigates this session's own tab,
-so the page the user is reading keeps its url.
-"""
+"""Search DuckDuckGo and read the organic results, paging with the More Results button."""
 
 import time
 from urllib.parse import quote_plus
@@ -70,7 +62,14 @@ def _duckduckgo_grow_results(driver):
 
 
 def duckduckgo_search(driver, query, rounds=1, tries=3):
-    """Run query, return [{title, snippet, time, site, url}] (retries on bot-check pages)."""
+    """Run query, return [{title, snippet, time, site, url}] (retries on bot-check pages).
+
+    Class names are hashed per deploy but the hooks survive: article[data-testid=result],
+    a[data-testid=result-title-a] (the real target), [data-result=snippet]. ?s= is ignored and scrolling loads
+    nothing — paging is the "More Results" button, and rounds=N is how many times it gets clicked. Captcha
+    pages swap the cards for a bot check and have no articles at all, which is what the retries are for.
+    Searching navigates this session's own tab, so the page the user is reading keeps its url.
+    """
     rows = []
     for attempt in range(tries):
         duckduckgo_goto_search(driver, query)

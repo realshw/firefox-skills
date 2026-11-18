@@ -1,13 +1,4 @@
-"""bilibili_move_videos(driver, plan, out_path=None) -> [{'target','mid','count','ok','code','missing','resp'}]
-plan: {"src_media_id": 0, "targets": [{"mid": 0, "name": "folder", "avids": [123, "456:24", (789, 24)]}]}
-API: POST /x/v3/fav/resource/move (src_media_id, tar_media_id, mid, resources="<avid>:<type>,...", csrf).
-Trap: the type must be the list entry's own `type` — PGC film / 番剧 are 24 — and a wrong one is accepted
-with exactly the {"code": 0, "data": 0} a real move returns, so the reply proves nothing either way.
-`data` is not a count either: a batch that moved every item still answers data 0, and so does one that
-moved none. That is why ok comes from re-pulling the target folder and finding the avids, never from the
-reply — and why that pull has to settle: right after a move, list is briefly still serving the folder as
-it was, so a single pull reports the whole batch missing. Poll until the avids show up, don't sleep once.
-"""
+"""Move bilibili favourites into other folders, and prove each batch landed."""
 
 import json
 import time
@@ -31,7 +22,11 @@ def _bilibili_read_avid(item):
 
 
 def _bilibili_wait_in_folder(driver, media_id, avids, tries=6, sleep=1.5):
-    """Poll the folder until every avid is listed; ([missing ids], tries used) once it gives up."""
+    """Poll the folder until every avid is listed; ([missing ids], tries used) once it gives up.
+
+    This is the only proof a move landed: right after one, list is briefly still serving the folder as it
+    was, so a single pull reports the whole batch missing.
+    """
     want = [_bilibili_read_avid(a) for a in avids]
     for attempt in range(1, tries + 1):
         present = {m['id'] for m in bilibili_read_folder_medias(driver, media_id)}
@@ -44,6 +39,15 @@ def _bilibili_wait_in_folder(driver, media_id, avids, tries=6, sleep=1.5):
 
 
 def bilibili_move_videos(driver, plan, out_path=None, verify=True):
+    """[{'target','mid','count','ok','code','missing','resp'}], one row per batch, printed as it goes.
+
+    plan is the dict below or a path to it: {"src_media_id": 0, "targets": [{"mid": 0, "name": "folder",
+    "avids": [123, "456:24", (789, 24)]}]}. API: POST /x/v3/fav/resource/move (src_media_id, tar_media_id,
+    mid, resources="<avid>:<type>,...", csrf). The type must be the list entry's own — PGC film / 番剧 are
+    24 — and a wrong one is accepted with exactly the {"code": 0, "data": 0} a real move returns, so the
+    reply proves nothing either way; `data` is not a count either (a batch that moved every item still
+    answers 0, and so does one that moved none). Hence verify: ok comes from re-pulling the target folder.
+    """
     if isinstance(plan, str):
         plan = json.load(open(plan))
     account, src = bilibili_get_uid(driver), plan['src_media_id']

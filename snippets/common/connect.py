@@ -1,9 +1,4 @@
-"""connect(reuse=True, port=2828) -> driver: the one and only connection incantation — reattach.py calls it
-too, so args and timeout ceilings drift in one place only. Precondition: Firefox up with -marionette and no
-stray geckodriver (reattach.py).
-Calling it again hands back the driver the session already holds, so two attaches never fight over one
-Marionette; reattach() asks for a fresh one instead, which is how a dead session gets replaced.
-"""
+"""Attach to the running Firefox and hand back a driver."""
 
 import __main__
 import shutil
@@ -14,7 +9,13 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 
 def connect(reuse=True, port=2828):
-    """Attach to the running Firefox and return the driver, or the one the session already holds."""
+    """Attach to the running Firefox and return the driver, or the one the session already holds.
+
+    The one and only connection incantation — reattach.py calls it too, so args and timeout ceilings drift in
+    one place only. Precondition: Firefox up with -marionette and no stray geckodriver (reattach.py). Calling
+    it again hands back the driver the session already holds, so two attaches never fight over one Marionette;
+    reattach() asks for a fresh one instead, which is how a dead session gets replaced.
+    """
     driver = getattr(__main__, "driver", None) if reuse else None
     if isinstance(driver, WebDriver):
         print("SELENIUM: reusing the driver already attached")

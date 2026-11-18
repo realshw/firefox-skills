@@ -1,12 +1,14 @@
-"""grok_send_message(driver) -> None; clicks send — no wait, no confirmation.
-Click the button whose aria-label says send/submit — no wait, no confirmation.
-"""
+"""Send what is typed in the Grok composer."""
 
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
 
 def grok_send_message(driver):
+    """Click the button whose aria-label says send/submit — no wait, no confirmation.
+
+    Enter is the fallback when no such button is on the page.
+    """
     btns = []
     for b in driver.find_elements("css selector", "button"):
         try:

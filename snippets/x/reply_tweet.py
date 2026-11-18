@@ -1,8 +1,4 @@
-"""x_reply_tweet(driver, url, text) -> None; replies in the inline composer, or stops before sending when dry_run.
-The inline and modal composers share tweetTextarea_0 — take the box NOT inside [role="dialog"], and it
-mounts a moment after navigation. Same aria-disabled rule as post_tweet; clear with select-all+DELETE,
-never a click on the box (a floating hint intercepts it).
-"""
+"""Reply to a post through x.com's inline composer."""
 
 from selenium.webdriver.common.keys import Keys
 
@@ -23,7 +19,12 @@ def _x_find_inline_box(driver):
 
 
 def x_reply_tweet(driver, url, text, dry_run=False):
-    """Open `url` (a /status/ link or handle/status/id) and reply with the inline composer."""
+    """Open `url` (a /status/ link or handle/status/id) and reply with the inline composer.
+
+    The inline and modal composers share tweetTextarea_0 — take the box NOT inside [role="dialog"], and it
+    mounts a moment after navigation. Same aria-disabled rule as post_tweet; clear with select-all+DELETE,
+    never a click on the box (a floating hint intercepts it). dry_run stops before the Reply click.
+    """
     if not url.startswith("http"):
         url = "https://x.com/" + url.lstrip("/")
     site_tab(driver, "//x.com/")

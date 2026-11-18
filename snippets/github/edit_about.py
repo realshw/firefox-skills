@@ -1,9 +1,4 @@
-"""github_edit_about(driver, new_desc, sections) -> (before, after), once the page shows the change.
-The gear is button[aria-label="Edit repository metadata"]; once open the backdrop covers it, so check for
-the backdrop before clicking. The description is an input with a random React id — identify it by its
-placeholder and set it through the native value setter + an input event; checkboxes flip via their label.
-Save only closes the dialog on a server ack — the backdrop vanishing is the confirmation.
-"""
+"""Rewrite a GitHub repo's About description and homepage sections."""
 
 import time
 from selenium.webdriver.common.by import By
@@ -77,7 +72,13 @@ def _github_set_sections(driver, wanted):
 
 
 def github_edit_about(driver, new_desc=None, sections=None, timeout=20):
-    """Rewrite the About description and/or home-page sections; return (before, after)."""
+    """Rewrite the About description and/or home-page sections; return (before, after).
+
+    The gear is button[aria-label="Edit repository metadata"]; once open the backdrop covers it, so check for
+    the backdrop before clicking. The description is an input with a random React id — identify it by its
+    placeholder and set it through the native value setter + an input event; checkboxes flip via their label.
+    Save only closes the dialog on a server ack — the backdrop vanishing is the confirmation.
+    """
     _github_open_dialog(driver)
     before = driver.execute_script(_GITHUB_STATE_JS)
     if new_desc is not None:

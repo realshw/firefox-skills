@@ -1,8 +1,4 @@
-"""x_like_tweet(driver, index) -> None; likes the article at `index` and confirms on the flipped label.
-The like button's data-testid flips like → unlike, and that is the confirmation, not the count (which
-lags). Index is DOM order on the page (0 = first mounted article). Re-query the articles after every
-click — the element goes stale on re-render. undo=True un-likes.
-"""
+"""Like or un-like the post at a given position on an X page."""
 
 import json
 
@@ -23,7 +19,12 @@ def _x_read_label(driver, index):
 
 
 def x_like_tweet(driver, index=0, undo=False):
-    """Like (or un-like with undo=True) the article at `index`."""
+    """Like (or un-like with undo=True) the article at `index`; True when the label flipped as wanted.
+
+    The button's data-testid flips like → unlike, and that is the confirmation, not the count (which lags).
+    Index is DOM order on the page (0 = first mounted article). Re-query the articles after every click —
+    the element goes stale on re-render.
+    """
     arts = driver.find_elements("css selector", 'article[data-testid="tweet"]')
     if index >= len(arts):
         print("LIKE_FAILED: only %d articles mounted (index %d)" % (len(arts), index))

@@ -1,7 +1,4 @@
-"""cloudmusic_open_daily(driver) -> None; leaves the 每日推荐 list open.
-Already open when h1.recommend-title .recommend shows 每日推荐. 30 songs per list; the "10 / 10" on the
-h1 is the date, not a count.
-"""
+"""Leave cloudmusic's 每日推荐 list open."""
 
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -12,6 +9,10 @@ _CLOUDMUSIC_DAILY_JS = ('const t = document.querySelector("h1.recommend-title .r
 
 
 def cloudmusic_open_daily(driver):
+    """Open the 每日推荐 list; it counts as open when h1.recommend-title .recommend says so.
+
+    30 songs per list, and the "10 / 10" on that h1 is the date, not a count.
+    """
     if not driver.execute_script(_CLOUDMUSIC_DAILY_JS):
         cloudmusic_open_rec(driver)
         spans = [

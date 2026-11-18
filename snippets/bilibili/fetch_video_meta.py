@@ -1,8 +1,4 @@
-"""bilibili_fetch_video_meta(driver, vids, out_path=None) -> the same list with tname/desc/tags filled in; each entry
-needs 'avid' and gets its 'bvid' resolved when it is missing or empty. Tags are the deciding signal when
-reshuffling — tname is empty these days, and a title alone routinely points at the wrong folder.
-API: GET /x/web-interface/view?aid=, GET /x/tag/archive/tags?bvid=
-"""
+"""Fill in tname / desc / tags for a slice of a bilibili account dump."""
 
 import json
 import time
@@ -11,6 +7,12 @@ exec(open("snippets/bilibili/api.py").read())
 
 
 def bilibili_fetch_video_meta(driver, vids, out_path=None):
+    """The same list with tname/desc/tags filled in; each entry needs 'avid' and gets its 'bvid' resolved.
+
+    A missing or empty bvid is looked up. Tags are the deciding signal when reshuffling — tname is empty
+    these days, and a title alone routinely points at the wrong folder. API: GET /x/web-interface/view?aid=,
+    GET /x/tag/archive/tags?bvid=
+    """
     for i, m in enumerate(vids):
         aid = m['avid']
         if not m.get('bvid'):

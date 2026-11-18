@@ -1,10 +1,12 @@
-"""cloudmusic_read_player_state(driver) -> None; prints the mini-bar's state (song, artist, playing, clock).
-The mini bar is the source of truth (no <audio>, Web Audio pipeline). The 歌曲 tab number is the song
-count; the badge on the playlist cover is the play count.
-"""
+"""Print what cloudmusic's mini bar says is playing."""
 
 
 def cloudmusic_read_player_state(driver):
+    """Print the mini-bar's state: title, PLAYING/PAUSED/NO_CONTROL and the clock.
+
+    The mini bar is the source of truth (no <audio>, Web Audio pipeline). Elsewhere on the page the 歌曲 tab
+    number is the song count and the badge on the playlist cover is the play count — neither is playback.
+    """
     js = r"""
     const footer = document.querySelector('footer');
     const icon = footer ? footer.querySelector('span[aria-label=pause], span[aria-label=play]') : null;

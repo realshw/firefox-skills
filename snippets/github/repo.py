@@ -1,9 +1,4 @@
-"""github_open_repo(driver, slug) -> {name, desc, stars, forks, branch};
-github_read_readme(driver) -> the rendered README, saved;
-github_list_tree(driver) -> the root listing, printed.
-data-testid is stable, class names are CSS modules with a per-build hash — match the module prefix with
-[class*=...]. The description is p[class*="SidebarAbout-module"]; the tree is plain /tree/ and /blob/ links.
-"""
+"""Read a GitHub repo's home page, its README and its file tree."""
 
 import os
 import tempfile
@@ -23,7 +18,11 @@ def github_open_repo(driver, slug, timeout=45):
 
 
 def github_read_repo_info(driver):
-    """Current repo page as a dict."""
+    """Current repo page as a dict.
+
+    data-testid is stable, class names are CSS modules with a per-build hash — match the module prefix with
+    [class*=...]. The description is p[class*="SidebarAbout-module"].
+    """
     js = """
     const t = s => { const e = document.querySelector(s); return e ? e.innerText.trim() : ''; };
     const num = s => { const m = t(s).match(/\\(([^)]+)\\)/); return m ? m[1] : t(s).replace(/^\\w+/, '').trim(); };
@@ -53,7 +52,10 @@ def github_read_readme(driver, out_path=None, limit=6000):
 
 
 def github_list_tree(driver, limit=80):
-    """Print the entry names in the root listing (dirs and files, deduped, order kept)."""
+    """Print the entry names in the root listing (dirs and files, deduped, order kept).
+
+    The tree is plain /tree/ and /blob/ links — d for a dir, f for a file.
+    """
     seen = driver.execute_script("""
     const out = [], seen = new Set();
     document.querySelectorAll('a[href*="/tree/"], a[href*="/blob/"]').forEach(a => {

@@ -1,10 +1,4 @@
-"""freebsd_list_releases(driver) -> {production, legacy, upcoming, dated};
-freebsd_read_latest_release(driver) -> the production version;
-freebsd_open_releases(driver) -> None, leaves the releases page loaded.
-The page states its own tiers ("Production Release: 15.1", …) then lists every release with a date —
-parse those two shapes, not the markup. Url trap the folder depends on: /releases/15.1R/relnotes/ works,
-/releases/15.1.0/relnotes/ is a 404.
-"""
+"""Read which FreeBSD releases exist, and which one is production."""
 
 import re
 
@@ -27,7 +21,11 @@ def freebsd_open_releases(driver, timeout=30):
 
 
 def freebsd_list_releases(driver):
-    """{production: [...], legacy: [...], upcoming: [...], dated: [(version, date)]}"""
+    """{production: [...], legacy: [...], upcoming: [...], dated: [(version, date)]}
+
+    The page states its own tiers ("Production Release: 15.1", …) then lists every release with a date —
+    parse those two shapes, not the markup.
+    """
     t = driver.execute_script("return document.body.innerText")
     out = {'production': [], 'legacy': [], 'upcoming': []}
     for tier, ver in _FREEBSD_TIER.findall(t):
@@ -41,6 +39,9 @@ def freebsd_list_releases(driver):
 
 
 def freebsd_read_latest_release(driver):
-    """The current production version, as a string ('15.1')."""
+    """The current production version, as a string ('15.1').
+
+    This is what the folder's urls need: /releases/15.1R/relnotes/ works, /releases/15.1.0/relnotes/ is a 404.
+    """
     t = freebsd_open_releases(driver)
     return re.search(r"Production Release:\s*([\d.]+)", t).group(1)

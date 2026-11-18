@@ -1,10 +1,4 @@
-"""x_collect_tweets(driver, n) -> n tweets, scrolling and deduping; x_read_tweets(driver) -> what is mounted now;
-x_print_tweets(rows) -> None, prints them.
-The timeline is virtualized, so x_collect_tweets(driver) reads after every scroll and dedupes on the status id.
-Engagement comes from the stats group's aria-label — the number group must start with a digit, or a
-liked row's ", Reposted" poisons the count. Quoted tweets carry a second tweetText inside the article:
-count only outside that box. /notifications has no articles; promoted rows need a handle filter.
-"""
+"""Collect the tweets mounted on an x.com page as dicts, scrolling and deduping."""
 
 import time
 
@@ -72,12 +66,19 @@ def x_read_tweets(driver, limit=100):
 
     `url` is site-relative (prefix https://x.com). `stats` holds the exact aria-label numbers, not
     the rounded "1.4K" on screen; 0 means the field was missing, which on X means "none yet".
+
+    Engagement comes from the stats group's aria-label — the number group must start with a digit, or a
+    liked row's ", Reposted" poisons the count. Quoted tweets carry a second tweetText inside the article:
+    count only outside that box. /notifications has no articles at all; promoted rows need a handle filter.
     """
     return (driver.execute_script(X_EXTRACT_JS) or [])[:limit]
 
 
 def x_collect_tweets(driver, n=30, max_scrolls=20, pause=2.5):
-    """Read-and-scroll until n tweets are gathered, the feed ends, or two scrolls add nothing."""
+    """Read-and-scroll until n tweets are gathered, the feed ends, or two scrolls add nothing.
+
+    The feed is virtualized, so this reads what is mounted after every scroll and dedupes on the status id.
+    """
     seen, out, dry = set(), [], 0
     for _ in range(max_scrolls + 1):
         fresh = 0

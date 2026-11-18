@@ -1,10 +1,4 @@
-"""type_verified(driver, msg) / composer(driver): verified against the page, not against send_keys — an observer
-counts beforeinput/input/compositionend, a short chunk is retyped from the missing tail only, and the
-read-back (never .value on a contenteditable, which has none; never .text on a textarea, which is empty) is
-the proof. Long text is pasted first — async, so confirm activeElement and poll the read-back — with chunked
-keys as the fallback. selector picks the field: contenteditable by default, "textarea" for DeepSeek; Grok's
-composer drops fast keystrokes, so chunk=1, delay=(0.08, 0.08) types there one character at a time.
-"""
+"""Type into a page's composer and prove the text landed by reading it back."""
 
 import random
 import shutil
@@ -76,7 +70,9 @@ _JS_RECEIVED = "return window.__inputObs ? window.__inputObs.received : -1"
 def composer(driver, selector=None, timeout=20):
     """The visible field to type into: contenteditable, or whatever selector the site needs.
 
-    The field mounts a beat after readyState, so wait for it rather than failing a load in progress."""
+    The field mounts a beat after readyState, so wait for it rather than failing a load in progress. selector
+    picks it: contenteditable by default, "textarea" for DeepSeek.
+    """
     sel = selector or "[contenteditable='true']"
     end = time.time() + timeout
     while time.time() < end:
@@ -92,7 +88,10 @@ def _norm(s):
 
 
 def _read(el):
-    """Read a field back in the property that actually holds its text."""
+    """Read a field back in the property that actually holds its text.
+
+    Never .value on a contenteditable, which has none; never .text on a textarea, which is empty.
+    """
     if el.tag_name in ("textarea", "input"):
         return _norm(el.get_attribute("value") or "")
     return _norm(el.text)
@@ -136,7 +135,13 @@ def _VERIFIED_SETTLE(el, target, timeout=2.0, tick=0.1):
 
 
 def type_verified(driver, msg, selector=None, chunk=24, delay=(0.06, 0.14), tries=3, paste_over=80):
-    """Type msg (paste first when long), verifying the read-back; True only when it matches exactly."""
+    """Type msg (paste first when long), verifying the read-back; True only when it matches exactly.
+
+    Verified against the page, not against send_keys: an observer counts beforeinput/input/compositionend,
+    a short chunk is retyped from the missing tail only, and the read-back is the proof. Long text is pasted
+    first — async, so confirm activeElement and poll the read-back — with chunked keys as the fallback. Grok's
+    composer drops fast keystrokes, so chunk=1, delay=(0.08, 0.08) types there one character at a time.
+    """
     el = composer(driver, selector)
     base = driver.execute_script(_JS_ATTACH, el)
     target = _norm(msg)

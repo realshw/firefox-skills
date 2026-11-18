@@ -1,8 +1,4 @@
-"""x_post_tweet(driver, text) -> None; posts, or types then discards when dry_run.
-Two composers share the testids: scope everything to [role="dialog"] or an unscoped querySelector types
-into the inline box while you watch the modal's button. Post state lives in aria-disabled (never the
-`disabled` property) and X counts CJK as 2 chars. The composer emptying is the signal, not the click.
-"""
+"""Post a new tweet, or type one and discard it."""
 
 from selenium.webdriver.common.keys import Keys
 
@@ -47,7 +43,12 @@ def _x_close_composer(driver):
 
 
 def x_post_tweet(driver, text, dry_run=False):
-    """Compose `text` and post it. dry_run=True types, checks the button, then discards — nothing sent."""
+    """Compose `text` and post it. dry_run=True types, checks the button, then discards — nothing sent.
+
+    Two composers share the testids: scope everything to [role="dialog"] or an unscoped querySelector types
+    into the inline box while you watch the modal's button. Post state lives in aria-disabled (never the
+    `disabled` property) and X counts CJK as 2 chars. The composer emptying is the signal, not the click.
+    """
     if not driver.find_elements("css selector", X_DIALOG_BOX):
         driver.find_element("css selector", X_NEW_TWEET).click()
     if not wait_js(driver, "!!document.querySelector('%s')" % X_DIALOG_BOX):

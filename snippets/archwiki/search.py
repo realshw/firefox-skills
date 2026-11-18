@@ -1,8 +1,4 @@
-"""archwiki_search(driver, query) -> [{title, url, snippet}], printed.
-index.php?search=<q>&fulltext=1 — fulltext=1 is not optional or you get the "go to title" page. Pair
-.mw-search-result-heading with the .searchresult div by index. The top hit is often a #REDIRECT stub and
-matching is loose — don't dedupe, the redirect is frequently the canonical name.
-"""
+"""Full-text search the ArchWiki and print the hits."""
 
 from urllib.parse import quote
 
@@ -11,7 +7,12 @@ exec(open("snippets/common/wait_js.py").read())
 
 
 def archwiki_search(driver, query, limit=10, timeout=30):
-    """Print and return [{title, url, snippet}] for an ArchWiki full-text search."""
+    """Print and return [{title, url, snippet}] for an ArchWiki full-text search.
+
+    index.php?search=<q>&fulltext=1 — fulltext=1 is not optional or you get the "go to title" page. Pair
+    .mw-search-result-heading with the .searchresult div by index. The top hit is often a #REDIRECT stub and
+    matching is loose — don't dedupe, the redirect is frequently the canonical name.
+    """
     site_tab(driver, "//wiki.archlinux.org/")
     driver.get("https://wiki.archlinux.org/index.php?search=" + quote(query) + "&fulltext=1")
     wait_js(driver, "!!document.querySelector('.mw-search-result-heading')", timeout)

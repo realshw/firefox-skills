@@ -1,7 +1,4 @@
-"""freebsd_open_status(driver, report) -> the page text; freebsd_list_quarters(driver) -> published slugs, newest first.
-Same outline(driver) / section(driver) pair as everywhere else. Traps: the links are relative slugs shaped
-report-2026-04-2026-06/ (start + end month), and the newest quarter is often announced but unpublished.
-"""
+"""Load FreeBSD quarterly status reports, and list the published ones."""
 
 import os
 import re
@@ -17,7 +14,11 @@ _FREEBSD_QUARTERS = None  # cached: freebsd_open_status(driver) would otherwise 
 
 
 def freebsd_list_quarters(driver, force=False):
-    """Published report slugs, newest first. Drives the tab to /status/ (cached after the first call)."""
+    """Published report slugs, newest first. Drives the tab to /status/ (cached after the first call).
+
+    Traps: the links are relative slugs shaped report-2026-04-2026-06/ (start + end month), and the newest
+    quarter is often announced but unpublished.
+    """
     global _FREEBSD_QUARTERS
     if _FREEBSD_QUARTERS is not None and not force:
         return _FREEBSD_QUARTERS
@@ -38,7 +39,10 @@ def freebsd_list_quarters(driver, force=False):
 
 
 def freebsd_open_status(driver, report=None, timeout=30, cache=True):
-    """Load one quarterly report (slug or None = newest); returns the page text."""
+    """Load one quarterly report (slug or None = newest); returns the page text.
+
+    Read it with the same outline(driver) / section(driver) pair as everywhere else.
+    """
     slug = report or (freebsd_list_quarters(driver) or [''])[0]
     if not slug:
         print("NO_REPORTS")

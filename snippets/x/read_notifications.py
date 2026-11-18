@@ -1,10 +1,12 @@
-"""x_read_notifications(driver) -> None; prints the mounted notification cells.
-Reads the mounted cells of /notifications (navigate there first) — they are
-[data-testid="notification"], not articles. links[0] is the actor; the second link may be a quoted excerpt.
-"""
+"""Print the notification cells mounted on x.com's /notifications page."""
 
 
 def x_read_notifications(driver):
+    """Print the mounted cells of /notifications (navigate there first).
+
+    They are [data-testid="notification"], not articles. links[0] is the actor; the second link may be a
+    quoted excerpt.
+    """
     cells = driver.find_elements("css selector", '[data-testid="notification"]')
     print("NOTIFICATIONS:", len(cells), "|", driver.title)
     for i, c in enumerate(cells, 1):

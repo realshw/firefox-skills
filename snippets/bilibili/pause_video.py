@@ -1,6 +1,4 @@
-"""bilibili_pause_video(driver) -> None; leaves the video paused.
-Either /video/ or /bangumi/play/ (covers PGC movies/series) counts; mirrors resume_playback.py.
-"""
+"""Pause the bilibili video open in a tab and confirm it stopped."""
 
 import json
 
@@ -8,6 +6,12 @@ exec(open("snippets/common/wait_js.py").read())
 
 
 def bilibili_pause_video(driver):
+    """Leave the video paused; prints PAUSED, ALREADY_PAUSED or PAUSE_FAILED.
+
+    Either /video/ or /bangumi/play/ (covers PGC movies/series) counts; mirrors resume_playback.py. A real
+    WebDriver click doubles as the user gesture (a JS click may not count), and paused flips asynchronously,
+    so wait for it rather than re-reading a fixed delay later.
+    """
     state_js = r"""
     const v = document.querySelector('video');
     if (!v) return null;

@@ -1,13 +1,14 @@
-"""wait_js(driver, expr) / as_expr(js): one poll loop for the whole skill — send JS, stop at the first truthy
-answer; a raised exception means "not yet", never a failure — the deadline decides. Pass a timeout when the
-site is slower than 25 s.
-"""
+"""Poll a JS expression until it turns truthy, and wrap a JS block so it can be polled."""
 
 import time
 
 
 def wait_js(driver, expr, timeout=25, tick=0.5):
-    """True as soon as the JS expression evaluates truthy, False once timeout seconds pass."""
+    """True as soon as the JS expression evaluates truthy, False once timeout seconds pass.
+
+    The one poll loop for the whole skill: a raised exception means "not yet", never a failure — the deadline
+    decides. Pass a timeout when the site is slower than 25 s.
+    """
     t0 = time.time()
     while time.time() - t0 < timeout:
         try:

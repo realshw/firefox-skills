@@ -1,10 +1,4 @@
-"""x_save_video(driver, index, out_dir) -> the saved path;
-x_read_video_info(driver, index) -> {tid, duration_ms, poster, variants}.
-The DOM exposes only a poster jpg and a blob: src (MSE), so the mp4 url comes from the syndication API —
-its token must be computed *in the browser* (Python's base36 rounds differently, a wrong token 404s).
-Working door: a tab of its own on the viewer, click "Raw Data", read pre#rawdata.textContent; the bytes
-come back in ~4 MB Range slices. The m3u8 fallback is partial (video track only).
-"""
+"""Download the mp4 attached to a tweet."""
 
 import base64
 import json
@@ -64,6 +58,7 @@ def _x_wait_articles(driver, index, timeout=15):
 
 
 def x_read_tweet_id(driver, index=0):
+    """The status id of article `index`, or None while it has not mounted."""
     _x_wait_articles(driver, index)
     try:
         return driver.execute_script(
@@ -77,7 +72,10 @@ def x_read_tweet_id(driver, index=0):
 
 
 def _x_read_syndication(driver, tid, timeout=25):
-    """The syndication JSON for tid, read out of its own tab's raw pane."""
+    """The syndication JSON for tid, read out of its own tab's raw pane.
+
+    Working door: a tab of its own on the viewer, click "Raw Data", read pre#rawdata.textContent.
+    """
     token = driver.execute_script("return ((%s/1e15)*Math.PI).toString(36).replace(/(0+|\\.)/g,'')" % tid)
     current = driver.current_window_handle
     driver.switch_to.new_window('tab')
@@ -103,6 +101,8 @@ def _x_read_syndication(driver, tid, timeout=25):
 def x_read_video_info(driver, index=0, tid=None):
     """{tid, duration_ms, poster, variants: [{type, bitrate, url}]} or None if the post has no video.
 
+    The DOM exposes only a poster jpg and a blob: src (MSE), so the mp4 url comes from the syndication API —
+    and its token must be computed *in the browser* (Python's base36 rounds differently, a wrong token 404s).
     `tid` skips the DOM read entirely — a timeline/search result row's status id is enough.
     """
     tid = tid or x_read_tweet_id(driver, index)
@@ -218,7 +218,9 @@ def _x_download_hls(driver, url, path_base, verbose=True):
 
 def x_save_video(driver, index=0, out_dir=None, max_height=720, dry_run=False, verbose=True):
     """Save the video attached to article `index` (current page must be x.com) to out_dir (default:
-    the system temp dir). Returns path(s)."""
+    the system temp dir). Returns path(s).
+
+    The bytes come back in ~4 MB Range slices; the m3u8 fallback is partial (video track only)."""
     # Marionette kills execute_async_script at the *driver's* script timeout (20-30 s by default) long
     # before our in-page 120 s guard fires — a slow 4 MB slice then surfaces as a TimeoutException that
     # looks like a hang. Raise it once, here, rather than per call.

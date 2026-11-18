@@ -1,12 +1,14 @@
-"""x_read_thread(driver) -> None; prints the thread of the open /status/ page.
-Reads the thread of the open /status/ page — the focal tweet is the *first* article, everything after
-it is a reply. Needs extract_tweets.py; replies lazy-load, so a long chain needs a bigger max_scrolls.
-"""
+"""Print the thread under the /status/ page that is open."""
 
 exec(open("snippets/x/extract_tweets.py").read())
 
 
 def x_read_thread(driver):
+    """Print the focal tweet and then every reply, in order, with its stats.
+
+    The focal tweet is the *first* article, everything after it is a reply. Replies lazy-load, so a long
+    chain needs a bigger max_scrolls than the 6 here.
+    """
     rows = x_collect_tweets(driver, n=200, max_scrolls=6)
     if not rows:
         print("NO_THREAD: not on a /status/ page? url =", driver.current_url)

@@ -1,8 +1,4 @@
-"""grok_read_reply(driver) -> the reply text, once the Stop button is gone.
-Completion: a visible button[aria-label~="Stop"] while generating, gone once done — pass that as js_done
-or a mid-stream pause passes as stable (the bubble is created empty on send). The reply text is
-div.response-content-markdown, not the outer "Worked for Xs" line.
-"""
+"""Read the reply Grok is writing in the open chat, once it stops writing."""
 
 import os
 import tempfile
@@ -24,6 +20,12 @@ GROK_REPLY_PATH = os.path.join(tempfile.gettempdir(), 'grok_reply.txt')
 
 
 def grok_read_reply(driver):
+    """The reply text, saved to <tempdir>/grok_reply.txt, once the Stop button is gone.
+
+    Completion: a visible button[aria-label~="Stop"] while generating, gone once done — it is passed as
+    js_done, or a mid-stream pause passes as stable (the bubble is created empty on send). The reply text is
+    div.response-content-markdown, not the outer "Worked for Xs" line.
+    """
     print("NUM_RESPONSES:", driver.execute_script(GROK_JS_COUNT))
     if not driver.execute_script(GROK_JS_DONE):
         print("GENERATING - waiting for the Stop button to clear")

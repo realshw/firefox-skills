@@ -1,8 +1,4 @@
-"""page_text(driver) / headings(driver) / outline(driver) / section(driver) / sections_find(driver) /
-count(driver) for long official documents. Headings are walked as *elements*, never by text offset (the TOC
-repeats every heading verbatim), the walk climbs out of heading-only wrappers (MediaWiki div.mw-heading), and
-a section includes its subsections.
-"""
+"""Walk a long official document's headings and pull it section by section."""
 
 import re
 
@@ -18,7 +14,10 @@ def page_text(driver, out_path=None):
 
 
 def headings(driver, tags=("h1", "h2", "h3", "h4")):
-    """Every heading on the page as [(tag, text)] in document order."""
+    """Every heading on the page as [(tag, text)] in document order.
+
+    Headings are walked as *elements*, never by text offset — the TOC repeats every heading verbatim.
+    """
     js = ("return [...document.querySelectorAll('" + ",".join(tags) + "')]"
           ".map(h => [h.tagName, h.innerText.trim()]).filter(x => x[1])")
     return driver.execute_script(js)
@@ -61,7 +60,11 @@ return out.join('\\n').trim();
 
 
 def section(driver, name, limit=2000, show=True):
-    """Text of one section by heading text; falls back to text slicing (last hit — TOC comes first)."""
+    """Text of one section by heading text; falls back to text slicing (last hit — TOC comes first).
+
+    The walk climbs out of heading-only wrappers (MediaWiki's div.mw-heading) and a section includes its
+    subsections.
+    """
     body = driver.execute_script(_SECTION_JS, name)
     if body is None:
         t = page_text(driver)

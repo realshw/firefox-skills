@@ -1,11 +1,4 @@
-"""front_tab(driver) / tabs(driver) / front_index() / wm_title() / store(): "which page is the user on?" —
-WebDriver cannot answer this. window_handles carries no order,
-switch_to.window does NOT move the tab the human sees (proved: sessionstore's `selected` survives a
-25 s switch), every tab answers visible + hasFocus, and a chrome-privileged context (about:newtab)
-raises UnsupportedOperationError on every command, titles included. Two signals outside WebDriver do
-work: the session store's `selected` index for the front tab, and the X11 window title
-"<front tab title> — Mozilla Firefox". Both are passive — reading them moves nothing.
-"""
+"""Find which tab the user is actually looking at, without moving it."""
 
 import glob
 import json
@@ -81,7 +74,11 @@ def _xprop(args):
 
 
 def wm_title():
-    """Title of the front tab, read off the Firefox window's X11 title; None when xprop is absent."""
+    """Title of the front tab, read off the Firefox window's X11 title; None when xprop is absent.
+
+    The title reads "<front tab title> — Mozilla Firefox" (SUFFIXES), which is what makes it usable as a
+    cross-check on the session-store index.
+    """
     listing = _xprop(["-root", "_NET_CLIENT_LIST_STACKING"])
     for wid in listing.split("#")[-1].replace(",", " ").split():
         info = _xprop(["-id", wid, "WM_CLASS", "_NET_WM_NAME"])
@@ -98,7 +95,11 @@ def wm_title():
 
 
 def tabs(driver):
-    """Every tab as {handle, index, title, url, error}; the session is left on the handle it arrived on."""
+    """Every tab as {handle, index, title, url, error}; the session is left on the handle it arrived on.
+
+    A chrome-privileged context (about:newtab) raises UnsupportedOperationError on every command, titles
+    included, so a tab that refuses the question becomes a row carrying the error, not a crash.
+    """
     start = driver.current_window_handle
     out = []
     for index, handle in enumerate(driver.window_handles):
@@ -118,7 +119,14 @@ def tabs(driver):
 
 
 def front_tab(driver, switch=False, rows=None):
-    """The row the user is looking at: session-store index first, window title as the cross-check."""
+    """The row the user is looking at: session-store index first, window title as the cross-check.
+
+    WebDriver cannot answer "which page is the user on?": window_handles carries no order, switch_to.window
+    does NOT move the tab the human sees (proved: sessionstore's `selected` survives a 25 s switch), and
+    every tab answers visible + hasFocus. Two signals outside WebDriver do work: the session store's
+    `selected` index for the front tab, and the X11 window title "<front tab title> — Mozilla Firefox".
+    Both are passive — reading them moves nothing.
+    """
     rows = tabs(driver) if rows is None else rows
     index, title = front_index(), wm_title()
     picked, source = None, ""

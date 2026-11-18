@@ -1,8 +1,4 @@
-"""x_delete_tweet(driver, url) -> None; deletes your post at `url`, stopping at the sheet when dry_run.
-The caret opens a [role="menu"] whose "Delete" item carries no testid — match the label exactly; the
-confirm sheet has no [role="dialog"] wrapper. The caret is one click from a real deletion, so every call
-takes `expect` and refuses unless the focal post's text contains it. /status/ pages only.
-"""
+"""Delete one of your own posts on X, with a guard on which post it is."""
 
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
@@ -11,7 +7,12 @@ X_CARET = 'article[data-testid="tweet"] [data-testid="caret"]'
 
 
 def x_delete_tweet(driver, url, expect=None, dry_run=False):
-    """Delete the post at `url` (must be yours). `expect` guards the target; dry_run stops at the sheet."""
+    """Delete the post at `url` (must be yours). `expect` guards the target; dry_run stops at the sheet.
+
+    The caret opens a [role="menu"] whose "Delete" item carries no testid — match the label exactly; the
+    confirm sheet has no [role="dialog"] wrapper. The caret is one click from a real deletion, so every call
+    takes `expect` and refuses unless the focal post's text contains it. /status/ pages only.
+    """
     if not url.startswith("http"):
         url = "https://x.com/" + url.lstrip("/")
     site_tab(driver, "//x.com/")

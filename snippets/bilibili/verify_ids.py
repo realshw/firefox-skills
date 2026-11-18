@@ -1,12 +1,4 @@
-"""bilibili_verify_ids(driver, baseline) -> {'ok','lost','new','dup','folders'} —
-bilibili_verify_reorg's cheap sibling: same
-comparison by folder id, but from bilibili_read_folder_ids instead of a page-by-page dump, so it costs 22 requests
-instead of 40+ and keeps answering when resource/list is 412 (risk control blocks that one endpoint alone;
-list-all, view and ids still answer 200). Trade-off: ids carry no titles, so a lost entry is reported by
-avid alone, and a PGC type-24 entry is invisible here — so the baseline side is filtered to type 2 as
-well, and 影视·剧集 does not read one short. Use it
-after a move batch; use bilibili_verify_reorg (titles, dead-entry report) when the answer has to name the video.
-"""
+"""Check a bilibili reorg the cheap way: compare folder ids, 22 requests."""
 
 from collections import Counter
 
@@ -15,6 +7,15 @@ exec(open("snippets/common/pad.py").read())
 
 
 def bilibili_verify_ids(driver, baseline):
+    """{'ok','lost','new','dup'} after printing the per-folder table — a move batch's verdict.
+
+    bilibili_verify_reorg's cheap sibling: the same comparison by folder id, but from
+    bilibili_read_folder_ids instead of a page-by-page dump, so it costs 22 requests instead of 40+ and keeps
+    answering when resource/list is 412 (risk control blocks that one endpoint alone; list-all, view and ids
+    still answer 200). Trade-off: ids carry no titles, so a lost entry is reported by avid alone, and a PGC
+    type-24 entry is invisible here — so the baseline side is filtered to type 2 as well, and 影视·剧集 does not
+    read one short. Use bilibili_verify_reorg (titles, dead-entry report) when the answer has to name the video.
+    """
     before = {v['id']: (k, [m['id'] for m in v['medias'] if m.get('type') == 2]) for k, v in baseline.items()}
     now = {}
     for f in bilibili_read_fav_folders(driver):

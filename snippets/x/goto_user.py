@@ -1,8 +1,4 @@
-"""x_goto_user(driver, handle, tab) -> tweets mounted on the profile page.
-Tab urls are plain (/handle, /handle/replies, /handle/media): don't click the role="tab" buttons. Wait
-for the tweets, not [data-testid="UserName"] — a count taken when the header mounts is still 0. The
-empty-profile wording differs by tab and owner, so match the fragments.
-"""
+"""Open an x.com profile page and count the tweets it mounts."""
 
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
@@ -11,7 +7,12 @@ X_USER_TABS = {"posts": "", "replies": "/with_replies", "media": "/media", "like
 
 
 def x_goto_user(driver, handle, tab="posts", timeout=25):
-    """Navigate the x.com tab to a profile page (handle with or without @); returns tweets mounted."""
+    """Navigate the x.com tab to a profile page (handle with or without @); returns tweets mounted.
+
+    Tab urls are plain (/handle, /handle/replies, /handle/media): don't click the role="tab" buttons. Wait for
+    the tweets, not [data-testid="UserName"] — a count taken when the header mounts is still 0. The
+    empty-profile wording differs by tab and owner, so match the fragments.
+    """
     h = handle.strip().lstrip("@").split("/")[0]
     if tab not in X_USER_TABS:
         print("BAD_TAB:", tab, "expected one of", list(X_USER_TABS))

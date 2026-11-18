@@ -1,9 +1,4 @@
-"""bilibili_verify_reorg(driver, baseline, out_path=None) -> {'ok','lost','new','dup','folders'}; baseline is a previous
-bilibili_dump_all dict or its JSON path. Re-dumps the account and compares by folder id — ids survive renames, so a
-renamed folder is not reported as one folder emptied and another filled. lost = an avid that is now in no
-folder at all (the only real failure); new = favourited since the baseline, not a failure; dup = the same
-avid twice in one folder. It speaks for the whole account, so a plan's targets need no separate check.
-"""
+"""Check a bilibili reorg against a previous dump, by folder id and title."""
 
 import json
 import os
@@ -15,6 +10,14 @@ exec(open("snippets/common/pad.py").read())
 
 
 def bilibili_verify_reorg(driver, baseline, out_path=None):
+    """{'ok','lost','new','dup','folders'} after printing the before/after table.
+
+    baseline is a previous bilibili_dump_all dict or its JSON path. Re-dumps the account and compares by folder
+    id — ids survive renames, so a renamed folder is not reported as one folder emptied and another filled.
+    lost = an avid that is now in no folder at all (the only real failure); new = favourited since the
+    baseline, not a failure; dup = the same avid twice in one folder. It speaks for the whole account, so a
+    plan's targets need no separate check.
+    """
     if isinstance(baseline, str):
         baseline = json.load(open(baseline))
     after = bilibili_dump_all(driver, out_path or os.path.join(tempfile.gettempdir(), 'bili_reorg_after.json'))

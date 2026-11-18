@@ -1,7 +1,4 @@
-"""bilibili_restart_video(driver) -> None; forces the open video back to 00:00 and proves playback resumed.
-Bilibili resumes from account history, so force it to 00:00 — but after a seek the stream re-buffers and
-paused is already false while currentTime sits at 0: wait for the playing state, never read it once.
-"""
+"""Force the open bilibili video back to 00:00 and prove playback moved."""
 
 import json
 
@@ -12,6 +9,11 @@ BILIBILI_MOVING_JS = "!document.querySelector('video').paused && document.queryS
 
 
 def bilibili_restart_video(driver):
+    """Seek to 00:00 and wait for the clock to pass 1 s; prints RESTARTED or FAILED.
+
+    Bilibili resumes from account history, so force it to 00:00 — but after a seek the stream re-buffers and
+    paused is already false while currentTime sits at 0: wait for the playing state, never read it once.
+    """
     js = """const v = document.querySelector('video');
     if (!v) return null;
     return {paused: v.paused, t: v.currentTime, d: v.duration};"""

@@ -1,13 +1,4 @@
-"""bilibili_dump_all(driver, out_path=None) -> {folder: {id, count, medias:[{id,type,bvid,title,upper,intro,
-duration,fav_time,ctime}]}} written to <tempdir>/bili_all_media.json — the whole account in one call,
-which is what every reshuffle starts from. The extra fields are what deciding "what is this video" needs;
-for tags as well, hand a slice of this to bilibili_fetch_video_meta.
-type 2 = video, 24 = PGC 番剧/film (move/delete need it); a dead entry stays behind under the exact
-title 已失效视频 and bilibili_remove_from_folder takes it out. It usually has an empty upper.name, but not always
-(时政·社会 kept its uploader while the video was gone), so the title is the check that always fires.
-type 24 never reports an upper, and an entry whose video is gone stays out of every page while
-media_count still counts it — bilibili_read_folder_ids is the view that shows that one.
-"""
+"""Dump the whole bilibili favourite account — every folder, every entry — into one JSON."""
 
 import json
 import os
@@ -21,6 +12,14 @@ BILIBILI_DEFAULT_OUT = os.path.join(tempfile.gettempdir(), 'bili_all_media.json'
 
 
 def bilibili_dump_all(driver, out_path=None):
+    """{folder: {id, count, medias: [...]}} for the whole account, written to <tempdir>/bili_all_media.json.
+
+    The whole account in one call, which is what every reshuffle starts from. The extra fields are what
+    deciding "what is this video" needs; for tags as well, hand a slice of this to bilibili_fetch_video_meta.
+    A dead entry stays behind under the exact title 已失效视频 and bilibili_remove_from_folder takes it out: it
+    usually has an empty upper.name, but not always (时政·社会 kept its uploader while the video was gone), so
+    the title is the check that always fires — and type 24 never reports an upper at all.
+    """
     out_path = out_path or BILIBILI_DEFAULT_OUT
     out, dead, seen = {}, [], defaultdict(list)
     for f in bilibili_read_fav_folders(driver):

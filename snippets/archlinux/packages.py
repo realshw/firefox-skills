@@ -1,9 +1,4 @@
-r"""archlinux_search(driver, query) -> [{repo, arch, name, version, desc, updated, url}], the handle the rest of the
-file takes; archlinux_read_info(driver, name, repo) -> its fields;
-archlinux_read_depends(driver, name) -> the dependencies, printed.
-That detail page is a Key:\tValue definition list (name/version are the h2, not lines) and dependencies sit
-under an h3 "Dependencies (58)" — section(driver, 'Dependencies') matches it by prefix.
-"""
+"""Search the Arch Linux package repositories and read one package's fields."""
 
 import re
 
@@ -13,7 +8,10 @@ exec(open("snippets/common/wait_js.py").read())
 
 
 def archlinux_search(driver, query, limit=10, timeout=30):
-    """Print and return [{repo, arch, name, version, desc, updated, url}]."""
+    """Print and return [{repo, arch, name, version, desc, updated, url}].
+
+    The handle the rest of the file takes: every other call here starts from a row this returns.
+    """
     site_tab(driver, "//archlinux.org/")
     driver.get("https://archlinux.org/packages/?q=" + query.replace(" ", "+"))
     wait_js(driver, '!!document.querySelector(\'a[href*="/x86_64/"], a[href*="/any/"]\')', timeout)
@@ -32,7 +30,10 @@ def archlinux_search(driver, query, limit=10, timeout=30):
 
 
 def archlinux_read_info(driver, url_or_name, repo='extra', arch='x86_64', timeout=30, quiet=False):
-    """Open a package page (full url, or name + repo/arch) and return its fields as a dict."""
+    r"""Open a package page (full url, or name + repo/arch) and return its fields as a dict.
+
+    That detail page is a Key:\tValue definition list (name/version are the h2, not lines).
+    """
     url = url_or_name if url_or_name.startswith("http") else \
         "https://archlinux.org/packages/%s/%s/%s/" % (repo, arch, url_or_name)
     site_tab(driver, "//archlinux.org/")
@@ -60,7 +61,10 @@ def archlinux_read_info(driver, url_or_name, repo='extra', arch='x86_64', timeou
 
 
 def archlinux_read_depends(driver, url_or_name, repo='extra', arch='x86_64', limit=60):
-    """Print the package's dependencies."""
+    """Print the package's dependencies.
+
+    They sit under an h3 "Dependencies (58)" — section(driver, 'Dependencies') matches it by prefix.
+    """
     d = archlinux_read_info(driver, url_or_name, repo, arch, quiet=True)
     print("DEPS for", d.get('name', url_or_name), d.get('version', ''))
     body = section(driver, 'Dependencies', limit=6000, show=False)

@@ -1,11 +1,4 @@
-"""github_read_file(driver, slug, path) -> the text;
-github_save_file(driver, slug, path) -> the same text, written to disk.
-File contents cannot be fetch()ed (/raw/ 302s to raw.githubusercontent.com without CORS; a credentialed
-api.github.com call loses the login and hits 60 req/h), so _github_read_in_tab(driver) *navigates* a tab of its
-own, reads document.body — Firefox renders text/plain in a <pre> — then switches back, leaving the fetched
-page open like any other. Firefox discards an unloaded background tab, handle and all, so the way back is
-not guaranteed: stay on whatever is left rather than raising after a read that already succeeded.
-"""
+"""Read a file out of a GitHub repo as plain text, or save it to disk."""
 
 import os
 import tempfile
@@ -15,7 +8,14 @@ exec(open("snippets/common/wait_js.py").read())
 
 
 def _github_read_in_tab(driver, url, settle=1.2, timeout=30):
-    """Load url in a tab of its own, return (body_text, content_type), then switch back."""
+    """Load url in a tab of its own, return (body_text, content_type), then switch back.
+
+    File contents cannot be fetch()ed (/raw/ 302s to raw.githubusercontent.com without CORS; a credentialed
+    api.github.com call loses the login and hits 60 req/h), so this *navigates* a tab and reads
+    document.body — Firefox renders text/plain in a <pre> — leaving the fetched page open like any other.
+    Firefox discards an unloaded background tab, handle and all, so the way back is not guaranteed: stay on
+    whatever is left rather than raising after a read that already succeeded.
+    """
     orig = driver.current_window_handle
     driver.switch_to.new_window('tab')
     try:

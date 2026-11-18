@@ -1,7 +1,4 @@
-"""cloudmusic_open_radar(driver) -> None; leaves 私人漫游 open.
-Already open when that description line shows (the visible title is a plain span, the only h1 is a 0×0
-hidden copy). 35 songs, mixing repeats with fresh recommendations.
-"""
+"""Leave cloudmusic's 私人漫游 open."""
 
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -11,6 +8,11 @@ _CLOUDMUSIC_RADAR_JS = 'return document.body.innerText.includes("反复聆听你
 
 
 def cloudmusic_open_radar(driver):
+    """Open 私人漫游; it counts as open when that description line shows.
+
+    The visible title is a plain span — the only h1 is a 0×0 hidden copy, so it is no use as the check.
+    35 songs, mixing repeats with fresh recommendations.
+    """
     if not driver.execute_script(_CLOUDMUSIC_RADAR_JS):
         cloudmusic_open_rec(driver)
         spans = [

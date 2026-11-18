@@ -1,9 +1,8 @@
-"""wikipedia_read_infobox(driver) -> None; prints table.infobox, or NO INFOBOX when the page has none.
-Print the article's table.infobox, or NO INFOBOX when the page has none.
-"""
+"""Print a Wikipedia article's infobox."""
 
 
 def wikipedia_read_infobox(driver):
+    """Print table.infobox, or NO INFOBOX when the page has none."""
     try:
         print(driver.find_element("css selector", "table.infobox").text)
     except Exception as e:

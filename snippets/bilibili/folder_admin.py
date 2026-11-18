@@ -1,12 +1,4 @@
-"""bilibili_create_folder(driver, title, intro, privacy) -> the settled or created folder;
-bilibili_rename_folder(driver, media_id, **fields) -> None;
-bilibili_read_folder_list(driver) -> the folders list-all reports;
-bilibili_read_folder_info(driver, media_id) -> data.info;
-bilibili_read_first_cover(driver, media_id) -> a cover url; bilibili_delete_folders(driver, ids) -> None.
-Traps: attr bit 0 is the only reliable privacy flag (never compare the whole number — add returns an
-unsettled 6/7); edit overwrites every field it is given, cover='' wipes it, so unset args come from
-bilibili_read_folder_info(driver) (list-all lacks intro). 默认收藏夹 (attr=1) can be neither renamed nor deleted.
-"""
+"""Create, rename and delete bilibili favourite folders."""
 
 import time
 
@@ -19,7 +11,10 @@ def bilibili_read_folder_list(driver):
 
 
 def bilibili_delete_folders(driver, media_ids):
-    """POST /x/v3/fav/folder/del — a single int, a comma-separated string, or an iterable of ints."""
+    """POST /x/v3/fav/folder/del — a single int, a comma-separated string, or an iterable of ints.
+
+    默认收藏夹 (attr=1) can be neither renamed nor deleted.
+    """
     if isinstance(media_ids, int):
         media_ids = str(media_ids)
     elif not isinstance(media_ids, str):
@@ -28,6 +23,11 @@ def bilibili_delete_folders(driver, media_ids):
 
 
 def bilibili_create_folder(driver, title, intro='', privacy=1):
+    """The settled or created folder, None when the add fails; prints CREATED with the settled attr.
+
+    attr bit 0 is the only reliable privacy flag — never compare the whole number, because add returns an
+    unsettled 6/7 and the settled one is read back from list-all.
+    """
     j = bilibili_post_api(driver, '/x/v3/fav/folder/add', {
         'title': title,
         'intro': intro,
@@ -59,7 +59,11 @@ def bilibili_read_first_cover(driver, media_id):
 
 
 def bilibili_rename_folder(driver, media_id, title=None, intro=None, privacy=None, cover=None):
-    """Edit a folder, keeping title / intro / privacy / cover unless told otherwise."""
+    """Edit a folder, keeping title / intro / privacy / cover unless told otherwise.
+
+    edit overwrites every field it is given and cover='' wipes it, so an unset arg comes from
+    bilibili_read_folder_info (list-all lacks intro). 默认收藏夹 (attr=1) can be neither renamed nor deleted.
+    """
     info = bilibili_read_folder_info(driver, media_id)
     if not info:
         print('RENAME_FAILED: no such folder', media_id)

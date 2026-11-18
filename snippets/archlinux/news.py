@@ -1,15 +1,15 @@
-"""archlinux_read_news(driver) -> [{date, title, author, url}]; archlinux_read_news_item(driver, url_or_slug) -> text.
-/news is a plain table (Published / Title / Author) linking to /news/<slug>/, where manual-intervention
-notices land and fail silently on upgrade. Item pages are div.article-content inside div.news-article —
-not an <article>; narrow to it or the nav/footer makes a body dump useless.
-"""
+"""Read the Arch Linux news list and open a single news item."""
 
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 
 
 def archlinux_read_news(driver, limit=8, timeout=30):
-    """Print and return [{date, title, author, url}] for the newest news entries."""
+    """Print and return [{date, title, author, url}] for the newest news entries.
+
+    /news is a plain table (Published / Title / Author) linking to /news/<slug>/, where manual-intervention
+    notices land and fail silently on upgrade.
+    """
     site_tab(driver, "//archlinux.org/")
     driver.get("https://archlinux.org/news/")
     wait_js(driver, '!!document.querySelector(\'a[href^="/news/"]\')', timeout)
@@ -30,7 +30,11 @@ def archlinux_read_news(driver, limit=8, timeout=30):
 
 
 def archlinux_read_news_item(driver, url_or_slug, limit=5000):
-    """Open one news item (full url or bare slug) and print its article text."""
+    """Open one news item (full url or bare slug) and print its article text.
+
+    Item pages are div.article-content inside div.news-article — not an <article>; narrow to it or the
+    nav/footer makes a body dump useless.
+    """
     url = url_or_slug if url_or_slug.startswith("http") else \
         "https://archlinux.org/news/" + url_or_slug.strip("/") + "/"
     site_tab(driver, "//archlinux.org/")

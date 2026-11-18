@@ -1,9 +1,4 @@
-"""x_save_media(driver, index, out_dir) -> the saved paths; x_list_media(driver, index) -> [{url, alt}].
-Downloads ride the browser: pbs.twimg.com answers CORS, so a fetch() inside the page reads the bytes and
-returns base64 — never shell out to curl/requests, the machine only reaches the net through the browser.
-?name=orig 404s on some media, so fall back large -> as-is; and the fetch must start the FileReader or
-execute_async_script hangs into a 20 s TimeoutException. Video posts yield only their poster.
-"""
+"""Save a tweet's photos to disk through the browser's own fetch."""
 
 import base64
 import os
@@ -76,7 +71,13 @@ def _x_find_best_bytes(driver, url, want_orig=True):
 
 def x_save_media(driver, index=0, out_dir=None, want_orig=True, dry_run=False):
     """Save one tweet's photos/video posters to out_dir (default: the system temp dir); returns the
-    saved paths (alt text printed)."""
+    saved paths (alt text printed).
+
+    Downloads ride the browser: pbs.twimg.com answers CORS, so a fetch() inside the page reads the bytes and
+    returns base64 — never shell out to curl/requests, the machine only reaches the net through the browser.
+    ?name=orig 404s on some media, so it falls back large -> as-is (_x_find_best_bytes), and the fetch must
+    start the FileReader or execute_async_script hangs into a 20 s TimeoutException. A video post yields
+    only its poster here; save_video.py fetches the mp4."""
     out_dir = out_dir or os.path.join(tempfile.gettempdir(), "x_media")
     items = x_list_media(driver, index)
     if not items:

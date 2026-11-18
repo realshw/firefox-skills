@@ -1,9 +1,4 @@
-"""github_search(driver, query) -> [{title, url, extra}], printed; github_goto_search(driver, query) -> the results url.
-Every result kind is rows under [data-testid="results-list"], whose first child can be a banner — filter
-rows by name. Code hits carry [data-testid="link-to-search-result"]; other rows hold ordinary links.
-Code search needs the signed-in account; q rides in one percent-encoded string — free text and
-qualifiers together: "webdriver.Firefox language:Python".
-"""
+"""Run a GitHub search across repos, code, issues, PRs, users or discussions."""
 
 import re
 from urllib.parse import quote
@@ -46,7 +41,13 @@ def _github_abs_url(href):
 
 
 def github_search(driver, query, kind='repositories', limit=10, timeout=45):
-    """Print and return [{title, url, extra}] for a GitHub search; kind see _KINDS."""
+    """Print and return [{title, url, extra}] for a GitHub search; kind see _GITHUB_KINDS.
+
+    Every result kind is rows under [data-testid="results-list"], whose first child can be a banner — filter
+    rows by name. Code hits carry [data-testid="link-to-search-result"]; other rows hold ordinary links. Code
+    search needs the signed-in account; q rides in one percent-encoded string — free text and qualifiers
+    together: "webdriver.Firefox language:Python".
+    """
     github_goto_search(driver, query, kind, timeout=timeout)
     rows = driver.execute_script(_GITHUB_ROWS_JS)
     out, seen = [], set()

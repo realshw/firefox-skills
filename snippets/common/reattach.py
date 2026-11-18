@@ -1,8 +1,4 @@
-"""reattach(port=2828) -> driver: reconnect when a session dies or loses its window. Stray geckodrivers make
-NewSession stall on "Session already started", and survive SIGINT. Match comm
-only, never cmdline — a tmux session's cmdline contains "geckodriver" and pkill -f would take the
-browser down with it. Skip zombies; Firefox + marionette stay alive.
-"""
+"""Reconnect to Firefox when a session dies or loses its window."""
 
 import os
 import time
@@ -11,7 +7,12 @@ exec(open("snippets/common/connect.py").read())
 
 
 def reattach(port=2828):
-    """Kill stray geckodrivers, then attach on `port` and return the driver."""
+    """Kill stray geckodrivers, then attach on `port` and return the driver.
+
+    Stray geckodrivers make NewSession stall on "Session already started", and they survive SIGINT. Match comm
+    only, never cmdline — a tmux session's cmdline contains "geckodriver" and pkill -f would take the browser
+    down with it. Zombies are skipped; Firefox + marionette stay alive.
+    """
     strays = []
     for pid in os.listdir("/proc"):
         if not pid.isdigit():

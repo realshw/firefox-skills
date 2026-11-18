@@ -1,12 +1,4 @@
-"""github_read_thread(driver) -> {title, state, body, items};
-github_list_issues(driver, slug) -> [{num, title, url, time}];
-github_read_issue(driver, url_or_num) -> the issue dict;
-github_append_body() / github_post_comment() -> the saved text.
-Rows are React children (data-testid issue-listitem-title-link / issue-activity-timestamp); filtering
-needs ?q=is%3Aissue+is%3Aclosed (?state=closed just reloads the open list).
-github_read_thread(driver) reads both the React
-comment viewer and the classic timeline — a page picks either one. JS strings double their escapes.
-"""
+"""Read GitHub issue and PR threads, list issues, and edit or comment on one."""
 
 import re
 import time
@@ -15,10 +7,7 @@ exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/type_verified.py").read())
 exec(open("snippets/common/wait_js.py").read())
 
-# Editing the issue body: the body's first icon button is the kebab holding "Edit", the editor is the same
-# textarea the new-issue form uses, and "Save" carries no testid (the comment box's own buttons sit too).
-# Commenting: the page's Markdown textarea is the comment box, and its submit is the last enabled "Comment"
-# button — "Close with comment" keeps its own pair just above.
+# The selectors the two editors share; the traps for each live in the function docstrings.
 _GITHUB_BODY_SEL = 'textarea[placeholder^="Type your description"]'
 _GITHUB_COMMENT_SEL = 'textarea[placeholder*="Markdown"]'
 _GITHUB_SAVE_BODY_JS = """
@@ -90,7 +79,11 @@ return {title: rawTitle.split('\\n')[0].trim(),
 
 
 def github_read_thread(driver, timeout=30):
-    """Wait for the open issue/PR page, return {title, state, body, items} (body may be '')."""
+    """Wait for the open issue/PR page, return {title, state, body, items} (body may be '').
+
+    Reads both the React comment viewer and the classic timeline — a page picks either one. The JS strings
+    double their escapes.
+    """
     wait_js(
         driver, "!!(document.querySelector('[data-testid=\"issue-body\"]')"
         " || document.querySelector('div.timeline-comment-group')"
@@ -104,7 +97,11 @@ def github_read_thread(driver, timeout=30):
 
 
 def github_list_issues(driver, slug, state='open', limit=25, timeout=30):
-    """Print and return [{num, title, url, time}] for one state of a repo's issues."""
+    """Print and return [{num, title, url, time}] for one state of a repo's issues.
+
+    Rows are React children (data-testid issue-listitem-title-link / issue-activity-timestamp); filtering
+    needs ?q=is%3Aissue+is%3Aclosed, because ?state=closed just reloads the open list.
+    """
     site_tab(driver, "github.com")
     driver.get("https://github.com/" + slug.strip("/") + "/issues?q=is%3Aissue+is%3A" + state)
     wait_js(driver, "!!document.querySelector('[data-testid=\"issue-listitem-title-link\"]')", timeout)
@@ -154,9 +151,11 @@ def github_read_issue(driver, url_or_num, slug=None, body_limit=6000, comment_li
 def github_append_body(driver, url_or_num, text, slug=None, timeout=60):
     """Append text to an issue body (kebab -> Edit), verify the saved tail, return the new body.
 
-    Only the tail is typed: type_verified reads the editor, sees the old body as a prefix of the wanted
-    text and sends the remainder after moving the caret to the end. Safe to re-run - appending twice is a
-    visible duplicate, not a silent one."""
+    The body's first icon button is the kebab holding "Edit", the editor is the same textarea the new-issue
+    form uses, and "Save" carries no testid (the comment box's own buttons sit there too). Only the tail is
+    typed: type_verified reads the editor, sees the old body as a prefix of the wanted text and sends the
+    remainder after moving the caret to the end. Safe to re-run - appending twice is a visible duplicate,
+    not a silent one."""
     url = _github_build_issue_url(url_or_num, slug)
     site_tab(driver, "github.com")
     driver.get(url)
@@ -188,8 +187,10 @@ def github_append_body(driver, url_or_num, text, slug=None, timeout=60):
 def github_post_comment(driver, url_or_num, text, slug=None, timeout=60, dry_run=False):
     """Post text as a new comment on an issue, then reload and prove it is in the thread.
 
-    dry_run=True only checks the box is there - nothing is typed and nothing is sent, so it is safe on
-    an issue the caller is not ready to post to. Returns the comment dict when it lands."""
+    The page's Markdown textarea is the comment box, and its submit is the last enabled "Comment" button —
+    "Close with comment" keeps its own pair just above. dry_run=True only checks the box is there - nothing
+    is typed and nothing is sent, so it is safe on an issue the caller is not ready to post to. Returns the
+    comment dict when it lands."""
     url = _github_build_issue_url(url_or_num, slug)
     site_tab(driver, "github.com")
     driver.get(url)

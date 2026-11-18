@@ -1,7 +1,4 @@
-"""cloudmusic_play_all(driver) -> None; presses 播放全部 and proves the clock moves.
-Click 播放全部 and wait for the pause icon in the mini bar. Right after a cold load the track can park
-itself at PAUSED, so sample the mini-bar clock too and resume once if it has not moved.
-"""
+"""Press 播放全部 on cloudmusic and prove the clock moves."""
 
 import json
 from selenium.webdriver.support.ui import WebDriverWait
@@ -32,6 +29,11 @@ def _cloudmusic_check_clock_moves(driver, first):
 
 
 def cloudmusic_play_all(driver):
+    """Click 播放全部 and wait for the pause icon in the mini bar, then prove the clock moves.
+
+    Right after a cold load the track can park itself at PAUSED, so the mini-bar clock is sampled too and
+    playback is resumed once if it has not moved.
+    """
     els = [e for e in driver.find_elements("xpath", '//*[contains(text(), "播放全部")]') if e.is_displayed()]
     if not els:
         raise RuntimeError("播放全部 button not found")

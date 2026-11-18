@@ -1,8 +1,4 @@
-"""bilibili_search_links(driver, keyword) -> candidate links for the keyword results page.
-Navigate the bilibili tab to the keyword results page and return candidate links. The results SPA
-hydrates its cards gradually, so wait until the link set stops growing rather than sleeping. `pgc` marks
-PGC entries — with a title as keyword those are the official, playable ones.
-"""
+"""Search bilibili and return the video / 番剧 links the results page holds."""
 
 import urllib.parse
 
@@ -12,6 +8,12 @@ exec(open("snippets/common/wait_stable.py").read())
 
 
 def bilibili_search_links(driver, keyword, limit=40, timeout=30):
+    """Candidate links for the keyword results page, each with text, surrounding ctx and a pgc flag.
+
+    Navigates the bilibili tab there first. The results SPA hydrates its cards gradually, so wait until the
+    link set stops growing rather than sleeping. pgc marks PGC entries — with a title as keyword those are
+    the official, playable ones.
+    """
     site_tab(driver, "bilibili.com")
     driver.get('https://search.bilibili.com/all?keyword=' + urllib.parse.quote(keyword))
     js = r"""

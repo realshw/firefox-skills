@@ -1,8 +1,4 @@
-"""read_pdf(driver) / pdf_info(driver) / pdf_find(driver, term): Firefox's pdf.js leaves
-window.PDFViewerApplication on the page, so a PDF in a tab reads as text —
-execute_async_script (getTextContent returns a Promise), poll pagesCount, join items on hasEOL or whole
-paragraphs run together. Empty text means a scan, not a bug; read_pdf(driver) raises the 20 s ceiling itself.
-"""
+"""Read a PDF's text out of the tab Firefox's pdf.js renders it in."""
 
 import os
 import tempfile
@@ -33,7 +29,11 @@ const want = arguments[0];
 
 
 def pdf_info(driver, timeout=30):
-    """{pages, url} for the PDF in the current tab, or None (poll until the viewer is ready)."""
+    """{pages, url} for the PDF in the current tab, or None (poll until the viewer is ready).
+
+    Firefox's pdf.js leaves window.PDFViewerApplication on the page, so a PDF in a tab reads as text;
+    pagesCount is what says the viewer is ready.
+    """
     deadline = time.time() + timeout
     while time.time() < deadline:
         d = driver.execute_script("const a = window.PDFViewerApplication;"
@@ -45,7 +45,12 @@ def pdf_info(driver, timeout=30):
 
 
 def read_pdf(driver, pages=None, out_path=PDF_TEXT, script_timeout=300):
-    """Extract the PDF's text; pages = 1-based numbers (default: all). Saves + prints a SAVED line."""
+    """Extract the PDF's text; pages = 1-based numbers (default: all). Saves + prints a SAVED line.
+
+    execute_async_script because getTextContent returns a Promise, and items are joined on hasEOL — join them
+    on spaces alone and whole paragraphs run together. Empty text means a scan, not a bug. Raises the script
+    timeout itself, so a 20 s ceiling does not cut a long PDF off.
+    """
     info = pdf_info(driver)
     if not info:
         print("NO_PDF: PDFViewerApplication not found — is this tab actually a PDF?")

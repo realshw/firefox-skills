@@ -1,9 +1,4 @@
-"""x_goto_search(driver, query) -> the number of tweets mounted on the results page.
-f=live is the "Latest" tab; operators go straight into q — quote() the whole query once, never
-hand-build the url. Queries can legitimately have no hits, so return 0 rather than spinning out the
-timeout. Past a few dozen navigations X serves a rate-limit wall and tweets: 0 — back off, don't read
-that as "no hits".
-"""
+"""Search x.com and count the tweets the results page mounts."""
 
 from urllib.parse import quote
 
@@ -12,7 +7,13 @@ exec(open("snippets/common/wait_js.py").read())
 
 
 def x_goto_search(driver, query, latest=True, timeout=25):
-    """Navigate the x.com tab to the search results; return the number of tweets mounted."""
+    """Navigate the x.com tab to the search results; return the number of tweets mounted.
+
+    f=live is the "Latest" tab; operators go straight into q — quote() the whole query once, never hand-build
+    the url. Queries can legitimately have no hits, so 0 is a real answer rather than a reason to spin out the
+    timeout. Past a few dozen navigations X serves a rate-limit wall and tweets: 0 — back off, don't read that
+    as "no hits".
+    """
     site_tab(driver, "//x.com/")
     driver.get("https://x.com/search?q=" + quote(query) + ("&f=live" if latest else ""))
     wait_js(driver, 'document.querySelectorAll(\'article[data-testid="tweet"]\')'

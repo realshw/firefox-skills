@@ -1,11 +1,4 @@
-"""youtube_open_video(driver, url_or_id) -> the watch page's metadata;
-youtube_video_info(driver) -> id / title / author / length / views / publish;
-youtube_read_description(driver) -> None, prints it; youtube_get_video_id(url_or_id) -> the 11-char id.
-ytInitialPlayerResponse is the *initial load* snapshot, so an SPA hop leaves a stale one — youtube_open_video(driver)
-always does a full driver.get() then waits until videoDetails.videoId matches (ytcfg is on the home page
-too, never use it as the check). The DOM lands later, so every read waits first; one regex covers all
-id forms. publishDate is absent on some uploads — .get() it and fall back to the DOM.
-"""
+"""Read a YouTube watch page's metadata and its description."""
 
 import json
 import re
@@ -23,7 +16,12 @@ def youtube_get_video_id(url_or_id):
 
 
 def youtube_open_video(driver, url_or_id, timeout=30):
-    """Load a watch page and return its metadata as a dict (see video_info)."""
+    """Load a watch page and return its metadata as a dict (see video_info).
+
+    ytInitialPlayerResponse is the *initial load* snapshot, so an SPA hop leaves a stale one — this always
+    does a full driver.get() and then waits until videoDetails.videoId matches. (ytcfg is on the home page
+    too, so never use it as the check.) The DOM lands later, so the read waits for it first.
+    """
     vid = youtube_get_video_id(url_or_id)
     site_tab(driver, "youtube.com")
     driver.get("https://www.youtube.com/watch?v=" + vid)
@@ -39,7 +37,10 @@ def youtube_open_video(driver, url_or_id, timeout=30):
 
 
 def youtube_video_info(driver):
-    """Current watch page as a dict: id / title / author / length / views / publish / description."""
+    """Current watch page as a dict: id / title / author / length / views / publish / description.
+
+    publishDate is absent on some uploads, so publish is '' there rather than an error.
+    """
     js = """
     var r = window.ytInitialPlayerResponse; if (!r || !r.videoDetails) return null;
     var v = r.videoDetails, m = (r.microformat || {}).playerMicroformatRenderer || {};

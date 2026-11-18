@@ -1,8 +1,4 @@
-"""freebsd_open_relnotes(driver, version) -> the page text, cached to <tempdir>/relnotes_<v>.txt.
-One giant page with a TOC that repeats every heading — read it with common/page_sections.py (outline(driver)
-then section(driver)), never a text search. The url keeps its "R" (/releases/15.1R/relnotes/, 15.1.0 is a
-404) and relnotes get edited after release, so check the last-modified date.
-"""
+"""Load a FreeBSD release's notes as text."""
 
 import os
 import tempfile
@@ -13,7 +9,12 @@ exec(open("snippets/common/wait_js.py").read())
 
 
 def freebsd_open_relnotes(driver, version='15.1', timeout=30, cache=True):
-    """Load one release's notes; returns the page text (cached to <tempdir>/relnotes_<v>.txt)."""
+    """Load one release's notes; returns the page text (cached to <tempdir>/relnotes_<v>.txt).
+
+    One giant page with a TOC that repeats every heading — read it with common/page_sections.py (outline(driver)
+    then section(driver)), never a text search. The url keeps its "R" (/releases/15.1R/relnotes/, 15.1.0 is a
+    404), and relnotes get edited after release, so check the last-modified date.
+    """
     v = version.strip().rstrip("Rr")
     url = "https://www.freebsd.org/releases/" + v + "R/relnotes/"
     site_tab(driver, "freebsd.org")

@@ -1,15 +1,16 @@
-"""x_send_reply_draft(driver) -> True once the inline composer is empty again.
-Sends whatever sits in the inline composer (the half set_reply_draft.py does not do). tweetButtonInline's
-aria-disabled only clears once there is content and an early click is a silent no-op, so check it first.
-Confirmation is "the editor emptied"; the toast is reported, never required.
-"""
+"""Send whatever sits in x.com's inline reply composer."""
 
 exec(open("snippets/common/wait_js.py").read())
 exec(open("snippets/x/reply_tweet.py").read())
 
 
 def x_send_reply_draft(driver, timeout=30):
-    """Click Reply on the current inline draft; True once the composer is empty again."""
+    """Click Reply on the current inline draft; True once the composer is empty again.
+
+    The second half of set_reply_draft.py. tweetButtonInline's aria-disabled only clears once there is
+    content and an early click is a silent no-op, so check it first. Confirmation is "the editor emptied";
+    the toast is reported, never required.
+    """
     box = driver.execute_script("return (" + _X_INLINE + ")")
     if not box:
         print("NO_COMPOSER: no inline reply box on this page")

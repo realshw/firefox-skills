@@ -1,10 +1,4 @@
-"""gitlab_read_file(driver, project, path) -> the file text;
-gitlab_raw_url(project, path) -> the one url form that serves text/plain.
-GitLab raw URLs on archlinux.org sit behind an Anubis proof-of-work interstitial ("Making sure you're
-not a bot!"). driver.get() can time out while the challenge is still being solved, and the bot page is
-text/html, so wait for the title to lose "bot" before trusting the body. The tab stays on the fetched
-file, the way github's file.py leaves it.
-"""
+"""Read a file out of a GitLab repo as plain text."""
 
 import os
 
@@ -31,7 +25,13 @@ def _gitlab_settle(driver, timeout=90):
 
 
 def gitlab_read_file(driver, project, path, ref="main", out_path=None, host="gitlab.archlinux.org", preview=0):
-    """Load one repo file in a tab; return its text, optionally writing it to out_path."""
+    """Load one repo file in a tab; return its text, optionally writing it to out_path.
+
+    Raw URLs on archlinux.org sit behind an Anubis proof-of-work interstitial ("Making sure you're not a
+    bot!"). driver.get() can time out while the challenge is still being solved, and the bot page is
+    text/html, so wait for the title to lose "bot" before trusting the body. The tab stays on the fetched
+    file, the way github's file.py leaves it.
+    """
     url = gitlab_raw_url(project, path, ref, host)
     site_tab(driver, host)
     try:

@@ -1,6 +1,4 @@
-"""bilibili_resume_playback(driver) -> None; resumes if paused, then verifies.
-Either /video/ or /bangumi/play/ (covers PGC movies/series) counts; if paused, resume and verify.
-"""
+"""Resume the bilibili video open in a tab and confirm the clock moves."""
 
 import json
 
@@ -8,6 +6,12 @@ exec(open("snippets/common/wait_js.py").read())
 
 
 def bilibili_resume_playback(driver):
+    """Resume if paused, then verify; prints RESUME_OK or RESUME_FAILED.
+
+    Either /video/ or /bangumi/play/ (covers PGC movies/series) counts. Verify on the media clock, not on a
+    duration: read currentTime within the same media-clock tick and you get the value you started with, so
+    the click alone proves nothing.
+    """
     state_js = r"""
     const v = document.querySelector('video');
     if (!v) return null;

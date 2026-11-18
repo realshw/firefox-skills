@@ -1,8 +1,4 @@
-"""cloudmusic_toggle_play(driver) -> None; flips play/pause and reads the label back.
-Toggle play/pause and verify by reading the label back — read it *before* the click, the toggle swaps
-the node out. The 0.3 s is not a condition: the mini bar slides in, and a click aimed at a moving element
-lands somewhere else.
-"""
+"""Flip cloudmusic play/pause and read the label back."""
 
 import time
 
@@ -18,6 +14,11 @@ def _cloudmusic_find_toggle_icon(driver):
 
 
 def cloudmusic_toggle_play(driver):
+    """Toggle play/pause and verify by reading the label back — before, since the toggle swaps the node out.
+
+    The 0.3 s is not a condition: the mini bar slides in, and a click aimed at a moving element lands
+    somewhere else.
+    """
     before = _cloudmusic_find_toggle_icon(driver)
     if before is None:
         raise RuntimeError("play/pause control not found in mini bar")
