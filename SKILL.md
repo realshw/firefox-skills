@@ -59,7 +59,6 @@ description: >-
 - Site code and its DOM quirks go in `snippets/<site>/`; shared code goes in `snippets/common/`.
 - Name as the library does: `SITE_NOUN` constant, `site_verb_noun(driver, ...)` function.
 - Prefix `_` while only its own file calls it; those helpers need no docstring.
-- Name a one-snippet file after the snippet.
 - Save what will run again as a snippet, without being asked.
 - Run it before saving; anything hard to undo takes `dry_run=True`.
 - Format Python with `yapf -i`, pinned to 120 columns (`.style.yapf`).
