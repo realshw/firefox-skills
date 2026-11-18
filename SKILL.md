@@ -16,7 +16,7 @@ description: >-
 - Snippet: a reusable `.py` file under `snippets/`, kept for the next run.
 - Block: code sent to the Python REPL — a snippet, or throwaway code that never lands in a file.
 - `scripts/help.py snippets/` lists the sites this skill covers.
-- `scripts/help.py snippets/<site>/` gives each snippet's path and one sentence; run it before writing anything there.
+- `scripts/help.py snippets/<site>/` gives each snippet's path and the docstring it opens with; run it before writing anything there.
 - `scripts/help.py snippets/common/` does the same for the helper a block needs.
 - `scripts/help.py snippets/<site>/<file>.py` lists one file's non-private callables: signature, then docstring.
 - Read a file before editing it: its docstrings record the traps it was written to avoid.
@@ -54,7 +54,7 @@ description: >-
 - Read https://www.selenium.dev/llms.txt before writing a snippet.
 - Read https://agentskills.io/llms.txt before changing this file.
 - Both index what goes stale here: the Selenium docs and the skill format.
-- Open with one sentence: what the snippet can do, no signature.
+- Open with the module docstring: one sentence on what the snippet can do, no signature.
 - Give every non-private function a docstring: what it hands back, and the traps it was written to avoid.
 - Site code and its DOM quirks go in `snippets/<site>/`; shared code goes in `snippets/common/`.
 - Name as the library does: `SITE_NOUN` constant, `site_verb_noun(driver, ...)` function.
