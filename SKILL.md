@@ -11,10 +11,13 @@ description: >-
 - Grow: what a block proved goes back into `snippets/` as a file, so the next task starts from the tree.
 - Cite: the reply names the page behind every fact it states.
 
-## Find: what exists already
+## Terminology
 
 - Snippet: a reusable `.py` file under `snippets/`.
 - Block: code sent to the Python REPL — a snippet, or throwaway code.
+
+## Find: what exists already
+
 - `scripts/help.py snippets/` lists the sites this skill covers.
 - `scripts/help.py snippets/<site>/` gives each snippet's path and the docstring it opens with.
 - `scripts/help.py snippets/common/` does the same for the shared helpers.
@@ -65,13 +68,16 @@ description: >-
 - Format Python with `yapf -i`, pinned to 120 columns (`.style.yapf`).
 - Format markdown with `prettier --write .`; it wraps nothing (`.prettierrc`).
 - Commit as `<domain>: <verb phrase>`.
-- Edits take effect on the next run; nothing needs reloading.
 
 ## Cite: every fact names its page
 
 - Unsure about a fact? Search first: `snippets/bing/` or `snippets/duckduckgo/`.
 - Read the results; do not compose the answer from recall.
 - Cite the page each fact came from in your reply.
+
+## Miscellaneous
+
+- Edits take effect on the next run; nothing needs reloading.
 
 ## Examples
 
