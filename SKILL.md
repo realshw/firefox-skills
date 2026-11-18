@@ -4,11 +4,11 @@ description: >-
   Browser automation with Selenium against the session's live Firefox. Use it whenever a task reaches the web — checking a fact, reading or verifying a page, and any request you would otherwise send with curl or wget, even a one-off GET.
 ---
 
-## Loop: find, run, maintain, cite
+## Loop: find, run, grow, cite
 
 - Find: `scripts/help.py` names the sites, the snippets, and each snippet's callables.
 - Run: `scripts/exec.py` sends one block at a time to the REPL that holds `driver`.
-- Maintain: what a block proved goes back into `snippets/` as a file, so the next task starts from the tree.
+- Grow: what a block proved goes back into `snippets/` as a file, so the next task starts from the tree.
 - Cite: the reply names the page behind every fact it states.
 
 ## Find: what exists already
@@ -49,7 +49,7 @@ description: >-
 - That tab must be a loaded page on that site: a blank or foreign one fails.
 - Send a `curl`/`wget` request as a `fetch` from that tab, so cookies and origin travel with it.
 
-## Maintain: what proved itself stays
+## Grow: what proved itself stays
 
 - Read https://www.selenium.dev/llms.txt before writing a snippet.
 - Read https://agentskills.io/llms.txt before changing this file.
