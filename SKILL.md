@@ -58,7 +58,7 @@ description: >-
 - Give every non-private function a docstring: what it hands back, and the traps it was written to avoid.
 - Site code and its DOM quirks go in `snippets/<site>/`; shared code goes in `snippets/common/`.
 - Name as the library does: `SITE_NOUN` constant, `site_verb_noun(driver, ...)` function.
-- Prefix `_` while only its own file calls it; those helpers need no docstring.
+- Prefix `_` on anything only its own file calls; those helpers need no docstring.
 - Save what will run again as a snippet, without being asked.
 - Run it before saving; anything hard to undo takes `dry_run=True`.
 - Format Python with `yapf -i`, pinned to 120 columns (`.style.yapf`).
