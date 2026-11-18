@@ -4,10 +4,10 @@ description: >-
   Browser automation with Selenium against the session's live Firefox. Use it whenever a task reaches the web — checking a fact, reading or verifying a page, and any request you would otherwise send with curl or wget, even a one-off GET.
 ---
 
-## Loop: find, run, grow, cite
+## Loop: find, exec, grow, cite
 
 - Find: `scripts/help.py` names the sites, the snippets, and each snippet's callables.
-- Run: `scripts/exec.py` sends one block at a time to the REPL that holds `driver`.
+- Exec: `scripts/exec.py` sends one block at a time to the REPL that holds `driver`.
 - Grow: what a block proved goes back into `snippets/` as a file, so the next task starts from the tree.
 - Cite: the reply names the page behind every fact it states.
 
@@ -21,7 +21,7 @@ description: >-
 - `scripts/help.py snippets/<site>/<file>.py` lists one file's non-private callables: signature, then docstring.
 - Read the file, not just its line: the docstrings record the traps it was written to avoid.
 
-## Run: one block at a time
+## Exec: one block at a time
 
 - `scripts/exec.py` feeds one block on stdin to the live REPL in tmux window `cowork:firefox`.
 - The REPL keeps `driver` alive from block to block.
@@ -61,7 +61,7 @@ description: >-
 - Name as the library does: `SITE_NOUN` constant, `site_verb_noun(driver, ...)` function.
 - Prefix `_` on anything only its own file calls; those helpers need no docstring.
 - Save what will run again as a snippet, without being asked.
-- Run it before saving; anything hard to undo takes `dry_run=True`.
+- Exec it before saving; anything hard to undo takes `dry_run=True`.
 - Format Python with `yapf -i`, pinned to 120 columns (`.style.yapf`).
 - Format markdown with `prettier --write .`; it wraps nothing (`.prettierrc`).
 - Commit as `<domain>: <verb phrase>`.
@@ -88,7 +88,7 @@ Two paths in one run is the mistake, and it is refused:
 scripts/help.py snippets/bilibili/ snippets/common/
 ```
 
-Run a block, then read the print it leaves:
+Exec a block, then read the print it leaves:
 
 ```bash
 scripts/exec.py <<'PY'
