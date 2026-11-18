@@ -11,7 +11,7 @@ description: >-
 - Maintain: what a block proved goes back into `snippets/` as a file, so the next task starts from the tree.
 - Cite: the reply names the page behind every fact it states.
 
-## Running a snippet or block
+## Find: what exists already
 
 - Snippet: a reusable `.py` file under `snippets/`, kept for the next run.
 - Block: code sent to the Python REPL — a snippet, or throwaway code that never lands in a file.
@@ -19,24 +19,28 @@ description: >-
 - `scripts/help.py snippets/<site>/` gives each snippet's path and one sentence; run it before writing anything there.
 - `scripts/help.py snippets/common/` does the same for the helper a block needs.
 - `scripts/help.py snippets/<site>/<file>.py` lists one file's non-private callables: signature, then docstring.
-- Each snippet opens with one `exec(open("snippets/<site>/<file>.py").read())` line per neighbour.
-- Everything lands in the one namespace the REPL holds: a name two sites both want carries its site prefix.
+- Read a file before editing it: its docstrings record the traps it was written to avoid.
+
+## Run: one block at a time
+
 - `scripts/exec.py` feeds one block on stdin to the live REPL in tmux window `cowork:firefox`.
 - The REPL keeps `driver` alive from block to block.
+- Each snippet opens with one `exec(open("snippets/<site>/<file>.py").read())` line per neighbour.
+- Everything lands in the one namespace the REPL holds: a name two sites both want carries its site prefix.
 - Nothing in `snippets/<site>/` fits? Send a block of your own to that same REPL.
 - Read the summary the block prints rather than re-reading the page.
 - Wait on a condition, never a duration.
 - Predicate to poll: [`wait_js()`](snippets/common/wait_js.py).
 - Value that must settle: [`wait_js_stable()` / `wait_text_stable()`](snippets/common/wait_stable.py).
 
-## Handling the driver
+### Handling the driver
 
 - [`connect()`](snippets/common/connect.py) attaches to the running Firefox.
 - [`reattach()`](snippets/common/reattach.py) reconnects when a session dies or loses its window.
 - Both hand back a `driver` instead of taking one.
 - Reuse the `driver` the session already holds; do not attach again in each block.
 
-## Respecting the tabs
+### Respecting the tabs
 
 - Different site: [`site_tab()`](snippets/common/site_tab.py) opens a tab; the old tab keeps its page.
 - Same site: reuse that tab.
@@ -45,7 +49,7 @@ description: >-
 - That tab must be a loaded page on that site: a blank or foreign one fails.
 - Send a `curl`/`wget` request as a `fetch` from that tab, so cookies and origin travel with it.
 
-## Saving a snippet
+## Maintain: what proved itself stays
 
 - Read https://www.selenium.dev/llms.txt before writing a snippet.
 - Read https://agentskills.io/llms.txt before changing this file.
@@ -53,7 +57,6 @@ description: >-
 - Open with one sentence: what the snippet can do, no signature.
 - Give every non-private function a docstring: what it hands back, and the traps it was written to avoid.
 - Site code and its DOM quirks go in `snippets/<site>/`; shared code goes in `snippets/common/`.
-- Read a file before editing it: its docstrings record the traps it was written to avoid.
 - Name as the library does: `SITE_NOUN` constant, `site_verb_noun(driver, ...)` function.
 - Prefix `_` while only its own file calls it; those helpers need no docstring.
 - Name a one-snippet file after the snippet.
@@ -64,7 +67,7 @@ description: >-
 - Commit as `<domain>: <verb phrase>`.
 - Edits take effect on the next run; nothing needs reloading.
 
-## Sourcing the answer
+## Cite: every fact names its page
 
 - Unsure about a fact? Run a search snippet first: `snippets/bing/` or `snippets/duckduckgo/`.
 - Read the results; do not compose the answer from recall.
