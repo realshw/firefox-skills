@@ -71,7 +71,7 @@ description: >-
 
 ## Cite: every fact names its page
 
-- Unsure about a fact? Search first: `snippets/bing/` or `snippets/duckduckgo/`.
+- Unsure about a fact? Search first: `snippets/bing/search.py` or `snippets/duckduckgo/search.py`.
 - Read the results; do not compose the answer from recall.
 - Cite the page each fact came from in your reply.
 
