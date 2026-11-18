@@ -71,3 +71,27 @@ description: >-
 - Unsure about a fact? Run a search snippet first: `snippets/bing/` or `snippets/duckduckgo/`.
 - Read the results; do not compose the answer from recall.
 - Cite the page each fact came from in your reply.
+
+## Examples
+
+Ask what is already there, one path at a time:
+
+```bash
+scripts/help.py snippets/
+scripts/help.py snippets/bilibili/
+scripts/help.py snippets/bilibili/api.py
+```
+
+Two paths in one run is the mistake, and it is refused:
+
+```bash
+scripts/help.py snippets/bilibili/ snippets/common/
+```
+
+Run a block, then read the print it leaves:
+
+```bash
+scripts/exec.py <<'PY'
+print(driver.current_url)
+PY
+```
