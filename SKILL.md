@@ -18,9 +18,9 @@ description: >-
 
 ## Find: what exists already
 
-- `scripts/help.py snippets/` lists the sites this skill covers.
-- `scripts/help.py snippets/<site>/` gives each snippet's path and the docstring it opens with.
-- `scripts/help.py snippets/common/` does the same for the shared helpers.
+- `scripts/help.py snippets` lists the sites this skill covers.
+- `scripts/help.py snippets/<site>` gives each snippet's path and the docstring it opens with.
+- `scripts/help.py snippets/common` does the same for the shared helpers.
 - `scripts/help.py snippets/<site>/<file>.py` lists one file's non-private callables: signature, then docstring.
 - Read the file, not just its line: the docstrings record the traps it was written to avoid.
 
@@ -84,15 +84,15 @@ description: >-
 Ask what is already there, one path at a time:
 
 ```bash
-scripts/help.py snippets/
-scripts/help.py snippets/bilibili/
+scripts/help.py snippets
+scripts/help.py snippets/bilibili
 scripts/help.py snippets/bilibili/api.py
 ```
 
 Two paths in one run is the mistake, and it is refused:
 
 ```bash
-scripts/help.py snippets/bilibili/ snippets/common/
+scripts/help.py snippets/bilibili snippets/common
 ```
 
 Exec a block, then read the print it leaves:
