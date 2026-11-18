@@ -1,6 +1,8 @@
-# x_read_timeline(driver) -> None; prints the first 30 posts of the home timeline.
-# Reads the home timeline (For You), first 30 posts, printed. For the
-# Following feed use https://x.com/home?filter=following.
+"""x_read_timeline(driver) -> None; prints the first 30 posts of the home timeline.
+Reads the home timeline (For You), first 30 posts, printed. For the
+Following feed use https://x.com/home?filter=following.
+"""
+
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 exec(open("snippets/x/extract_tweets.py").read())

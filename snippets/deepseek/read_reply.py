@@ -1,8 +1,10 @@
-# deepseek_read_reply(driver, since) -> the last reply's text; `since` is what send_message returned.
-# Completion: while generating the composer's round button is a stop control, done flips it back to
-# disabled + the send paper-plane — but the ~0.3 s submit spinner also reads disabled. Counting clean
-# ticks to outlast that spinner cost ~3 s per read; instead the previous reply's exact text is vetoed for
-# 5 s after the send stamp, so 2 ticks suffice. done + text growth were measured to coincide (max 1.3 s).
+"""deepseek_read_reply(driver, since) -> the last reply's text; `since` is what send_message returned.
+Completion: while generating the composer's round button is a stop control, done flips it back to
+disabled + the send paper-plane — but the ~0.3 s submit spinner also reads disabled. Counting clean
+ticks to outlast that spinner cost ~3 s per read; instead the previous reply's exact text is vetoed for
+5 s after the send stamp, so 2 ticks suffice. done + text growth were measured to coincide (max 1.3 s).
+"""
+
 import json
 import os
 import tempfile

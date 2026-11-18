@@ -1,6 +1,7 @@
-# x_read_me(driver) -> None; prints the handle the account switcher spells out.
-# The account switcher spells out the logged-in handle; get_attribute("href") returns the *resolved* url,
-# so take the last path segment. .text may include the avatar's alt text — squash newlines.
+"""x_read_me(driver) -> None; prints the handle the account switcher spells out.
+The account switcher spells out the logged-in handle; get_attribute("href") returns the *resolved* url,
+so take the last path segment. .text may include the avatar's alt text — squash newlines.
+"""
 
 
 def x_read_me(driver):

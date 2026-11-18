@@ -1,6 +1,8 @@
-# deepseek_send_message(driver) -> time.time() of the send, the `since` read_reply wants.
-# Click the composer's send button (the first enabled one) — no wait, no confirmation. Returns the send
-# time so deepseek_read_reply(since=...) can tell the new answer from the previous one during the submit spinner.
+"""deepseek_send_message(driver) -> time.time() of the send, the `since` read_reply wants.
+Click the composer's send button (the first enabled one) — no wait, no confirmation. Returns the send
+time so deepseek_read_reply(since=...) can tell the new answer from the previous one during the submit spinner.
+"""
+
 import time
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains

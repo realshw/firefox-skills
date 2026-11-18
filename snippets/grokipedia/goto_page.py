@@ -1,6 +1,8 @@
-# grokipedia_goto_page(driver, title) -> the rendered entry text; spaces map to underscores
-# ("Elon Musk" -> /page/Elon_Musk), and the wait is wait_stable() on that text.
-# Entries run to tens of KB — use the shared sections_find(driver); company pages open with a key-value summary block.
+"""grokipedia_goto_page(driver, title) -> the rendered entry text; spaces map to underscores
+("Elon Musk" -> /page/Elon_Musk), and the wait is wait_stable() on that text.
+Entries run to tens of KB — use the shared sections_find(driver); company pages open with a key-value summary block.
+"""
+
 from urllib.parse import quote
 
 exec(open("snippets/common/site_tab.py").read())

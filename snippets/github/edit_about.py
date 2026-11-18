@@ -1,8 +1,10 @@
-# github_edit_about(driver, new_desc, sections) -> (before, after), once the page shows the change.
-# The gear is button[aria-label="Edit repository metadata"]; once open the backdrop covers it, so check for
-# the backdrop before clicking. The description is an input with a random React id — identify it by its
-# placeholder and set it through the native value setter + an input event; checkboxes flip via their label.
-# Save only closes the dialog on a server ack — the backdrop vanishing is the confirmation.
+"""github_edit_about(driver, new_desc, sections) -> (before, after), once the page shows the change.
+The gear is button[aria-label="Edit repository metadata"]; once open the backdrop covers it, so check for
+the backdrop before clicking. The description is an input with a random React id — identify it by its
+placeholder and set it through the native value setter + an input event; checkboxes flip via their label.
+Save only closes the dialog on a server ack — the backdrop vanishing is the confirmation.
+"""
+
 import time
 from selenium.webdriver.common.by import By
 

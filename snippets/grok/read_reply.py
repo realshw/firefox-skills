@@ -1,7 +1,9 @@
-# grok_read_reply(driver) -> the reply text, once the Stop button is gone.
-# Completion: a visible button[aria-label~="Stop"] while generating, gone once done — pass that as js_done
-# or a mid-stream pause passes as stable (the bubble is created empty on send). The reply text is
-# div.response-content-markdown, not the outer "Worked for Xs" line.
+"""grok_read_reply(driver) -> the reply text, once the Stop button is gone.
+Completion: a visible button[aria-label~="Stop"] while generating, gone once done — pass that as js_done
+or a mid-stream pause passes as stable (the bubble is created empty on send). The reply text is
+div.response-content-markdown, not the outer "Worked for Xs" line.
+"""
+
 import os
 import tempfile
 

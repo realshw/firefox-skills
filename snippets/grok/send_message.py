@@ -1,5 +1,7 @@
-# grok_send_message(driver) -> None; clicks send — no wait, no confirmation.
-# Click the button whose aria-label says send/submit — no wait, no confirmation.
+"""grok_send_message(driver) -> None; clicks send — no wait, no confirmation.
+Click the button whose aria-label says send/submit — no wait, no confirmation.
+"""
+
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 

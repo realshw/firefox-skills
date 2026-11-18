@@ -1,6 +1,8 @@
-# freebsd_open_status(driver, report) -> the page text; freebsd_list_quarters(driver) -> published slugs, newest first.
-# Same outline(driver) / section(driver) pair as everywhere else. Traps: the links are relative slugs shaped
-# report-2026-04-2026-06/ (start + end month), and the newest quarter is often announced but unpublished.
+"""freebsd_open_status(driver, report) -> the page text; freebsd_list_quarters(driver) -> published slugs, newest first.
+Same outline(driver) / section(driver) pair as everywhere else. Traps: the links are relative slugs shaped
+report-2026-04-2026-06/ (start + end month), and the newest quarter is often announced but unpublished.
+"""
+
 import os
 import re
 import tempfile

@@ -1,8 +1,10 @@
-# x_goto_search(driver, query) -> the number of tweets mounted on the results page.
-# f=live is the "Latest" tab; operators go straight into q — quote() the whole query once, never
-# hand-build the url. Queries can legitimately have no hits, so return 0 rather than spinning out the
-# timeout. Past a few dozen navigations X serves a rate-limit wall and tweets: 0 — back off, don't read
-# that as "no hits".
+"""x_goto_search(driver, query) -> the number of tweets mounted on the results page.
+f=live is the "Latest" tab; operators go straight into q — quote() the whole query once, never
+hand-build the url. Queries can legitimately have no hits, so return 0 rather than spinning out the
+timeout. Past a few dozen navigations X serves a rate-limit wall and tweets: 0 — back off, don't read
+that as "no hits".
+"""
+
 from urllib.parse import quote
 
 exec(open("snippets/common/site_tab.py").read())

@@ -1,8 +1,10 @@
-# github_search(driver, query) -> [{title, url, extra}], printed; github_goto_search(driver, query) -> the results url.
-# Every result kind is rows under [data-testid="results-list"], whose first child can be a banner — filter
-# rows by name. Code hits carry [data-testid="link-to-search-result"]; other rows hold ordinary links.
-# Code search needs the signed-in account; q rides in one percent-encoded string — free text and
-# qualifiers together: "webdriver.Firefox language:Python".
+"""github_search(driver, query) -> [{title, url, extra}], printed; github_goto_search(driver, query) -> the results url.
+Every result kind is rows under [data-testid="results-list"], whose first child can be a banner — filter
+rows by name. Code hits carry [data-testid="link-to-search-result"]; other rows hold ordinary links.
+Code search needs the signed-in account; q rides in one percent-encoded string — free text and
+qualifiers together: "webdriver.Firefox language:Python".
+"""
+
 import re
 from urllib.parse import quote
 

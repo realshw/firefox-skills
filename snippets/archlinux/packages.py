@@ -1,8 +1,10 @@
-# archlinux_search(driver, query) -> [{repo, arch, name, version, desc, updated, url}], the handle the rest of the
-# file takes; archlinux_read_info(driver, name, repo) -> its fields;
-# archlinux_read_depends(driver, name) -> the dependencies, printed.
-# That detail page is a Key:\tValue definition list (name/version are the h2, not lines) and dependencies sit
-# under an h3 "Dependencies (58)" — section(driver, 'Dependencies') matches it by prefix.
+r"""archlinux_search(driver, query) -> [{repo, arch, name, version, desc, updated, url}], the handle the rest of the
+file takes; archlinux_read_info(driver, name, repo) -> its fields;
+archlinux_read_depends(driver, name) -> the dependencies, printed.
+That detail page is a Key:\tValue definition list (name/version are the h2, not lines) and dependencies sit
+under an h3 "Dependencies (58)" — section(driver, 'Dependencies') matches it by prefix.
+"""
+
 import re
 
 exec(open("snippets/common/page_sections.py").read())

@@ -1,7 +1,9 @@
-# x_send_reply_draft(driver) -> True once the inline composer is empty again.
-# Sends whatever sits in the inline composer (the half set_reply_draft.py does not do). tweetButtonInline's
-# aria-disabled only clears once there is content and an early click is a silent no-op, so check it first.
-# Confirmation is "the editor emptied"; the toast is reported, never required.
+"""x_send_reply_draft(driver) -> True once the inline composer is empty again.
+Sends whatever sits in the inline composer (the half set_reply_draft.py does not do). tweetButtonInline's
+aria-disabled only clears once there is content and an early click is a silent no-op, so check it first.
+Confirmation is "the editor emptied"; the toast is reported, never required.
+"""
+
 exec(open("snippets/common/wait_js.py").read())
 exec(open("snippets/x/reply_tweet.py").read())
 

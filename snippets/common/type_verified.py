@@ -1,9 +1,11 @@
-# type_verified(driver, msg) / composer(driver): verified against the page, not against send_keys — an observer
-# counts beforeinput/input/compositionend, a short chunk is retyped from the missing tail only, and the
-# read-back (never .value on a contenteditable, which has none; never .text on a textarea, which is empty) is
-# the proof. Long text is pasted first — async, so confirm activeElement and poll the read-back — with chunked
-# keys as the fallback. selector picks the field: contenteditable by default, "textarea" for DeepSeek; Grok's
-# composer drops fast keystrokes, so chunk=1, delay=(0.08, 0.08) types there one character at a time.
+"""type_verified(driver, msg) / composer(driver): verified against the page, not against send_keys — an observer
+counts beforeinput/input/compositionend, a short chunk is retyped from the missing tail only, and the
+read-back (never .value on a contenteditable, which has none; never .text on a textarea, which is empty) is
+the proof. Long text is pasted first — async, so confirm activeElement and poll the read-back — with chunked
+keys as the fallback. selector picks the field: contenteditable by default, "textarea" for DeepSeek; Grok's
+composer drops fast keystrokes, so chunk=1, delay=(0.08, 0.08) types there one character at a time.
+"""
+
 import random
 import shutil
 import subprocess

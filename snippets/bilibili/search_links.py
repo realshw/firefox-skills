@@ -1,7 +1,9 @@
-# bilibili_search_links(driver, keyword) -> candidate links for the keyword results page.
-# Navigate the bilibili tab to the keyword results page and return candidate links. The results SPA
-# hydrates its cards gradually, so wait until the link set stops growing rather than sleeping. `pgc` marks
-# PGC entries — with a title as keyword those are the official, playable ones.
+"""bilibili_search_links(driver, keyword) -> candidate links for the keyword results page.
+Navigate the bilibili tab to the keyword results page and return candidate links. The results SPA
+hydrates its cards gradually, so wait until the link set stops growing rather than sleeping. `pgc` marks
+PGC entries — with a title as keyword those are the official, playable ones.
+"""
+
 import urllib.parse
 
 exec(open("snippets/common/site_tab.py").read())

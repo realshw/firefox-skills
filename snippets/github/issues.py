@@ -1,11 +1,13 @@
-# github_read_thread(driver) -> {title, state, body, items};
-# github_list_issues(driver, slug) -> [{num, title, url, time}];
-# github_read_issue(driver, url_or_num) -> the issue dict;
-# github_append_body() / github_post_comment() -> the saved text.
-# Rows are React children (data-testid issue-listitem-title-link / issue-activity-timestamp); filtering
-# needs ?q=is%3Aissue+is%3Aclosed (?state=closed just reloads the open list).
-# github_read_thread(driver) reads both the React
-# comment viewer and the classic timeline — a page picks either one. JS strings double their escapes.
+"""github_read_thread(driver) -> {title, state, body, items};
+github_list_issues(driver, slug) -> [{num, title, url, time}];
+github_read_issue(driver, url_or_num) -> the issue dict;
+github_append_body() / github_post_comment() -> the saved text.
+Rows are React children (data-testid issue-listitem-title-link / issue-activity-timestamp); filtering
+needs ?q=is%3Aissue+is%3Aclosed (?state=closed just reloads the open list).
+github_read_thread(driver) reads both the React
+comment viewer and the classic timeline — a page picks either one. JS strings double their escapes.
+"""
+
 import re
 import time
 

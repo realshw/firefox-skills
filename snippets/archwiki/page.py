@@ -1,9 +1,11 @@
-# archwiki_open_page(driver, title) -> the page text; archwiki_read_code_blocks(driver) -> the <pre> commands;
-# archwiki_read_notes(driver) -> the warning / note / tip boxes.
-# Titles are /title/With_Underscores (spaces normalize). Read .mw-parser-output through
-# common/page_sections.py; MediaWiki wraps headings in div.mw-heading so [edit] never leaks into the h2.
-# What the wiki adds: <pre> blocks with real commands (archwiki_read_code_blocks(driver))
-# and warning/note templates (archwiki_read_notes(driver)).
+"""archwiki_open_page(driver, title) -> the page text; archwiki_read_code_blocks(driver) -> the <pre> commands;
+archwiki_read_notes(driver) -> the warning / note / tip boxes.
+Titles are /title/With_Underscores (spaces normalize). Read .mw-parser-output through
+common/page_sections.py; MediaWiki wraps headings in div.mw-heading so [edit] never leaks into the h2.
+What the wiki adds: <pre> blocks with real commands (archwiki_read_code_blocks(driver))
+and warning/note templates (archwiki_read_notes(driver)).
+"""
+
 from urllib.parse import quote
 
 exec(open("snippets/common/page_sections.py").read())

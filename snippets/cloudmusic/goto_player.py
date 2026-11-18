@@ -1,8 +1,10 @@
-# cloudmusic_goto_player(driver) -> None; leaves the web player open, mini-bar rendered.
-# Load the web player and wait for the mini-bar <footer> — that bar is the only playback state (no <audio>
-# on the page, Web Audio pipeline). "Already on the player" means the player tab, and playback snippets
-# need that tab to stay theirs rather than the page the user is reading. Two player tabs mean two audio
-# pipelines that cloudmusic_toggle_play cannot reach, so an existing one is adopted, not opened next to.
+"""cloudmusic_goto_player(driver) -> None; leaves the web player open, mini-bar rendered.
+Load the web player and wait for the mini-bar <footer> — that bar is the only playback state (no <audio>
+on the page, Web Audio pipeline). "Already on the player" means the player tab, and playback snippets
+need that tab to stay theirs rather than the page the user is reading. Two player tabs mean two audio
+pipelines that cloudmusic_toggle_play cannot reach, so an existing one is adopted, not opened next to.
+"""
+
 from selenium.webdriver.support.ui import WebDriverWait
 
 exec(open("snippets/common/site_tab.py").read())

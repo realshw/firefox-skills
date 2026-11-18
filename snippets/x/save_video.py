@@ -1,9 +1,11 @@
-# x_save_video(driver, index, out_dir) -> the saved path;
-# x_read_video_info(driver, index) -> {tid, duration_ms, poster, variants}.
-# The DOM exposes only a poster jpg and a blob: src (MSE), so the mp4 url comes from the syndication API —
-# its token must be computed *in the browser* (Python's base36 rounds differently, a wrong token 404s).
-# Working door: a tab of its own on the viewer, click "Raw Data", read pre#rawdata.textContent; the bytes
-# come back in ~4 MB Range slices. The m3u8 fallback is partial (video track only).
+"""x_save_video(driver, index, out_dir) -> the saved path;
+x_read_video_info(driver, index) -> {tid, duration_ms, poster, variants}.
+The DOM exposes only a poster jpg and a blob: src (MSE), so the mp4 url comes from the syndication API —
+its token must be computed *in the browser* (Python's base36 rounds differently, a wrong token 404s).
+Working door: a tab of its own on the viewer, click "Raw Data", read pre#rawdata.textContent; the bytes
+come back in ~4 MB Range slices. The m3u8 fallback is partial (video track only).
+"""
+
 import base64
 import json
 import os

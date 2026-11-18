@@ -1,12 +1,14 @@
-# bilibili_move_videos(driver, plan, out_path=None) -> [{'target','mid','count','ok','code','missing','resp'}]
-# plan: {"src_media_id": 0, "targets": [{"mid": 0, "name": "folder", "avids": [123, "456:24", (789, 24)]}]}
-# API: POST /x/v3/fav/resource/move (src_media_id, tar_media_id, mid, resources="<avid>:<type>,...", csrf).
-# Trap: the type must be the list entry's own `type` — PGC film / 番剧 are 24 — and a wrong one is accepted
-# with exactly the {"code": 0, "data": 0} a real move returns, so the reply proves nothing either way.
-# `data` is not a count either: a batch that moved every item still answers data 0, and so does one that
-# moved none. That is why ok comes from re-pulling the target folder and finding the avids, never from the
-# reply — and why that pull has to settle: right after a move, list is briefly still serving the folder as
-# it was, so a single pull reports the whole batch missing. Poll until the avids show up, don't sleep once.
+"""bilibili_move_videos(driver, plan, out_path=None) -> [{'target','mid','count','ok','code','missing','resp'}]
+plan: {"src_media_id": 0, "targets": [{"mid": 0, "name": "folder", "avids": [123, "456:24", (789, 24)]}]}
+API: POST /x/v3/fav/resource/move (src_media_id, tar_media_id, mid, resources="<avid>:<type>,...", csrf).
+Trap: the type must be the list entry's own `type` — PGC film / 番剧 are 24 — and a wrong one is accepted
+with exactly the {"code": 0, "data": 0} a real move returns, so the reply proves nothing either way.
+`data` is not a count either: a batch that moved every item still answers data 0, and so does one that
+moved none. That is why ok comes from re-pulling the target folder and finding the avids, never from the
+reply — and why that pull has to settle: right after a move, list is briefly still serving the folder as
+it was, so a single pull reports the whole batch missing. Poll until the avids show up, don't sleep once.
+"""
+
 import json
 import time
 

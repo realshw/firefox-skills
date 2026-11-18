@@ -1,5 +1,7 @@
-# bilibili_pause_video(driver) -> None; leaves the video paused.
-# Either /video/ or /bangumi/play/ (covers PGC movies/series) counts; mirrors resume_playback.py.
+"""bilibili_pause_video(driver) -> None; leaves the video paused.
+Either /video/ or /bangumi/play/ (covers PGC movies/series) counts; mirrors resume_playback.py.
+"""
+
 import json
 
 exec(open("snippets/common/wait_js.py").read())

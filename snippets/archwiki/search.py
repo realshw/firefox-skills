@@ -1,7 +1,9 @@
-# archwiki_search(driver, query) -> [{title, url, snippet}], printed.
-# index.php?search=<q>&fulltext=1 — fulltext=1 is not optional or you get the "go to title" page. Pair
-# .mw-search-result-heading with the .searchresult div by index. The top hit is often a #REDIRECT stub and
-# matching is loose — don't dedupe, the redirect is frequently the canonical name.
+"""archwiki_search(driver, query) -> [{title, url, snippet}], printed.
+index.php?search=<q>&fulltext=1 — fulltext=1 is not optional or you get the "go to title" page. Pair
+.mw-search-result-heading with the .searchresult div by index. The top hit is often a #REDIRECT stub and
+matching is loose — don't dedupe, the redirect is frequently the canonical name.
+"""
+
 from urllib.parse import quote
 
 exec(open("snippets/common/site_tab.py").read())

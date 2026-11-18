@@ -1,8 +1,10 @@
-# x_save_media(driver, index, out_dir) -> the saved paths; x_list_media(driver, index) -> [{url, alt}].
-# Downloads ride the browser: pbs.twimg.com answers CORS, so a fetch() inside the page reads the bytes and
-# returns base64 — never shell out to curl/requests, the machine only reaches the net through the browser.
-# ?name=orig 404s on some media, so fall back large -> as-is; and the fetch must start the FileReader or
-# execute_async_script hangs into a 20 s TimeoutException. Video posts yield only their poster.
+"""x_save_media(driver, index, out_dir) -> the saved paths; x_list_media(driver, index) -> [{url, alt}].
+Downloads ride the browser: pbs.twimg.com answers CORS, so a fetch() inside the page reads the bytes and
+returns base64 — never shell out to curl/requests, the machine only reaches the net through the browser.
+?name=orig 404s on some media, so fall back large -> as-is; and the fetch must start the FileReader or
+execute_async_script hangs into a 20 s TimeoutException. Video posts yield only their poster.
+"""
+
 import base64
 import os
 import re

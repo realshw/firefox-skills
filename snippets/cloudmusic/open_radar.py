@@ -1,6 +1,8 @@
-# cloudmusic_open_radar(driver) -> None; leaves 私人漫游 open.
-# Already open when that description line shows (the visible title is a plain span, the only h1 is a 0×0
-# hidden copy). 35 songs, mixing repeats with fresh recommendations.
+"""cloudmusic_open_radar(driver) -> None; leaves 私人漫游 open.
+Already open when that description line shows (the visible title is a plain span, the only h1 is a 0×0
+hidden copy). 35 songs, mixing repeats with fresh recommendations.
+"""
+
 from selenium.webdriver.support.ui import WebDriverWait
 
 exec(open("snippets/cloudmusic/open_rec.py").read())

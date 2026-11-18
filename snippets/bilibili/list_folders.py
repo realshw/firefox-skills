@@ -1,6 +1,8 @@
-# bilibili_list_folders(driver) -> the summary written to <tempdir>/bili_folders.json, one printed line each.
-# API: GET /x/v3/fav/folder/created/list-all?up_mid=<uid> — 默认收藏夹 has attr=1, the rest 3/22/23,
-# and attr bit 0 is the only reliable privacy flag.
+"""bilibili_list_folders(driver) -> the summary written to <tempdir>/bili_folders.json, one printed line each.
+API: GET /x/v3/fav/folder/created/list-all?up_mid=<uid> — 默认收藏夹 has attr=1, the rest 3/22/23,
+and attr bit 0 is the only reliable privacy flag.
+"""
+
 import json
 import os
 import tempfile

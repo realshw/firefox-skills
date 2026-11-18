@@ -1,6 +1,7 @@
-# cloudmusic_read_player_state(driver) -> None; prints the mini-bar's state (song, artist, playing, clock).
-# The mini bar is the source of truth (no <audio>, Web Audio pipeline). The 歌曲 tab number is the song
-# count; the badge on the playlist cover is the play count.
+"""cloudmusic_read_player_state(driver) -> None; prints the mini-bar's state (song, artist, playing, clock).
+The mini bar is the source of truth (no <audio>, Web Audio pipeline). The 歌曲 tab number is the song
+count; the badge on the playlist cover is the play count.
+"""
 
 
 def cloudmusic_read_player_state(driver):

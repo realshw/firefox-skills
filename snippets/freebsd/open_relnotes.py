@@ -1,7 +1,9 @@
-# freebsd_open_relnotes(driver, version) -> the page text, cached to <tempdir>/relnotes_<v>.txt.
-# One giant page with a TOC that repeats every heading — read it with common/page_sections.py (outline(driver)
-# then section(driver)), never a text search. The url keeps its "R" (/releases/15.1R/relnotes/, 15.1.0 is a
-# 404) and relnotes get edited after release, so check the last-modified date.
+"""freebsd_open_relnotes(driver, version) -> the page text, cached to <tempdir>/relnotes_<v>.txt.
+One giant page with a TOC that repeats every heading — read it with common/page_sections.py (outline(driver)
+then section(driver)), never a text search. The url keeps its "R" (/releases/15.1R/relnotes/, 15.1.0 is a
+404) and relnotes get edited after release, so check the last-modified date.
+"""
+
 import os
 import tempfile
 

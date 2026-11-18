@@ -1,8 +1,10 @@
-# goto(driver, url): driver.get() raises TimeoutException whenever one subresource never settles, but by then
-# the document is usually rendered — news sites leave an ad or analytics request hanging forever. The article
-# is readable, so absorb the timeout and wait for body text instead of re-navigating. A page mid-load has no
-# body at all (readyState "loading", find_element("body") raises NoSuchElement), which is why the wait is on
-# innerText.
+"""goto(driver, url): driver.get() raises TimeoutException whenever one subresource never settles, but by then
+the document is usually rendered — news sites leave an ad or analytics request hanging forever. The article
+is readable, so absorb the timeout and wait for body text instead of re-navigating. A page mid-load has no
+body at all (readyState "loading", find_element("body") raises NoSuchElement), which is why the wait is on
+innerText.
+"""
+
 from selenium.common.exceptions import TimeoutException
 
 exec(open("snippets/common/wait_js.py").read())

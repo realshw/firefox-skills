@@ -1,7 +1,9 @@
-# x_delete_tweet(driver, url) -> None; deletes your post at `url`, stopping at the sheet when dry_run.
-# The caret opens a [role="menu"] whose "Delete" item carries no testid — match the label exactly; the
-# confirm sheet has no [role="dialog"] wrapper. The caret is one click from a real deletion, so every call
-# takes `expect` and refuses unless the focal post's text contains it. /status/ pages only.
+"""x_delete_tweet(driver, url) -> None; deletes your post at `url`, stopping at the sheet when dry_run.
+The caret opens a [role="menu"] whose "Delete" item carries no testid — match the label exactly; the
+confirm sheet has no [role="dialog"] wrapper. The caret is one click from a real deletion, so every call
+takes `expect` and refuses unless the focal post's text contains it. /status/ pages only.
+"""
+
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 

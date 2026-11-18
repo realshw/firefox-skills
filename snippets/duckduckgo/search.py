@@ -1,11 +1,13 @@
-# duckduckgo_search(driver, query) -> [{title, snippet, time, site, url}];
-# duckduckgo_goto_search(driver, query) -> the results url it landed on;
-# duckduckgo_print_results(rows) -> None, prints them.
-# Class names are hashed per deploy but the hooks survive: article[data-testid=result],
-# a[data-testid=result-title-a] (the real target), [data-result=snippet]. ?s= is ignored and scrolling
-# loads nothing — paging is the "More Results" button, so duckduckgo_search(driver, rounds=N) clicks it. Captcha pages
-# swap the cards for a bot check and have no articles at all. Searching navigates this session's own tab,
-# so the page the user is reading keeps its url.
+"""duckduckgo_search(driver, query) -> [{title, snippet, time, site, url}];
+duckduckgo_goto_search(driver, query) -> the results url it landed on;
+duckduckgo_print_results(rows) -> None, prints them.
+Class names are hashed per deploy but the hooks survive: article[data-testid=result],
+a[data-testid=result-title-a] (the real target), [data-result=snippet]. ?s= is ignored and scrolling
+loads nothing — paging is the "More Results" button, so duckduckgo_search(driver, rounds=N) clicks it. Captcha pages
+swap the cards for a bot check and have no articles at all. Searching navigates this session's own tab,
+so the page the user is reading keeps its url.
+"""
+
 import time
 from urllib.parse import quote_plus
 

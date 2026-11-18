@@ -1,15 +1,17 @@
-# bing_search(driver, query) -> [{title, snippet, date, site, cite, url}] over the requested pages, printed;
-# bing_goto_search(driver, query) -> the url served; bing_read_results(driver) -> the cards on the current SERP.
-# Bing's two editions share one endpoint: cn.bing.com serves 国内版 by default and 国际版 once the ENSEARCH
-# cookie is BENVER=1. The &ensearch=0/1 param is what writes that cookie, so it goes on every request — a
-# bare url keeps whichever edition the jar already holds — and #est_switch says which one won: est_cn/est_en,
-# the live one carrying est_selected. When that disagrees, write the cookie and load once more.
-# www.bing.com answers with an empty shell from this machine (no #b_results at all), so 国际版 is
-# cn.bing.com + ensearch=1, not www.
-# Results are #b_results > li.b_algo: h2 > a is the target, div.b_caption p the snippet and its leading
-# "date ·" segment is a date rather than text, .tptt the site name, cite the display url. Paging is
-# &first=11, 21, … and nothing else, and a jar that has been through Bing's rdr=1 redirect flow answers
-# every first= with page 1 again — so read the .sb_pagS marker and report it rather than trusting first=.
+"""bing_search(driver, query) -> [{title, snippet, date, site, cite, url}] over the requested pages, printed;
+bing_goto_search(driver, query) -> the url served; bing_read_results(driver) -> the cards on the current SERP.
+Bing's two editions share one endpoint: cn.bing.com serves 国内版 by default and 国际版 once the ENSEARCH
+cookie is BENVER=1. The &ensearch=0/1 param is what writes that cookie, so it goes on every request — a
+bare url keeps whichever edition the jar already holds — and #est_switch says which one won: est_cn/est_en,
+the live one carrying est_selected. When that disagrees, write the cookie and load once more.
+www.bing.com answers with an empty shell from this machine (no #b_results at all), so 国际版 is
+cn.bing.com + ensearch=1, not www.
+Results are #b_results > li.b_algo: h2 > a is the target, div.b_caption p the snippet and its leading
+"date ·" segment is a date rather than text, .tptt the site name, cite the display url. Paging is
+&first=11, 21, … and nothing else, and a jar that has been through Bing's rdr=1 redirect flow answers
+every first= with page 1 again — so read the .sb_pagS marker and report it rather than trusting first=.
+"""
+
 import time
 from urllib.parse import quote_plus
 

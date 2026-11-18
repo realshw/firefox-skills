@@ -1,7 +1,9 @@
-# x_set_reply_draft(driver, text) -> the draft read back from the editor.
-# Replaces the inline reply draft without sending (send_reply_draft.py sends). Take the box NOT inside
-# [role="dialog"]; never click it to focus (a floating hint eats the click) — send_keys focuses fine.
-# Draft.js needs real keys: clear with Control+A + DELETE, then read innerText back.
+"""x_set_reply_draft(driver, text) -> the draft read back from the editor.
+Replaces the inline reply draft without sending (send_reply_draft.py sends). Take the box NOT inside
+[role="dialog"]; never click it to focus (a floating hint eats the click) — send_keys focuses fine.
+Draft.js needs real keys: clear with Control+A + DELETE, then read innerText back.
+"""
+
 from selenium.webdriver.common.keys import Keys
 
 exec(open("snippets/common/wait_js.py").read())

@@ -1,7 +1,9 @@
-# read_pdf(driver) / pdf_info(driver) / pdf_find(driver, term): Firefox's pdf.js leaves
-# window.PDFViewerApplication on the page, so a PDF in a tab reads as text —
-# execute_async_script (getTextContent returns a Promise), poll pagesCount, join items on hasEOL or whole
-# paragraphs run together. Empty text means a scan, not a bug; read_pdf(driver) raises the 20 s ceiling itself.
+"""read_pdf(driver) / pdf_info(driver) / pdf_find(driver, term): Firefox's pdf.js leaves
+window.PDFViewerApplication on the page, so a PDF in a tab reads as text —
+execute_async_script (getTextContent returns a Promise), poll pagesCount, join items on hasEOL or whole
+paragraphs run together. Empty text means a scan, not a bug; read_pdf(driver) raises the 20 s ceiling itself.
+"""
+
 import os
 import tempfile
 import time

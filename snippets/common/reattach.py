@@ -1,7 +1,9 @@
-# reattach(port=2828) -> driver: reconnect when a session dies or loses its window. Stray geckodrivers make
-# NewSession stall on "Session already started", and survive SIGINT. Match comm
-# only, never cmdline — a tmux session's cmdline contains "geckodriver" and pkill -f would take the
-# browser down with it. Skip zombies; Firefox + marionette stay alive.
+"""reattach(port=2828) -> driver: reconnect when a session dies or loses its window. Stray geckodrivers make
+NewSession stall on "Session already started", and survive SIGINT. Match comm
+only, never cmdline — a tmux session's cmdline contains "geckodriver" and pkill -f would take the
+browser down with it. Skip zombies; Firefox + marionette stay alive.
+"""
+
 import os
 import time
 

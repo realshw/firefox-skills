@@ -1,10 +1,12 @@
-# front_tab(driver) / tabs(driver) / front_index() / wm_title() / store(): "which page is the user on?" —
-# WebDriver cannot answer this. window_handles carries no order,
-# switch_to.window does NOT move the tab the human sees (proved: sessionstore's `selected` survives a
-# 25 s switch), every tab answers visible + hasFocus, and a chrome-privileged context (about:newtab)
-# raises UnsupportedOperationError on every command, titles included. Two signals outside WebDriver do
-# work: the session store's `selected` index for the front tab, and the X11 window title
-# "<front tab title> — Mozilla Firefox". Both are passive — reading them moves nothing.
+"""front_tab(driver) / tabs(driver) / front_index() / wm_title() / store(): "which page is the user on?" —
+WebDriver cannot answer this. window_handles carries no order,
+switch_to.window does NOT move the tab the human sees (proved: sessionstore's `selected` survives a
+25 s switch), every tab answers visible + hasFocus, and a chrome-privileged context (about:newtab)
+raises UnsupportedOperationError on every command, titles included. Two signals outside WebDriver do
+work: the session store's `selected` index for the front tab, and the X11 window title
+"<front tab title> — Mozilla Firefox". Both are passive — reading them moves nothing.
+"""
+
 import glob
 import json
 import os

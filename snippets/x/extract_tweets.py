@@ -1,9 +1,11 @@
-# x_collect_tweets(driver, n) -> n tweets, scrolling and deduping; x_read_tweets(driver) -> what is mounted now;
-# x_print_tweets(rows) -> None, prints them.
-# The timeline is virtualized, so x_collect_tweets(driver) reads after every scroll and dedupes on the status id.
-# Engagement comes from the stats group's aria-label — the number group must start with a digit, or a
-# liked row's ", Reposted" poisons the count. Quoted tweets carry a second tweetText inside the article:
-# count only outside that box. /notifications has no articles; promoted rows need a handle filter.
+"""x_collect_tweets(driver, n) -> n tweets, scrolling and deduping; x_read_tweets(driver) -> what is mounted now;
+x_print_tweets(rows) -> None, prints them.
+The timeline is virtualized, so x_collect_tweets(driver) reads after every scroll and dedupes on the status id.
+Engagement comes from the stats group's aria-label — the number group must start with a digit, or a
+liked row's ", Reposted" poisons the count. Quoted tweets carry a second tweetText inside the article:
+count only outside that box. /notifications has no articles; promoted rows need a handle filter.
+"""
+
 import time
 
 X_EXTRACT_JS = r"""

@@ -1,5 +1,6 @@
-# bilibili_read_user_info(driver) -> None; prints the account the cookies name (DedeUserID, nothing else).
-# The account the shared browser is logged in as — the DedeUserID cookie, nothing else.
+"""bilibili_read_user_info(driver) -> None; prints the account the cookies name (DedeUserID, nothing else).
+The account the shared browser is logged in as — the DedeUserID cookie, nothing else.
+"""
 
 
 def bilibili_read_user_info(driver):

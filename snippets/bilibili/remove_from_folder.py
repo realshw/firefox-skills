@@ -1,9 +1,11 @@
-# bilibili_remove_from_folder(driver, avids, media_id, sleep_s=1.5) -> [{'avid','ok','resp'}];
-# avids are ints (type 2) or
-# "<id>:<type>" strings — PGC entries are 24 and a type-2 delete reports code 0 with success_num 0.
-# API: POST /x/v3/fav/resource/deal (rid, type, del_media_ids, csrf). success_num counts additions only —
-# a delete that worked answers data {"success_num": 0}, so ok comes from code alone and the real proof is a
-# re-pull of the list (a dead entry lingers in the list for a moment after the call).
+"""bilibili_remove_from_folder(driver, avids, media_id, sleep_s=1.5) -> [{'avid','ok','resp'}];
+avids are ints (type 2) or
+"<id>:<type>" strings — PGC entries are 24 and a type-2 delete reports code 0 with success_num 0.
+API: POST /x/v3/fav/resource/deal (rid, type, del_media_ids, csrf). success_num counts additions only —
+a delete that worked answers data {"success_num": 0}, so ok comes from code alone and the real proof is a
+re-pull of the list (a dead entry lingers in the list for a moment after the call).
+"""
+
 import time
 
 exec(open("snippets/bilibili/api.py").read())

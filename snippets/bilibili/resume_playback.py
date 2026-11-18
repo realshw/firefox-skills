@@ -1,5 +1,7 @@
-# bilibili_resume_playback(driver) -> None; resumes if paused, then verifies.
-# Either /video/ or /bangumi/play/ (covers PGC movies/series) counts; if paused, resume and verify.
+"""bilibili_resume_playback(driver) -> None; resumes if paused, then verifies.
+Either /video/ or /bangumi/play/ (covers PGC movies/series) counts; if paused, resume and verify.
+"""
+
 import json
 
 exec(open("snippets/common/wait_js.py").read())

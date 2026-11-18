@@ -1,8 +1,10 @@
-# cloudmusic_read_rec_cards(driver) -> None; prints the recommendation cards.
-# Lazily-scrolled card grid: playlists, per-genre 每日推荐 and 私人漫游 look alike and cards nest
-# duplicates — collect by text, dedupe, keep only cards >150px right of the 240px sidebar. The document
-# doesn't grow: scroll [class*=AppScrollContainer] by 0.8*clientHeight and restore scrollTop. The row of
-# brand-new cards under the top edge is what says the grid has re-rendered.
+"""cloudmusic_read_rec_cards(driver) -> None; prints the recommendation cards.
+Lazily-scrolled card grid: playlists, per-genre 每日推荐 and 私人漫游 look alike and cards nest
+duplicates — collect by text, dedupe, keep only cards >150px right of the 240px sidebar. The document
+doesn't grow: scroll [class*=AppScrollContainer] by 0.8*clientHeight and restore scrollTop. The row of
+brand-new cards under the top edge is what says the grid has re-rendered.
+"""
+
 import json
 
 exec(open("snippets/common/wait_js.py").read())

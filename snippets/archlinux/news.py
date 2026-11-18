@@ -1,7 +1,9 @@
-# archlinux_read_news(driver) -> [{date, title, author, url}]; archlinux_read_news_item(driver, url_or_slug) -> text.
-# /news is a plain table (Published / Title / Author) linking to /news/<slug>/, where manual-intervention
-# notices land and fail silently on upgrade. Item pages are div.article-content inside div.news-article —
-# not an <article>; narrow to it or the nav/footer makes a body dump useless.
+"""archlinux_read_news(driver) -> [{date, title, author, url}]; archlinux_read_news_item(driver, url_or_slug) -> text.
+/news is a plain table (Published / Title / Author) linking to /news/<slug>/, where manual-intervention
+notices land and fail silently on upgrade. Item pages are div.article-content inside div.news-article —
+not an <article>; narrow to it or the nav/footer makes a body dump useless.
+"""
+
 exec(open("snippets/common/site_tab.py").read())
 exec(open("snippets/common/wait_js.py").read())
 
