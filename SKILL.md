@@ -25,7 +25,7 @@ description: >-
 
 - `scripts/exec.py` feeds one block on stdin to the live REPL in tmux window `cowork:firefox`.
 - The REPL keeps `driver` alive from block to block.
-- Each snippet opens with one `exec(open("snippets/<site>/<file>.py").read())` line per neighbour.
+- Load a snippet into the block with `exec(open("snippets/<site>/<file>.py").read())`.
 - Edits take effect on the next run; nothing needs reloading.
 - One namespace for every snippet and block: what one loads, the next can call.
 - Nothing in `snippets/<site>/` fits? Send a block of your own to that same REPL.
