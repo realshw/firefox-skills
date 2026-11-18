@@ -19,6 +19,7 @@ description: >-
 - `scripts/help.py snippets/<site>/` gives each snippet's path and the docstring it opens with; run it before writing anything there.
 - `scripts/help.py snippets/common/` does the same for the helper a block needs.
 - `scripts/help.py snippets/<site>/<file>.py` lists one file's non-private callables: signature, then docstring.
+- One path per run: two paths is a usage error, not two listings.
 - Read a file before editing it: its docstrings record the traps it was written to avoid.
 
 ## Run: one block at a time
