@@ -6,10 +6,12 @@ description: >-
 
 ## Running a snippet or block
 
-- Snippet: a file under `snippets/<site>/`, whatever it holds.
-- Block: anything sent to the REPL — a snippet, or throwaway code that never lands in a file.
-- `head -1 snippets/<site>/*.py` before writing anything: a file there may already do the task.
-- `head -1 snippets/common/*.py` the same way: the helper a block needs usually already exists.
+- Snippet: a reusable `.py` file under `snippets/`, kept for the next run.
+- Block: code sent to the Python REPL — a snippet, or throwaway code that never lands in a file.
+- `scripts/help.py snippets/` lists the sites this skill covers.
+- `scripts/help.py snippets/<site>/` gives each snippet's path and one sentence; run it before writing anything there.
+- `scripts/help.py snippets/common/` does the same for the helper a block needs.
+- `scripts/help.py snippets/<site>/<file>.py` lists one file's non-private callables: signature, then docstring.
 - Each snippet opens with one `exec(open("snippets/<site>/<file>.py").read())` line per neighbour.
 - Everything lands in the one namespace the REPL holds: a name two sites both want carries its site prefix.
 - `scripts/exec.py` feeds one block on stdin to the live REPL in tmux window `cowork:firefox`.
@@ -41,12 +43,12 @@ description: >-
 - Read https://www.selenium.dev/llms.txt before writing a snippet.
 - Read https://agentskills.io/llms.txt before changing this file.
 - Both index what goes stale here: the Selenium docs and the skill format.
-- Open with `# callable(driver, ...) -> what it hands back`: it is what `head -1` prints.
-- Siblings in the same shape follow on line 2; `head -3` when line 1 is not enough.
+- Open with one sentence: what the snippet can do, no signature.
+- Give every non-private function a docstring: what it hands back, and the traps it was written to avoid.
 - Site code and its DOM quirks go in `snippets/<site>/`; shared code goes in `snippets/common/`.
-- Read a file before editing it: the comment at the top records the traps it was written to avoid.
+- Read a file before editing it: its docstrings record the traps it was written to avoid.
 - Name as the library does: `SITE_NOUN` constant, `site_verb_noun(driver, ...)` function.
-- Prefix `_` while only its own file calls it.
+- Prefix `_` while only its own file calls it; those helpers need no docstring.
 - Name a one-snippet file after the snippet.
 - Save what will run again as a snippet, without being asked.
 - Run it before saving; anything hard to undo takes `dry_run=True`.
