@@ -9,6 +9,7 @@ description: >-
 - Find: `scripts/help.py` names the sites, the snippets, and each snippet's callables.
 - Run: `scripts/exec.py` sends one block at a time to the REPL that holds `driver`.
 - Maintain: what a block proved goes back into `snippets/` as a file, so the next task starts from the tree.
+- Cite: the reply names the page behind every fact it states.
 
 ## Running a snippet or block
 
