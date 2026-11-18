@@ -25,6 +25,7 @@ description: >-
 ## Run: one block at a time
 
 - `scripts/exec.py` feeds one block on stdin to the live REPL in tmux window `cowork:firefox`.
+- No filename: a path argument is refused — the block comes in on stdin.
 - The REPL keeps `driver` alive from block to block.
 - Each snippet opens with one `exec(open("snippets/<site>/<file>.py").read())` line per neighbour.
 - Everything lands in the one namespace the REPL holds: a name two sites both want carries its site prefix.
