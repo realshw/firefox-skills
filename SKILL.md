@@ -26,7 +26,6 @@ description: >-
 - `scripts/exec.py` feeds one block on stdin to the live REPL in tmux window `cowork:firefox`.
 - The REPL keeps `driver` alive from block to block.
 - Load a snippet into the block with `exec(open("snippets/<site>/<file>.py").read())`.
-- Edits take effect on the next run; nothing needs reloading.
 - One namespace for every snippet and block: what one loads, the next can call.
 - Nothing in `snippets/<site>/` fits? Send a block of your own to that same REPL.
 - Read the summary the block prints rather than re-reading the page.
@@ -57,6 +56,7 @@ description: >-
 - Both index what goes stale here: the Selenium docs and the skill format.
 - Open with the module docstring: one sentence on what the snippet can do, no signature.
 - Give every non-private function a docstring: what it hands back, and the traps it was written to avoid.
+- Pull in what it needs with `exec(open("snippets/<site>/<file>.py").read())` lines.
 - Site code and its DOM quirks go in `snippets/<site>/`; shared code goes in `snippets/common/`.
 - Name as the library does: `SITE_NOUN` constant, `site_verb_noun(driver, ...)` function.
 - Prefix `_` on anything only its own file calls; those helpers need no docstring.
@@ -65,6 +65,7 @@ description: >-
 - Format Python with `yapf -i`, pinned to 120 columns (`.style.yapf`).
 - Format markdown with `prettier --write .`; it wraps nothing (`.prettierrc`).
 - Commit as `<domain>: <verb phrase>`.
+- Edits take effect on the next run; nothing needs reloading.
 
 ## Cite: every fact names its page
 
