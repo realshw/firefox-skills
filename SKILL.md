@@ -8,12 +8,12 @@ description: >-
 
 - Find: `scripts/help.py` names the sites, the snippets, and each snippet's callables.
 - Exec: `scripts/exec.py` sends one block at a time to the REPL that holds `driver`.
-- Grow: what a block proved goes back into `snippets/` as a file, so the next task starts from the tree.
+- Grow: what a block proved goes back into `snippets/` as a file.
 - Cite: the reply names the page behind every fact it states.
 
 ## Terminology
 
-- Snippet: a reusable `.py` file under `snippets/`.
+- Snippet: a reusable Python file under `snippets/`.
 - Block: code sent to the Python REPL — a snippet, or throwaway code.
 
 ## Find: what exists already
@@ -22,14 +22,14 @@ description: >-
 - `scripts/help.py snippets/<site>` gives each snippet's path and the docstring it opens with.
 - `scripts/help.py snippets/common` does the same for the shared helpers.
 - `scripts/help.py snippets/<site>/<file>.py` lists one file's non-private callables: signature, then docstring.
-- Read the file, not just its line: the docstrings record the traps it was written to avoid.
+- Read the file, not just its line.
 
 ## Exec: one block at a time
 
 - `scripts/exec.py` feeds one block on stdin to the live REPL in tmux window `cowork:firefox`.
 - The REPL keeps `driver` alive from block to block.
 - Load a snippet into the block with `exec(open("snippets/<site>/<file>.py").read())`.
-- One namespace for every snippet and block: what one loads, the next can call.
+- One namespace for every snippet and block.
 - Nothing in `snippets/<site>/` fits? Send a block of your own to that same REPL.
 - Read the summary the block prints rather than re-reading the page.
 - Wait on a condition, never a duration.
@@ -40,23 +40,18 @@ description: >-
 
 - [`connect()`](snippets/common/connect.py) attaches to the running Firefox.
 - [`reattach()`](snippets/common/reattach.py) reconnects when a session dies or loses its window.
-- Both hand back a `driver` instead of taking one.
 - Reuse the `driver` the session already holds; do not attach again in each block.
 
 ### Respecting the tabs
 
-- Different site: [`site_tab()`](snippets/common/site_tab.py) opens a tab; the old tab keeps its page.
-- Same site: reuse that tab.
-- Tabs are plain Selenium windows: WebDriver draws no distinction.
-- Snippet API calls go out from the page the driver is on.
-- That tab must be a loaded page on that site: a blank or foreign one fails.
-- Send a `curl`/`wget` request as a `fetch` from that tab, so cookies and origin travel with it.
+- Call [`site_tab()`](snippets/common/site_tab.py) before `driver.get()`.
+- Snippet API calls need a loaded page on the site.
+- Send a `curl`/`wget` request as a `fetch` from that page.
 
 ## Grow: what proved itself stays
 
 - Read https://www.selenium.dev/llms.txt before writing a snippet.
 - Read https://agentskills.io/llms.txt before changing this file.
-- Both index what goes stale here: the Selenium docs and the skill format.
 - Open with the module docstring: one sentence on what the snippet can do, no signature.
 - Give every non-private function a docstring: what it hands back, and the traps it was written to avoid.
 - Pull in what it needs with `exec(open("snippets/<site>/<file>.py").read())` lines.
@@ -65,8 +60,6 @@ description: >-
 - Prefix `_` on anything only its own file calls; those helpers need no docstring.
 - Save what will run again as a snippet, without being asked.
 - Exec it before saving; anything hard to undo takes `dry_run=True`.
-- Format Python with `yapf -i`, pinned to 120 columns (`.style.yapf`).
-- Format markdown with `prettier --write .`; it wraps nothing (`.prettierrc`).
 - Commit as `<domain>: <verb phrase>`.
 
 ## Cite: every fact names its page
@@ -77,7 +70,9 @@ description: >-
 
 ## Miscellaneous
 
-- Edits take effect on the next run; nothing needs reloading.
+- Edits on a snippet take effect on the next block that loads it; nothing needs reloading.
+- Format Python with `yapf -i`, pinned to 120 columns (`.style.yapf`).
+- Format Markdown with `prettier --write .` (`.prettierrc`).
 
 ## Examples
 
@@ -87,12 +82,6 @@ Ask what is already there, one path at a time:
 scripts/help.py snippets
 scripts/help.py snippets/bilibili
 scripts/help.py snippets/bilibili/api.py
-```
-
-Two paths in one run is the mistake, and it is refused:
-
-```bash
-scripts/help.py snippets/bilibili snippets/common
 ```
 
 Exec a block, then read the print it leaves:
