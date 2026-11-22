@@ -11,11 +11,11 @@ hands back every non-private function's signature and docstring.
 """
 
 import ast
-import os
 import pathlib
 import sys
 
 PROG = pathlib.Path(__file__).name
+ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 USAGE = f"""usage: {PROG} <path>
 
@@ -23,8 +23,8 @@ USAGE = f"""usage: {PROG} <path>
   snippets/<site>/           each .py file there, with the docstring it opens with
   snippets/<site>/<file>.py  each non-private function in it, with its signature and docstring
 
-Prints paths relative to the directory you run it from, so a line copies straight into
-exec(open("<path>").read())."""
+Prints paths relative to the skill root, so a line copies straight into
+exec(open("<path>").read()) from a block, whatever directory you ran it in."""
 
 
 def fail(message):
@@ -59,8 +59,12 @@ def parse(path):
 
 
 def shown(path):
-    """The path as the command was given it — relative, so it can be pasted into a snippet line."""
-    return os.path.relpath(str(path))
+    """The path relative to the skill root, so it pastes into a block's exec(open(...)) line."""
+    path = pathlib.Path(path).resolve()
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)  # outside the skill, so the absolute path is the pasteable one
 
 
 def row(path, text):
@@ -141,7 +145,10 @@ def main():
     if len(sys.argv) != 2:
         print(USAGE, file=sys.stderr)
         return 2
-    target = pathlib.Path(sys.argv[1]).resolve()
+    target = pathlib.Path(sys.argv[1])
+    if not target.exists():
+        target = ROOT / target  # a skill-root path typed from another directory
+    target = target.resolve()
     if not target.exists():
         return fail(f"no such path: {sys.argv[1]}")
     if target.is_file():
