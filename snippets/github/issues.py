@@ -1,4 +1,4 @@
-"""Read GitHub issue and PR threads, list issues, and edit or comment on one."""
+"""Read GitHub issue and PR threads, list issues, and edit, comment on or close one."""
 
 import re
 import time
@@ -217,3 +217,47 @@ def github_post_comment(driver, url_or_num, text, slug=None, timeout=60, dry_run
     if not hit:
         raise RuntimeError("the comment is not in the thread after submitting")
     return hit[-1]
+
+
+def github_close_issue(driver, url_or_num, slug=None, timeout=30, dry_run=False):
+    """Close an issue and prove the header reads Closed; return the reloaded thread.
+
+    The button reads "Close issue" only while the issue is open, and that slot becomes "Reopen issue"
+    once it is closed - so the state label, not the button, is what the wait checks. Closed issues come
+    back untouched with ALREADY_CLOSED, which makes a re-run harmless, and dry_run=True reports the
+    button without clicking it.
+    """
+    url = _github_build_issue_url(url_or_num, slug)
+    site_tab(driver, "github.com")
+    driver.get(url)
+    d = github_read_thread(driver, timeout)
+    if 'Closed' in (d['state'] or ''):
+        print("ALREADY_CLOSED:", d['title'][:90], "|", url)
+        return d
+
+    has_button = driver.execute_script("""
+    return [...document.querySelectorAll('button')].some(x =>
+      (x.innerText || '').trim() === 'Close issue' && !x.disabled
+      && (x.offsetParent || x.getClientRects().length));
+    """)
+    if not has_button:
+        raise RuntimeError("no Close issue button - is the issue locked?")
+    if dry_run:
+        print("DRY_RUN: close button found, nothing clicked |", url)
+        return {"url": url, "dry_run": True}
+
+    driver.execute_script("""
+    const b = [...document.querySelectorAll('button')]
+      .find(x => (x.innerText || '').trim() === 'Close issue' && !x.disabled
+                 && (x.offsetParent || x.getClientRects().length));
+    b.click();
+    """)
+    if not wait_js(
+            driver, "(() => {const s = document.querySelector('[data-testid=\"header-state\"]');"
+            " return !!s && /Closed/.test(s.innerText);})()", timeout):
+        raise RuntimeError("the header never read Closed after clicking Close issue")
+
+    driver.get(url)
+    d = github_read_thread(driver, timeout)
+    print("CLOSED:", d['title'][:90], "|", d['state'] or '-')
+    return d
