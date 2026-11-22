@@ -1,8 +1,7 @@
 """Get the session onto the cloudmusic web player, mini bar and all."""
 
-from selenium.webdriver.support.ui import WebDriverWait
-
 exec(open("snippets/common/site_tab.py").read())
+exec(open("snippets/common/wait_js.py").read())
 
 CLOUDMUSIC_PLAYER_URL = "https://music.163.com/st/webplayer"
 
@@ -33,13 +32,15 @@ def cloudmusic_goto_player(driver):
     That bar is the only playback state there is — no <audio> on the page, Web Audio pipeline. "Already on
     the player" means the player tab, and playback snippets need that tab to stay theirs rather than the page
     the user is reading. Two player tabs mean two audio pipelines that cloudmusic_toggle_play cannot reach,
-    so an existing one is adopted, not opened next to.
+    so an existing one is adopted, not opened next to. Readiness is a condition: readyState complete, then the
+    bar in the DOM, and a bar that never lands raises rather than reading an empty page.
     """
     if not driver.current_url.startswith(CLOUDMUSIC_PLAYER_URL):
         if not _cloudmusic_find_player(driver):
             site_tab(driver, "music.163.com")
             driver.get(CLOUDMUSIC_PLAYER_URL)
-    WebDriverWait(driver, 25).until(lambda d: d.execute_script("return document.readyState") == "complete")
-    WebDriverWait(driver, 25).until(lambda d: d.find_elements("css selector", "footer"))
+    wait_js(driver, "document.readyState === 'complete'", 25)
+    if not wait_js(driver, "!!document.querySelector('footer')", 25):
+        raise RuntimeError("the mini bar <footer> never rendered")
     print("TITLE:", driver.title)
     print("URL:", driver.current_url)

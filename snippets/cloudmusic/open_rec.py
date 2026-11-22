@@ -1,7 +1,8 @@
 """Leave cloudmusic's daily recommendation page open."""
 
 import time
-from selenium.webdriver.support.ui import WebDriverWait
+
+exec(open("snippets/common/wait_js.py").read())
 
 _CLOUDMUSIC_SIDEBAR_JS = r"""
 const t = arguments[0];
@@ -33,5 +34,6 @@ def cloudmusic_open_rec(driver):
             if time.time() > deadline:
                 raise RuntimeError("sidebar item 推荐 not found")
             time.sleep(0.5)
-        WebDriverWait(driver, 15).until(lambda d: "推荐歌单" in d.find_element("tag name", "body").text)
+        if not wait_js(driver, "document.body.innerText.includes('推荐歌单')", 15):
+            raise RuntimeError("推荐 never opened")
     print("OPENED_REC")

@@ -1,7 +1,6 @@
 """Press 播放全部 on cloudmusic and prove the clock moves."""
 
 import json
-from selenium.webdriver.support.ui import WebDriverWait
 
 exec(open("snippets/common/wait_js.py").read())
 
@@ -38,7 +37,8 @@ def cloudmusic_play_all(driver):
     if not els:
         raise RuntimeError("播放全部 button not found")
     els[0].click()
-    WebDriverWait(driver, 15).until(lambda d: d.find_elements("css selector", "footer span[aria-label=pause]"))
+    if not wait_js(driver, "!!document.querySelector('footer span[aria-label=pause]')", 15):
+        raise RuntimeError("the pause icon never appeared in the mini bar")
     first = _cloudmusic_read_clock(driver)
     if not _cloudmusic_check_clock_moves(driver, first):
         icon = _cloudmusic_find_play_icon(driver)

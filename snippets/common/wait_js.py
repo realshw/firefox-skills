@@ -6,8 +6,9 @@ import time
 def wait_js(driver, expr, timeout=25, tick=0.5):
     """True as soon as the JS expression evaluates truthy, False once timeout seconds pass.
 
-    The one poll loop for the whole skill: a raised exception means "not yet", never a failure — the deadline
-    decides. Pass a timeout when the site is slower than 25 s.
+    The one poll loop for truthiness — wait_stable.py polls for a value that settles instead. Raised
+    exceptions mean "not yet", never a failure; the deadline decides. Pass a timeout when the site is slower
+    than 25 s.
     """
     t0 = time.time()
     while time.time() - t0 < timeout:

@@ -32,7 +32,7 @@ description: >-
 - One namespace for every snippet and block.
 - Nothing in `snippets/<site>/` fits? Send a block of your own to that same REPL.
 - Read the summary the block prints rather than re-reading the page.
-- Wait on a condition, never a duration.
+- Wait on a condition; a tick, a backoff or a pause between calls may be a duration, a page's readiness may not.
 - Predicate to poll: [`wait_js()`](snippets/common/wait_js.py).
 - Value that must settle: [`wait_js_stable()` / `wait_text_stable()`](snippets/common/wait_stable.py).
 

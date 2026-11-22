@@ -1,8 +1,7 @@
 """Leave cloudmusic's 私人漫游 open."""
 
-from selenium.webdriver.support.ui import WebDriverWait
-
 exec(open("snippets/cloudmusic/open_rec.py").read())
+exec(open("snippets/common/wait_js.py").read())
 
 _CLOUDMUSIC_RADAR_JS = 'return document.body.innerText.includes("反复聆听你最爱的歌");'
 
@@ -24,5 +23,6 @@ def cloudmusic_open_radar(driver):
         card = min(spans, key=lambda e: e.location["y"])
         driver.execute_script("arguments[0].click()",
                               card)  # JS click: the cover <img> sits over the span and intercepts a real click
-        WebDriverWait(driver, 15).until(lambda d: d.execute_script(_CLOUDMUSIC_RADAR_JS))
+        if not wait_js(driver, as_expr(_CLOUDMUSIC_RADAR_JS), 15):
+            raise RuntimeError("私人漫游 never opened")
     print("OPENED_RADAR")
