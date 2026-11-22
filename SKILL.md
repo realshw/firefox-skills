@@ -4,17 +4,17 @@ description: >-
   Browser automation with Selenium against the session's live Firefox. Use it whenever a task reaches the web — checking a fact, reading or verifying a page, and any request you would otherwise send with curl or wget, even a one-off GET.
 ---
 
+## Terminology
+
+- Snippet: a reusable Python file under `snippets/`.
+- Block: code sent to the Python REPL — a snippet, or throwaway code.
+
 ## Loop: find, exec, grow, cite
 
 - Find: `scripts/help.py` names the sites, the snippets, and each snippet's callables.
 - Exec: `scripts/exec.py` sends one block at a time to the REPL that holds `driver`.
 - Grow: what a block proved goes back into `snippets/` as a file.
 - Cite: the reply names the page behind every fact it states.
-
-## Terminology
-
-- Snippet: a reusable Python file under `snippets/`.
-- Block: code sent to the Python REPL — a snippet, or throwaway code.
 
 ## Find: what exists already
 
