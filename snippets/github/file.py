@@ -7,7 +7,7 @@ import time
 exec(open("snippets/common/wait_js.py").read())
 
 
-def _github_read_in_tab(driver, url, settle=1.2, timeout=30):
+def github_read_in_tab(driver, url, settle=1.2, timeout=30):
     """Load url in a tab of its own, return (body_text, content_type), then switch back.
 
     File contents cannot be fetch()ed (/raw/ 302s to raw.githubusercontent.com without CORS; a credentialed
@@ -43,7 +43,7 @@ def github_raw_url(slug, path, ref='HEAD'):
 def _github_fetch(driver, slug, path, ref):
     """(text, content_type) for one file; GitHub answers a wrong path with an html 404 page, which is a
     successful read of the wrong thing — say so instead of handing back the page as the file."""
-    text, ctype = _github_read_in_tab(driver, github_raw_url(slug, path, ref))
+    text, ctype = github_read_in_tab(driver, github_raw_url(slug, path, ref))
     if ctype and not ctype.startswith('text/plain'):
         print("NO_FILE:", slug.strip('/') + "/" + path + " @" + ref, "->", ctype, "not text/plain (wrong path or ref?)")
         return '', ctype

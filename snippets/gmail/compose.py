@@ -22,7 +22,7 @@ return {send: send,
 """
 
 
-def _discard(driver):
+def _gmail_discard(driver):
     """Throw the open compose away, answering Gmail's "Discard draft?" prompt when it appears."""
     driver.execute_script("""
     const d = [...document.querySelectorAll('div[role=button]')]
@@ -70,7 +70,7 @@ def gmail_compose(driver, to, subject, body, dry_run=True, timeout=20):
     state = driver.execute_script(_GMAIL_COMPOSE_JS)
     print("GMAIL_COMPOSE: to=%r subject=%r send=%r" % (to, subject, state["send"]))
     if dry_run:
-        _discard(driver)
+        _gmail_discard(driver)
         print("GMAIL_COMPOSE: dry_run - draft discarded, nothing sent")
         return False
     button = driver.execute_script("""

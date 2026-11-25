@@ -9,7 +9,7 @@ WEIXIN_LINUX_NOTES_URL = "https://weixin.qq.com/updates/linux/%s"
 WEIXIN_LINUX_CDN = "dldir1v6.qq.com/weixin/Universal/Linux/"
 
 
-def _open(driver, url, timeout=25):
+def _weixin_open(driver, url, timeout=25):
     """Load `url` with site_tab/goto when those snippets are loaded, else plain, and wait for text."""
     if "site_tab" in globals() and "goto" in globals():
         site_tab(driver, "weixin.qq.com")
@@ -29,7 +29,7 @@ def weixin_open_linux_page(driver):
     the wait is on a[href*=WeChatLinux], not on body text — the version node lands first and would let a
     caller read a page that has no package urls yet.
     """
-    _open(driver, WEIXIN_LINUX_URL)
+    _weixin_open(driver, WEIXIN_LINUX_URL)
     if "wait_js" in globals():
         wait_js(driver, "document.querySelectorAll('a[href*=\"WeChatLinux\"]').length >= 5", timeout=25)
     return driver.find_element(By.CSS_SELECTOR, ".main-section__bd-version").text.strip()
@@ -67,7 +67,7 @@ def weixin_release_notes(driver, version):
     """
     digits = version.replace(".", "")
     url = WEIXIN_LINUX_NOTES_URL % digits
-    _open(driver, url)
+    _weixin_open(driver, url)
     body = driver.find_element(By.TAG_NAME, "body").text
     if "/updates/linux/" not in driver.current_url:
         return None

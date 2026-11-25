@@ -46,7 +46,7 @@ def github_read_pull_diff(driver, url_or_num, slug=None, out_path=None):
     Returns the text. /pull/N.diff 302s to a host without CORS, so it is read in a tab of its own (file.py).
     """
     url = _github_build_pull_url(url_or_num, slug)
-    text, ctype = _github_read_in_tab(driver, url.rstrip('/') + '.diff', settle=1.5)
+    text, ctype = github_read_in_tab(driver, url.rstrip('/') + '.diff', settle=1.5)
     files = text.count("\ndiff --git ") + (1 if text.startswith("diff --git ") else 0)
     out_path = out_path or os.path.join(tempfile.gettempdir(), 'pr.diff')
     with open(out_path, "w") as f:
