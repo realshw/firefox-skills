@@ -10,6 +10,9 @@ send-keys as one base64 line (send-keys mangles literal newlines). Raised except
 "Type: message" line and exit 1 here; the traceback is dropped and sys.last_exc stays unset, so re-run the
 block to reproduce it, or have the block call traceback.print_exc() itself. Blocks run in the REPL's cwd,
 the skill root, so the `exec(open("snippets/..."))` lines a snippet starts with find their files.
+
+COWORK_TARGET and COWORK_TIMEOUT name the tmux window and the wait; a block is refused while the pane is
+not at its ">>>" prompt.
 """
 
 import base64
@@ -21,7 +24,7 @@ import sys
 
 PROG = pathlib.Path(__file__).name
 TARGET = os.environ.get("COWORK_TARGET", "cowork:firefox")
-TIMEOUT = float(os.environ.get("COWORK_TIMEOUT", "120"))
+TIMEOUT = float(os.environ.get("COWORK_TIMEOUT", "600"))
 
 # Runs in a throwaway locals dict, so it leaves no names in the shared globals. The socket file object is
 # the sink, so output streams out as the block prints, and the status byte it writes last says whether the
@@ -51,6 +54,21 @@ def fail(message):
     return 1
 
 
+def pane_tail(target):
+    """The last line of the pane that has anything on it; None when tmux cannot read the pane.
+
+    The busy REPL is the thing to catch here: send-keys types into whatever is on screen, so a block sent
+    while the last one is still running is echoed after it and only runs later, which looks like a hang and
+    mixes its output into a run whose status byte has already been read.
+    """
+    captured = subprocess.run(["tmux", "capture-pane", "-p", "-t", target], capture_output=True, text=True)
+    if captured.returncode:
+        return None
+
+    lines = [line.rstrip() for line in captured.stdout.splitlines() if line.strip()]
+    return lines[-1] if lines else ""
+
+
 def read_block():
     """The block from stdin; None when stdin is a tty, i.e. nothing was piped in."""
     if sys.stdin.isatty():
@@ -67,6 +85,13 @@ def main():
     block = read_block()
     if block is None:
         return 2
+
+    tail = pane_tail(TARGET)
+    if tail is None:
+        return fail(f"cannot read {TARGET} - is tmux still running?")
+    if tail != ">>>":
+        return fail(f"{TARGET} is not at the '>>>' prompt - a block is still running, so nothing was "
+                    f"sent; try again later.")
 
     socket.setdefaulttimeout(TIMEOUT)
     with socket.create_server(("127.0.0.1", 0)) as server:

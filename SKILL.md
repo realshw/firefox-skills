@@ -28,6 +28,8 @@ description: >-
 
 - `scripts/exec.py` feeds one block on stdin to the live REPL in tmux window `cowork:firefox`.
 - The REPL keeps `driver` alive from block to block.
+- The `COWORK_TARGET` environment variable names the tmux window a block is sent to.
+- The `COWORK_TIMEOUT` environment variable is how long `scripts/exec.py` waits for that block, in seconds.
 - Load a snippet into the block with `exec(open("snippets/<site>/<file>.py").read())`.
 - One namespace for every snippet and block.
 - Nothing in `snippets/<site>/` fits? Send a block of your own to that same REPL.
@@ -51,7 +53,6 @@ description: >-
 ## Grow: what proved itself stays
 
 - Read https://www.selenium.dev/llms.txt before writing a snippet.
-- Read https://agentskills.io/llms.txt before changing this file.
 - Open with the module docstring: one sentence on what the snippet can do, no signature.
 - Give every non-private function a docstring: what it hands back, and the traps it was written to avoid.
 - Pull in what it needs with `exec(open("snippets/<site>/<file>.py").read())` lines.
